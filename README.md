@@ -29,7 +29,7 @@ from unsloth import FastLanguageModel
 
 model_name = "marcelbinz/Llama-3.1-Centaur-70B-adapter"
 model, tokenizer = FastLanguageModel.from_pretrained(
-  model_name = args.model,
+  model_name = model_name,
   max_seq_length = 32768,
   dtype = None,
   load_in_4bit = True,
