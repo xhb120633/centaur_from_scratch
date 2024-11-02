@@ -49,18 +49,20 @@ if __name__ == '__main__':
             "zorowitz2023data",
       ]
 
-      model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=torch.bfloat16, device_map="auto")
+      model = AutoModelForCausalLM.from_pretrained(args.model, torch_dtype=torch.bfloat16, attn_implementation='flash_attention_2', device_map="auto")
       tokenizer = AutoTokenizer.from_pretrained(args.model)
       l_id = tokenizer(" <<").input_ids[1:]
       r_id = tokenizer(">>").input_ids[1:]
       collator = DataCollatorForCompletionOnlyLM(response_template=l_id, instruction_template=r_id, tokenizer=tokenizer)
       dataset = load_dataset("marcelbinz/Psych-101-test")
+      is_quantized = model.is_quantized
 
       data = []
       with torch.no_grad():
             for task_name in task_names:
                   eval_dataset = dataset['test'].filter(lambda example: example['experiment'].startswith(task_name))
-
+                  
+                  model.is_quantized = False
                   training_args = TrainingArguments(
                         output_dir="eval",
                         per_device_eval_batch_size=1
@@ -75,6 +77,7 @@ if __name__ == '__main__':
                         max_seq_length=32768,
                         data_collator=collator,
                   )
+                  model.is_quantized = is_quantized
                   result = trainer.evaluate()
 
                   print(task_name, flush=True)
