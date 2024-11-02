@@ -9,20 +9,7 @@ Establishing a unified theory of cognition has been a major goal of psychology. 
 
 Note that Centaur is trained on a data set in which human choices are encapsuled by "<<" and ">>" tokens. For optimal performance, it is recommended to adjust prompts accordingly.
 
-You can use the model using HuggingFace Transformers library with 2 or more 80GB GPUs (NVIDIA Ampere or newer) with at least 150GB of free disk space to accomodate the download.
-
-```python
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_name = "marcelbinz/Llama-3.1-Centaur-70B"
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, device_map="auto")
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-```
-
-[test.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test.py) shows an example of this type of usage.
-
-Alternatively, you can also run the model using unsloth on a single 80GB GPU by loading the low-rank adapter directly. 
+The recommended usage is by loading the low-rank adapter using unsloth:
 
 ```python
 from unsloth import FastLanguageModel
@@ -34,6 +21,36 @@ model, tokenizer = FastLanguageModel.from_pretrained(
   dtype = None,
   load_in_4bit = True,
 )
+
+FastLanguageModel.for_inference(model)
 ```
 
-[test_adapter.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test_adapter.py) shows an example of this type of usage.
+This requires 80 GB GPU memory. [test_adapter.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test_adapter.py) shows an example of this type of usage.
+
+You can alternatively use the model with the HuggingFace Transformers library:
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_name = "marcelbinz/Llama-3.1-Centaur-70B"
+model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, device_map="auto")
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+```
+
+This requires at least 160 GB GPU memory (even more for longer prompts). [test.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test.py) shows an example of this type of usage.
+
+
+### Reference
+
+```
+@misc{binz2024centaurfoundationmodelhuman,
+      title={Centaur: a foundation model of human cognition}, 
+      author={Marcel Binz and Elif Akata and Matthias Bethge and Franziska Brändle and Fred Callaway and Julian Coda-Forno and Peter Dayan and Can Demircan and Maria K. Eckstein and Noémi Éltető and Thomas L. Griffiths and Susanne Haridi and Akshay K. Jagadish and Li Ji-An and Alexander Kipnis and Sreejan Kumar and Tobias Ludwig and Marvin Mathony and Marcelo Mattar and Alireza Modirshanechi and Surabhi S. Nath and Joshua C. Peterson and Milena Rmus and Evan M. Russek and Tankred Saanum and Natalia Scharfenberg and Johannes A. Schubert and Luca M. Schulze Buschoff and Nishad Singhi and Xin Sui and Mirko Thalmann and Fabian Theis and Vuong Truong and Vishaal Udandarao and Konstantinos Voudouris and Robert Wilson and Kristin Witte and Shuchen Wu and Dirk Wulff and Huadong Xiong and Eric Schulz},
+      year={2024},
+      eprint={2410.20268},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2410.20268}, 
+}
+```
