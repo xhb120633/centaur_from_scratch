@@ -12,7 +12,7 @@
 
 source activate unsloth_env2
 
-python finetune_qlora.py \
+python finetune.py \
 --seed 100 \
 --model_name_or_path "unsloth/Meta-Llama-3.1-70B-bnb-4bit" \
 --max_seq_len 32768 \
