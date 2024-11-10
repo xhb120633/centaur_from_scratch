@@ -74,12 +74,12 @@ ax1.set_ylim(-0.5, len(results_centaur) + 2)
 ax1.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model'], frameon=False, ncols=3, bbox_to_anchor=(0.5, 1.05), loc='upper center')
 
 # subplot 2
-centaur_rewards = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_centaur_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
-human_rewards = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_human_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
+centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
+human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
 rewards = np.concatenate((human_rewards, centaur_rewards))
 
-centaur_mb = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_centaur_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
-human_mb = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_human_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
+centaur_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
+human_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
 model_basednesses = np.concatenate((human_mb, centaur_mb))
 
 df = pd.DataFrame({'rewards': rewards, 'model_basednesses': model_basednesses, 'agent': ['Humans'] * 30 + ['Centaur 3.1'] * 30})
@@ -99,12 +99,12 @@ ax2.text(-0.13, 1.12, 'b', transform=ax2.transAxes, fontsize=8, fontweight='bold
 ax1.text(-2.52, 1.12, 'a', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
 
 # subplot 3
-centaur_rewards = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_centaur_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
-human_rewards = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_human_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
+centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
+human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
 rewards = np.concatenate((human_rewards, centaur_rewards))
 
-centaur_ib = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_centaur_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
-human_ib = np.concatenate([pd.read_csv('../results/openloop/baselines_openloop_human_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
+centaur_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
+human_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
 information_bonus = np.concatenate((human_ib, centaur_ib))
 
 df = pd.DataFrame({'rewards': rewards, 'information_bonus': information_bonus, 'agent': ['Humans'] * 28 + ['Centaur 3.1'] * 28})
