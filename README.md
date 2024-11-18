@@ -1,5 +1,8 @@
 # Centaur: a foundation model of human cognition
 
+
+<img src="https://marcelbinz.github.io/imgs/centaur.png" width="200"/>
+
 - **Paper:** [Centaur: a foundation model of human cognition](https://marcelbinz.github.io/imgs/Centaur__preprint_.pdf)
 - **Point of Contact:** [Marcel Binz](mailto:marcel.binz@helmholtz-munich.de)
 
