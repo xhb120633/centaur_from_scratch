@@ -23,4 +23,4 @@ python generalization.py --model marcelbinz/Llama-3.1-Centaur-8B-adapter
 python generalization_custom_metrics.py --model marcelbinz/Llama-3.1-Centaur-8B-adapter
 
 cd ..
-python merge.py --model marcelbinz/Llama-3.1-Centaur-8B-adapter
+python merge.py --model marcelbinz-Llama-3.1-Centaur-8B-adapter
