@@ -3,20 +3,23 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import sys
-sys.path.append("../../3_data/")
-from utils import randomized_choice_options
 from unsloth import FastLanguageModel
 import transformers
 from datasets import load_dataset
 import math
+import argparse
+
+def randomized_choice_options(num_choices):
+    choice_options = list(map(chr, range(65, 91)))
+    return np.random.choice(choice_options, num_choices, replace=False)
 
 def generate_rewards(values):
     return np.round(np.clip(np.random.normal(values, 8.0), 1.0, 100.0)).astype('int')
 
-def generate_prompts_horizon(datasets):
+def generate_prompts_horizon(datasets, model):
 
     model, tokenizer = FastLanguageModel.from_pretrained(
-      model_name = 'marcelbinz/Llama-3.1-Centaur-70B-adapter',
+      model_name = model,
       max_seq_length = 32768,
       dtype = None,
       load_in_4bit = True,
@@ -36,12 +39,9 @@ def generate_prompts_horizon(datasets):
 
     for dataset_idx, dataset in enumerate(datasets):
         print(dataset)
-        df = pd.read_csv("../../3_data/wilson2014humans/" + dataset)
-        prompts = load_dataset('json', data_files={
-            'eval': [os.path.join('/home/aih/marcel.binz/' + 'Centaur-3.1/3_data/0_full_data', 'prompts_testing_t1.jsonl')],
-            }
-        )
-        eval_prompts = prompts['eval'].filter(lambda example: example['experiment'].startswith('wilson2014humans/' + dataset))
+        df = pd.read_csv(dataset)
+        prompts = load_dataset("marcelbinz/Psych-101-test")
+        eval_prompts = prompts['test'].filter(lambda example: example['experiment'].startswith('wilson2014humans/' + dataset))
         eval_participants = list(map(int, eval_prompts['participant']))
         df = df[df['participant'].isin(eval_participants)]
         print(len(df.participant.unique()), flush=True)
@@ -101,7 +101,11 @@ def generate_prompts_horizon(datasets):
         df.to_csv('simulation' + str(dataset_idx) + '.csv')
 
 if __name__ == '__main__':
-    files = os.listdir("../../3_data/wilson2014humans/")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, required=True)
+    args = parser.parse_args()
+
+    files = os.listdir(".")
     datasets = sorted([f for f in files if (f.startswith("exp") and f.endswith(".csv"))])
     print(datasets)
-    generate_prompts_horizon(datasets)
+    generate_prompts_horizon(datasets, args.model)
