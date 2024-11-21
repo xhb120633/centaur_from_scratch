@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
                   print(task_name, flush=True)
                   print(result, flush=True)
-                  data.append([task_name, result['eval_loss']])
+                  data.append([task_name.removesuffix('/prompts.jsonl'), result['eval_loss']])
             df = pd.DataFrame(data, columns=['task', str(args.model)])
             print(df, flush=True)
             df.to_csv('results/' + args.model.replace('/', '-') +  '.csv')
