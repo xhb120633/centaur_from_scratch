@@ -10,8 +10,6 @@
 #SBATCH --nice=10000
 #SBATCH --cpus-per-task=20
 
-
-
 source activate unsloth_env2
 
 cd ..
