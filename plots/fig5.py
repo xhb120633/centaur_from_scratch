@@ -12,11 +12,22 @@ import matplotlib.pyplot as plt
 import scienceplots
 import matplotlib.gridspec as gridspec
 import seaborn as sns
+from functools import reduce
 
 df = pd.read_csv('../experiments.csv', sep=';')
 df['path'] = df['path'].str.replace('/','')
 df = df.rename(columns={"path": "task"})
-df_llms = pd.read_csv('../results/fig5_data.csv')
+
+df_llama_70b = pd.read_csv('../results/all_data_unsloth-Meta-Llama-3.1-70B-bnb-4bit.csv')
+df_llama_70b = df_llama_70b[df_llama_70b['unseen'] == 'participants'][['task', 'unsloth/Meta-Llama-3.1-70B-bnb-4bit']]
+
+df_centaur_70b = pd.read_csv('../results/all_data_marcelbinz-Llama-3.1-Centaur-70B-adapter.csv')
+df_centaur_70b = df_centaur_70b[df_centaur_70b['unseen'] == 'participants'][['task', 'marcelbinz/Llama-3.1-Centaur-70B-adapter']]
+
+df_random = pd.read_csv('../results/all_data_random.csv')
+df_random = df_random[df_random['unseen'] == 'participants'][['task', 'random']]
+
+df_llms = reduce(lambda left,right: pd.merge(left,right,on=['task'], how='outer'), [df_llama_70b, df_centaur_70b, df_random])
 
 for index, row in df_llms.iterrows():
     df_llms.loc[index, 'num_actions'] = df[df['task'] == row['task']]['num_actions'].item()
@@ -26,10 +37,9 @@ for index, row in df_llms.iterrows():
     df_llms.loc[index, 'task_type'] = df[df['task'] == row['task']]['task_type'].item()
     df_llms.loc[index, 'split'] = df[df['task'] == row['task']]['split'].item()
 
-df_llms = df_llms[df_llms['split'] == 'train']
-ll_centaur = -df_llms['/home/aih/marcel.binz/Centaur-3.1/1_finetuning/centaur2-final-llama/checkpoint-2000/']
+ll_centaur = -df_llms['marcelbinz/Llama-3.1-Centaur-70B-adapter']
 ll_llama = -df_llms['unsloth/Meta-Llama-3.1-70B-bnb-4bit']
-ll_random = -np.log(df_llms['num_actions'])
+ll_random = -df_llms['random']
 df_llms['r2_centaur'] = 1 - (ll_centaur/ll_random)
 df_llms['r2_llama'] = 1 - (ll_llama/ll_random)
 df_llms['r2_delta'] = df_llms['r2_centaur'] - df_llms['r2_llama']
