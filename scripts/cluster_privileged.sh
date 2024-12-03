@@ -8,7 +8,7 @@
 #SBATCH --nice=1000
 #SBATCH --cpus-per-task=32
 
-source activate unsloth_env2
+source activate new_python
 
 cd ../generalization/
 python privileged.py
