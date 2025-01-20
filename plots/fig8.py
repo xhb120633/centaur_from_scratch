@@ -53,6 +53,8 @@ for task_index, task in enumerate(df['task']):
     ax.bar(np.arange(6), df_task, color=['#69005f', '#ff506e', '#cbc9e2', 'black', '#69005f', '#ff506e'])
     ax.set_xticks(np.arange(6), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)'])
     ax.set_ylim(-0.0, 0.4)
+    ax.set_title('choices13k' if task_index == 0 else 'Intertemporal choice', fontsize=8)
+    ax.text(-0.13, 1.12, 'a' if task_index == 0 else 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')
     if task_index == 0:
         ax.set_ylabel(r'Pseudo-R$^2$')
     ax.containers[0][0].set_alpha(0.8)
