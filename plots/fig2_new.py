@@ -38,7 +38,12 @@ new_cmap0 = truncate_colormap(plt.get_cmap('Greys'), 0.2, 1.0)
 gs = gridspec.GridSpec(3, 2, width_ratios=[0.6666, 0.3333])
 
 centaur_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
-llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_unsloth-Meta-Llama-3.1-70B-bnb-4bit.pth')
+
+use_8b = False
+if use_8b:
+    llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
+else:
+    llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_unsloth-Meta-Llama-3.1-70B-bnb-4bit.pth')
 
 df_exp = pd.read_csv('../experiments.csv', sep=';')
 df_baseline = pd.read_csv('../results/all_data_baseline.csv')
@@ -46,7 +51,7 @@ df_baseline = df_baseline[df_baseline['unseen'] == 'participants'][['task', 'bas
 
 papers = []
 results_centaur = []
-results_centaur_se = []  
+results_centaur_se = []
 results_llama = []
 for key in centaur_70b.keys():
     baseline = df_baseline[df_baseline['task'] == key]
@@ -66,96 +71,147 @@ ax1 = fig.add_subplot(gs[:, 0])
 
 order = np.argsort(results_centaur)
 papers = np.array(papers)[order]
-results_centaur = np.array(results_centaur)[order] + 100
-results_llama = np.array(results_llama)[order] + 100
+results_centaur = np.array(results_centaur)[order]
+results_llama = np.array(results_llama)[order]
 
 custom_lines_r2 = [
-    Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5), 
+    Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
     Line2D([0], [0], color=color_2, alpha=0.8, linewidth=5, markersize=5),
     Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
 
 
 ax1.barh([len(results_centaur) + 1 ], [np.array(results_centaur).mean()], xerr=[np.array(results_centaur).std() / math.sqrt(len(results_centaur))],  height=0.75, color=color_1, alpha=0.8)
-ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color=color_2, alpha=0.8)
 ax1.barh(np.arange(len(results_centaur)), results_centaur, xerr=results_centaur_se, height=0.75, color=color_1, alpha=0.8)
+ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color=color_2, alpha=0.8)
 ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
 
 ax1.set_yticks(np.arange(len(results_centaur)).tolist() + [len(results_centaur) + 1], papers.tolist() + ['Overall'])
 ax1.set_xlabel('Relative log-likelihoods (%)')
-ax1.set_xlim(50)
+ax1.set_xlim(-45, 105)
 ax1.set_ylim(-0.5, len(results_centaur) + 2)
-ax1.axvline(x=100, color='grey', linestyle='--', linewidth=1.0)
-ax1.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model'], frameon=False, ncols=1)
+ax1.axvline(x=0, color='grey', linestyle='--', linewidth=1.0)
+if use_8b:
+    ax1.legend(custom_lines_r2, ['Centaur (70B)', 'Centaur (8B)', 'Cognitive model'], frameon=False, ncols=1)
+else:
+    ax1.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model'], frameon=False, ncols=1)
 
-# subplot 2
-centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
-human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
-rewards = np.concatenate((human_rewards, centaur_rewards))
+if use_8b:
+    centaur_70b = torch.load('../generalization/results/generalization_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
+    llama_70b = torch.load('../generalization/results/generalization_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
 
-centaur_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
-human_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
-model_basednesses = np.concatenate((human_mb, centaur_mb))
+    df_baseline = pd.read_csv('../results/all_data_baseline.csv')
+    df_baseline = df_baseline[df_baseline['unseen'] == 'experiments'][['task', 'baseline']]
 
-df = pd.DataFrame({'rewards': rewards, 'model_basednesses': model_basednesses, 'agent': ['Humans'] * 30 + ['Centaur 3.1'] * 30})
-df['rewards'] = df['rewards'] * 2
-humans = df.loc[df.agent == "Humans"]
-centaur = df.loc[df.agent == "Centaur 3.1"]
+    df_random = pd.read_csv('../results/all_data_random.csv')
+    df_random = df_random[df_random['unseen'] == 'experiments'][['task', 'random']]
 
-ax2 = fig.add_subplot(gs[0, 1])
-custom_lines = [Line2D([0], [0], color=color_1, alpha=0.8, marker="o", linestyle='None', markersize=5), Line2D([0], [0], color='grey', marker="o", linestyle='None', markersize=5)]
-sns.kdeplot(x=humans.rewards, y=humans.model_basednesses, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
-sns.kdeplot(x=centaur.rewards, y=centaur.model_basednesses, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
-ax2.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.2), loc='upper center')
-ax2.set_xlabel('Reward')
-ax2.set_xlim(0.1, 0.9)
-ax2.set_ylabel('Model-basedness')
-ax2.text(-0.13, 1.12, 'b', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
-ax1.text(-2.52, 1.12, 'a', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
+    means = {}
+    sems = {}
+    for key in centaur_70b.keys():
+        print(key)
+        print(centaur_70b[key].shape)
+        baseline = df_baseline[df_baseline['task'] == key]
+        random = df_random[df_random['task'] == key]
+        means[key] = []
+        sems[key] = []
+        means[key].append(centaur_70b[key].mean())
+        means[key].append(llama_70b[key].mean())
+        sems[key].append(centaur_70b[key].std() / math.sqrt(len(centaur_70b[key])))
+        sems[key].append(llama_70b[key].std() / math.sqrt(len(llama_70b[key])))
 
-# subplot 3
-centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
-human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
-rewards = np.concatenate((human_rewards, centaur_rewards))
+        if len(baseline) > 0:
+            means[key].append(baseline.baseline.item())
+        else:
+            means[key].append(0)
+        sems[key].append(0)
+        means[key].append(random.random.item())
+        sems[key].append(0)
+        print()
 
-centaur_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
-human_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
-information_bonus = np.concatenate((human_ib, centaur_ib))
+    for task_index, task in enumerate(means.keys()):
+        print(task)
+        ax = fig.add_subplot(gs[task_index, 1])
+        ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#ff506e', '#cbc9e2', 'grey'])
+        ax.set_xticks(np.arange(4), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Cog.\nmodel', 'Random'], size=6)
 
-df = pd.DataFrame({'rewards': rewards, 'information_bonus': information_bonus, 'agent': ['Humans'] * 28 + ['Centaur 3.1'] * 28})
-humans = df.loc[df.agent == "Humans"]
-centaur = df.loc[df.agent == "Centaur 3.1"]
+        if task_index == 2:
+            ax.text(0.575, 0.15, 'N/A', transform=ax.transAxes, va='top')
 
-ax3 = fig.add_subplot(gs[1, 1])
-sns.kdeplot(x=humans.rewards, y=humans.information_bonus, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax3, alpha=0.75)
-sns.kdeplot(x=centaur.rewards, y=centaur.information_bonus, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax3, alpha=0.75)
-ax3.set_xlim(42, 62)
-ax3.set_xlabel('Reward')
-ax3.set_ylabel('Information bonus')
-ax3.text(-0.13, 1.12, 'c', transform=ax3.transAxes, fontsize=8, fontweight='bold', va='top')
+        ax.set_ylabel('Negative log-likelihood')
+        ax.containers[1][0].set_alpha(0.8)
+        ax.containers[1][1].set_alpha(0.8)
+        ax.containers[1][2].set_alpha(1)
 
-# subplot 4
-df_centaur = pd.read_csv('../openloop/jansen2021dunningkruger/simulation.csv')
-df_human = pd.read_csv("../openloop/jansen2021dunningkruger/exp1.csv")
-df_human =  df_human.head(len(df_centaur))
+else:
+    ax2 = fig.add_subplot(gs[0, 1])
+    ax3 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[2, 1])
+    # subplot 2
+    centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
+    human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
+    rewards = np.concatenate((human_rewards, centaur_rewards))
 
-centaur_predicted_scores = df_centaur[df_centaur['question'] == 'absAssess0'].choice.astype('float').values
-human_predicted_scores =  df_human[df_human['question'] == 'absAssess0'].choice.astype('float').values
-centaur_scores = df_centaur[df_centaur['question'] == 'score'].choice.astype('float').values
-human_scores =  df_human[df_human['question'] == 'score'].choice.astype('float').values
-scores = np.concatenate((human_scores, centaur_scores))
-predicted_scores = np.concatenate((human_predicted_scores, centaur_predicted_scores))
-df = pd.DataFrame({'predicted_scores': predicted_scores, 'scores': scores, 'agent': ['Humans'] * 1000 + ['Centaur 3.1'] * 1000})
-humans = df.loc[df.agent == "Humans"]
-centaur = df.loc[df.agent == "Centaur 3.1"]
+    centaur_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
+    human_mb = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_twostep' + str(i) + '.csv')['param'].values for i in range(1, 3)])
+    model_basednesses = np.concatenate((human_mb, centaur_mb))
 
-ax4 = fig.add_subplot(gs[2, 1])
-sns.kdeplot(x=humans.scores, y=humans.predicted_scores, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
-sns.kdeplot(x=centaur.scores, y=centaur.predicted_scores, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
-ax4.set_xlabel('True score')
-ax4.set_ylabel('Estimated score')
-ax4.text(-0.13, 1.12, 'd', transform=ax4.transAxes, fontsize=8, fontweight='bold', va='top')
+    df = pd.DataFrame({'rewards': rewards, 'model_basednesses': model_basednesses, 'agent': ['Humans'] * 30 + ['Centaur 3.1'] * 30})
+    df['rewards'] = df['rewards'] * 2
+    humans = df.loc[df.agent == "Humans"]
+    centaur = df.loc[df.agent == "Centaur 3.1"]
+
+    custom_lines = [Line2D([0], [0], color=color_1, alpha=0.8, marker="o", linestyle='None', markersize=5), Line2D([0], [0], color='grey', marker="o", linestyle='None', markersize=5)]
+    sns.kdeplot(x=humans.rewards, y=humans.model_basednesses, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
+    sns.kdeplot(x=centaur.rewards, y=centaur.model_basednesses, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
+    ax2.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.2), loc='upper center')
+    ax2.set_xlabel('Reward')
+    ax2.set_xlim(0.1, 0.9)
+    ax2.set_ylabel('Model-basedness')
+    ax2.text(-0.13, 1.12, 'b', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
+    ax1.text(-2.52, 1.12, 'a', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
+
+    # subplot 3
+    centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
+    human_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
+    rewards = np.concatenate((human_rewards, centaur_rewards))
+
+    centaur_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
+    human_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
+    information_bonus = np.concatenate((human_ib, centaur_ib))
+
+    df = pd.DataFrame({'rewards': rewards, 'information_bonus': information_bonus, 'agent': ['Humans'] * 28 + ['Centaur 3.1'] * 28})
+    humans = df.loc[df.agent == "Humans"]
+    centaur = df.loc[df.agent == "Centaur 3.1"]
+
+    sns.kdeplot(x=humans.rewards, y=humans.information_bonus, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax3, alpha=0.75)
+    sns.kdeplot(x=centaur.rewards, y=centaur.information_bonus, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax3, alpha=0.75)
+    ax3.set_xlim(42, 62)
+    ax3.set_xlabel('Reward')
+    ax3.set_ylabel('Information bonus')
+    ax3.text(-0.13, 1.12, 'c', transform=ax3.transAxes, fontsize=8, fontweight='bold', va='top')
+
+    # subplot 4
+    df_centaur = pd.read_csv('../openloop/jansen2021dunningkruger/simulation.csv')
+    df_human = pd.read_csv("../openloop/jansen2021dunningkruger/exp1.csv")
+    df_human =  df_human.head(len(df_centaur))
+
+    centaur_predicted_scores = df_centaur[df_centaur['question'] == 'absAssess0'].choice.astype('float').values
+    human_predicted_scores =  df_human[df_human['question'] == 'absAssess0'].choice.astype('float').values
+    centaur_scores = df_centaur[df_centaur['question'] == 'score'].choice.astype('float').values
+    human_scores =  df_human[df_human['question'] == 'score'].choice.astype('float').values
+    scores = np.concatenate((human_scores, centaur_scores))
+    predicted_scores = np.concatenate((human_predicted_scores, centaur_predicted_scores))
+    df = pd.DataFrame({'predicted_scores': predicted_scores, 'scores': scores, 'agent': ['Humans'] * 1000 + ['Centaur 3.1'] * 1000})
+    humans = df.loc[df.agent == "Humans"]
+    centaur = df.loc[df.agent == "Centaur 3.1"]
+
+    sns.kdeplot(x=humans.scores, y=humans.predicted_scores, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
+    sns.kdeplot(x=centaur.scores, y=centaur.predicted_scores, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
+    ax4.set_xlabel('True score')
+    ax4.set_ylabel('Estimated score')
+    ax4.text(-0.13, 1.12, 'd', transform=ax4.transAxes, fontsize=8, fontweight='bold', va='top')
 
 plt.tight_layout()
 sns.despine()
-plt.savefig('figures/fig2_new.pdf', bbox_inches='tight')
+plt.savefig('figures/fig2_new_8b=' + str(use_8b) + '.pdf', bbox_inches='tight')
 plt.show()
