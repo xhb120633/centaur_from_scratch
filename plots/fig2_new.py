@@ -39,7 +39,7 @@ gs = gridspec.GridSpec(3, 2, width_ratios=[0.6666, 0.3333])
 
 centaur_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
 
-use_8b = False
+use_8b = True
 if use_8b:
     llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
 else:
@@ -74,16 +74,26 @@ papers = np.array(papers)[order]
 results_centaur = np.array(results_centaur)[order]
 results_llama = np.array(results_llama)[order]
 
-custom_lines_r2 = [
-    Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
-    Line2D([0], [0], color=color_2, alpha=0.8, linewidth=5, markersize=5),
-    Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
+
 
 
 ax1.barh([len(results_centaur) + 1 ], [np.array(results_centaur).mean()], xerr=[np.array(results_centaur).std() / math.sqrt(len(results_centaur))],  height=0.75, color=color_1, alpha=0.8)
 ax1.barh(np.arange(len(results_centaur)), results_centaur, xerr=results_centaur_se, height=0.75, color=color_1, alpha=0.8)
-ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color=color_2, alpha=0.8)
-ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
+
+if use_8b:
+    custom_lines_r2 = [
+        Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
+        Line2D([0], [0], color=color_1, alpha=0.5, linewidth=5, markersize=5),
+        Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
+    ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color='white', alpha=0.3)
+    ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color='white', alpha=0.3)
+else:
+    custom_lines_r2 = [
+        Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
+        Line2D([0], [0], color=color_2, alpha=0.8, linewidth=5, markersize=5),
+        Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
+    ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color=color_2, alpha=0.8)
+    ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
 
 ax1.set_yticks(np.arange(len(results_centaur)).tolist() + [len(results_centaur) + 1], papers.tolist() + ['Overall'])
 ax1.set_xlabel('Relative log-likelihoods (%)')
@@ -128,18 +138,20 @@ if use_8b:
         sems[key].append(0)
         print()
 
+    titles = ['Modified cover story', 'Modified problem structure', 'Entirely novel domain']
     for task_index, task in enumerate(means.keys()):
         print(task)
         ax = fig.add_subplot(gs[task_index, 1])
-        ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#ff506e', '#cbc9e2', 'grey'])
+        ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#69005f', '#cbc9e2', 'grey'])
         ax.set_xticks(np.arange(4), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Cog.\nmodel', 'Random'], size=6)
+        ax.set_title(titles[task_index], size=6)
 
         if task_index == 2:
             ax.text(0.575, 0.15, 'N/A', transform=ax.transAxes, va='top')
 
         ax.set_ylabel('Negative log-likelihood')
         ax.containers[1][0].set_alpha(0.8)
-        ax.containers[1][1].set_alpha(0.8)
+        ax.containers[1][1].set_alpha(0.5)
         ax.containers[1][2].set_alpha(1)
 
 else:
