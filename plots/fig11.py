@@ -27,7 +27,7 @@ for key in centaur.keys():
         results_nemotron.append(nemotron[key].mean())
         results_hermes.append(hermes[key].mean())
         results_reflection.append(reflection[key].mean())
-  
+
 gs = gridspec.GridSpec(1, 1, width_ratios=[1])
 plt.style.use(['nature'])
 fig = plt.figure(figsize=(7.08661/2, 1.9))

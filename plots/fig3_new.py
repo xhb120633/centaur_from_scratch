@@ -31,7 +31,7 @@ for key in centaur_70b.keys():
     means[key].append(llama_70b[key].mean())
     sems[key].append(centaur_70b[key].std() / math.sqrt(len(centaur_70b[key])))
     sems[key].append(llama_70b[key].std() / math.sqrt(len(llama_70b[key])))
-    
+
     if len(baseline) > 0:
         means[key].append(baseline.baseline.item())
     else:
