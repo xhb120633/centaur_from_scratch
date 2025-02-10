@@ -51,6 +51,7 @@ for task_index, task in enumerate(means.keys()):
     print(task)
     ax = fig.add_subplot(gs[:, task_index])
     ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#ff506e', '#cbc9e2', 'grey'])
+    print(means[task])
     ax.set_xticks(np.arange(4), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Random'])
 
     if task_index == 2:

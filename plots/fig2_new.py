@@ -12,6 +12,8 @@ import matplotlib.colors as colors
 from functools import reduce
 import torch
 import math
+from scipy import stats
+
 
 def argsort(seq):
     # http://stackoverflow.com/questions/3071415/efficient-method-to-calculate-the-rank-vector-of-a-list-in-python
@@ -52,6 +54,9 @@ df_baseline = df_baseline[df_baseline['unseen'] == 'participants'][['task', 'bas
 papers = []
 results_centaur = []
 results_llama = []
+ll_centaur = []
+ll_llama = []
+baselines = []
 for key in centaur_70b.keys():
     baseline = df_baseline[df_baseline['task'] == key]
     if len(baseline) > 0:
@@ -63,8 +68,24 @@ for key in centaur_70b.keys():
         centaur_relative = ((-centaur_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
         llama_relative = ((-llama_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
         results_centaur.append(centaur_relative)
-        #results_centaur_se.append(centaur_relative.std() / math.sqrt(len(centaur_relative)))
         results_llama.append(llama_relative)
+        ll_centaur.append(centaur_70b[key])
+        ll_llama.append(llama_70b[key])
+        baselines.append(baseline.baseline.item())
+
+#print('Different to Llama: ', (results_centaur - results_llama).mean())
+centaur_full = np.concatenate(ll_centaur)
+llama_full = np.concatenate(ll_llama)
+print('Baselines: ', np.array(baselines).mean())
+print('Centaur: ', centaur_full.mean())
+print('Llama: ', llama_full.mean())
+print('Centaur SEM: ', centaur_full.std() / math.sqrt(len(centaur_full)))
+print('Llama SEM:', llama_full.std() / math.sqrt(len(llama_full)))
+print(stats.ttest_ind(centaur_full, llama_full, alternative='less'))
+results_centaur_copy = results_centaur
+results_llama_copy = results_llama
+
+print(stats.ttest_1samp(centaur_full, np.array(baselines).mean(), alternative='less'))
 
 deduped_centaur = {}
 deduped_llama = {}
@@ -97,7 +118,7 @@ results_llama = np.array(results_llama)[order]
 print(len(np.unique(papers)))
 print(len(results_centaur))
 
-ax1.barh([len(results_centaur) + 1 ], [np.array(results_centaur).mean()], xerr=[np.array(results_centaur).std() / math.sqrt(len(results_centaur))],  height=0.75, color=color_1, alpha=0.8)
+ax1.barh([len(results_centaur) + 1 ], [np.concatenate(results_centaur_copy).mean()], xerr=[np.concatenate(results_centaur_copy).std() / math.sqrt(len(np.concatenate(results_centaur_copy)))],  height=0.75, color=color_1, alpha=0.8)
 ax1.barh(np.arange(len(results_centaur)), results_centaur, xerr=results_centaur_se, height=0.75, color=color_1, alpha=0.8)
 
 if use_8b:
@@ -105,14 +126,14 @@ if use_8b:
         Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
         Line2D([0], [0], color=color_1, alpha=0.5, linewidth=5, markersize=5),
         Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
-    ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color='white', alpha=0.3)
+    ax1.barh([len(results_llama) + 1], [np.concatenate(results_llama_copy).mean()], height=0.75, color='white', alpha=0.3)
     ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color='white', alpha=0.3)
 else:
     custom_lines_r2 = [
         Line2D([0], [0], color=color_1, alpha=0.8, linewidth=5, markersize=5),
         Line2D([0], [0], color=color_2, alpha=0.8, linewidth=5, markersize=5),
         Line2D([0], [0], color=color_3, linestyle='dashed', markersize=5)]
-    ax1.barh([len(results_llama) + 1], [np.array(results_llama).mean()], height=0.75, color=color_2, alpha=0.8)
+    ax1.barh([len(results_llama) + 1], [np.concatenate(results_llama_copy).mean()], height=0.75, color=color_2, alpha=0.8)
     ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
 
 ax1.set_yticks(np.arange(len(results_centaur)).tolist() + [len(results_centaur) + 1], papers.tolist() + ['Overall'])
