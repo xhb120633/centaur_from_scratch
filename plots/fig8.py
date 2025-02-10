@@ -44,25 +44,25 @@ fig = plt.figure(figsize=(7.08661, 1.9))
 for task_index, task in enumerate(df['task']):
     print(task)
     df_task = df[df['task'] == task][model_names].values.flatten()
-    ll_random = -df_task[0]
-    df_task = 1 - (-df_task[1:]/ll_random)
+    df_task = df_task[[1, 2, 3, 4, 5, 6, 0]]
     df_task[df_task != df_task] = 0
     print(df_task)
     ax = fig.add_subplot(gs[:, task_index])
-
-    ax.bar(np.arange(6), df_task, color=['#69005f', '#ff506e', '#cbc9e2', 'black', '#69005f', '#ff506e'])
-    ax.set_xticks(np.arange(6), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)'])
-    ax.set_ylim(-0.0, 0.4)
+    ax.set_ylim(0, 0.7)
+    ax.bar(np.arange(7), df_task, color=['#69005f', '#ff506e', '#cbc9e2', 'white', '#69005f', '#ff506e', 'grey'])
+    ax.set_xticks(np.arange(7), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)', 'Random',])
+    #ax.set_ylim(-0.0, 0.4)
     ax.set_title('choices13k' if task_index == 0 else 'Intertemporal choice', fontsize=8)
     ax.text(-0.13, 1.12, 'a' if task_index == 0 else 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')
     if task_index == 0:
-        ax.set_ylabel(r'Pseudo-R$^2$')
+        ax.set_ylabel('Negative log-likelihood')
     ax.containers[0][0].set_alpha(0.8)
     ax.containers[0][1].set_alpha(0.8)
     ax.containers[0][2].set_alpha(1)
     ax.containers[0][3].set_alpha(0.5)
     ax.containers[0][4].set_alpha(0.8)
     ax.containers[0][5].set_alpha(0.8)
+    ax.containers[0][3].set_edgecolor('black')
     ax.containers[0][4].set_hatch('///')
     ax.containers[0][5].set_hatch('///')
 

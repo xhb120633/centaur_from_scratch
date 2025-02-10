@@ -75,6 +75,8 @@ results_centaur = 1 - (ll_centaur/ll_random)
 results_llama = 1 - (ll_llama/ll_random)
 results_baselines = 1 - (ll_baselines/ll_random)
 
+print(len(results_centaur))
+
 if plot_8b:
     ll_centaur_8b = -df['marcelbinz/Llama-3.1-Centaur-8B-adapter']
     ll_llama_8b = -df['unsloth/Meta-Llama-3.1-8B-bnb-4bit']

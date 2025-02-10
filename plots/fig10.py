@@ -35,21 +35,21 @@ fig = plt.figure(figsize=(7.08661, 3.8))
 
 for i,  key in enumerate(centaur_70b.keys()):
     print(key)
-    centaur_70b_r2 = (1 - (-centaur_70b[key] / -nll_random[key])).mean().item()
-    centaur_8b_r2 = (1 - (-centaur_8b[key] / -nll_random[key])).mean().item()
-    llama_70b_r2 = (1 - (-llama_70b[key] / -nll_random[key])).mean().item()
-    llama_8b_r2 = (1 - (-llama_8b[key] / -nll_random[key])).mean().item()
-    centaur_70b_r2_se = (1 - (-centaur_70b[key] / -nll_random[key])).std().item() / math.sqrt(len(centaur_70b[key]))
-    centaur_8b_r2_se = (1 - (-centaur_8b[key] / -nll_random[key])).std().item() / math.sqrt(len(centaur_8b[key]))
-    llama_70b_r2_se = (1 - (-llama_70b[key] / -nll_random[key])).std().item()  / math.sqrt(len(llama_70b[key]))
-    llama_8b_r2_se = (1 - (-llama_8b[key] / -nll_random[key])).std().item()  / math.sqrt(len(llama_8b[key]))
+    centaur_70b_r2 = centaur_70b[key].mean().item()
+    centaur_8b_r2 = centaur_8b[key].mean().item()
+    llama_70b_r2 = llama_70b[key].mean().item()
+    llama_8b_r2 = llama_8b[key].mean().item()
+    centaur_70b_r2_se = centaur_70b[key].std().item() / math.sqrt(len(centaur_70b[key]))
+    centaur_8b_r2_se = centaur_8b[key].std().item() / math.sqrt(len(centaur_8b[key]))
+    llama_70b_r2_se = llama_70b[key].std().item()  / math.sqrt(len(llama_70b[key]))
+    llama_8b_r2_se = llama_8b[key].std().item()  / math.sqrt(len(llama_8b[key]))
 
     ax = fig.add_subplot(gs[0 if i < 3 else 1, i % 3])
-    ax.bar(np.arange(4), np.array([centaur_70b_r2, centaur_8b_r2, llama_70b_r2, llama_8b_r2]), yerr=[centaur_70b_r2_se, centaur_8b_r2_se, llama_70b_r2_se, llama_8b_r2_se], color=['#69005f', '#69005f', '#ff506e', '#ff506e'])# 'C0', 'C1'
-    ax.set_xticks(np.arange(4), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Llama\n(70B)', 'Llama\n(8B)'])
+    ax.bar(np.arange(5), np.array([centaur_70b_r2, centaur_8b_r2, llama_70b_r2, llama_8b_r2, nll_random[key]]), yerr=[centaur_70b_r2_se, centaur_8b_r2_se, llama_70b_r2_se, llama_8b_r2_se, 0], color=['#69005f', '#69005f', '#ff506e', '#ff506e', 'grey'])# 'C0', 'C1'
+    ax.set_xticks(np.arange(5), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Llama\n(70B)', 'Llama\n(8B)', 'Random'])
     ax.set_ylim(0)
     if i == 0 or i == 3:
-        ax.set_ylabel(r'Pseudo-R$^2$')
+        ax.set_ylabel('Negative log-likelihood')
     ax.containers[1][0].set_alpha(0.8)
     ax.containers[1][1].set_alpha(0.5)
     ax.containers[1][2].set_alpha(0.8)

@@ -39,7 +39,7 @@ gs = gridspec.GridSpec(3, 2, width_ratios=[0.6666, 0.3333])
 
 centaur_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
 
-use_8b = False
+use_8b = True
 if use_8b:
     llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
 else:
