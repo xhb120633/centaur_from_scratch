@@ -48,10 +48,9 @@ for task_index, task in enumerate(df['task']):
     df_task[df_task != df_task] = 0
     print(df_task)
     ax = fig.add_subplot(gs[:, task_index])
-    ax.set_ylim(0, 0.7)
+    ax.set_ylim(0, 2.8)
     ax.bar(np.arange(7), df_task, color=['#69005f', '#ff506e', '#cbc9e2', 'white', '#69005f', '#ff506e', 'grey'])
     ax.set_xticks(np.arange(7), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)', 'Random',])
-    #ax.set_ylim(-0.0, 0.4)
     ax.set_title('choices13k' if task_index == 0 else 'Intertemporal choice', fontsize=8)
     ax.text(-0.13, 1.12, 'a' if task_index == 0 else 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')
     if task_index == 0:
