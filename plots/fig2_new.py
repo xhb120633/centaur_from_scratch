@@ -39,7 +39,7 @@ gs = gridspec.GridSpec(3, 2, width_ratios=[0.6666, 0.3333])
 
 centaur_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
 
-use_8b = True
+use_8b = False
 if use_8b:
     llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
 else:
@@ -51,7 +51,6 @@ df_baseline = df_baseline[df_baseline['unseen'] == 'participants'][['task', 'bas
 
 papers = []
 results_centaur = []
-results_centaur_se = []
 results_llama = []
 for key in centaur_70b.keys():
     baseline = df_baseline[df_baseline['task'] == key]
@@ -63,10 +62,31 @@ for key in centaur_70b.keys():
         print()
         centaur_relative = ((-centaur_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
         llama_relative = ((-llama_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
-        results_centaur.append(centaur_relative.mean())
-        results_centaur_se.append(centaur_relative.std() / math.sqrt(len(centaur_relative)))
-        results_llama.append(llama_relative.mean())
+        results_centaur.append(centaur_relative)
+        #results_centaur_se.append(centaur_relative.std() / math.sqrt(len(centaur_relative)))
+        results_llama.append(llama_relative)
 
+deduped_centaur = {}
+deduped_llama = {}
+for i, paper in enumerate(papers):
+    if paper in deduped_centaur.keys():
+        deduped_centaur[paper] =  np.concatenate((deduped_centaur[paper], results_centaur[i]))
+        deduped_llama[paper] =  np.concatenate((deduped_llama[paper], results_llama[i]))
+    else:
+        deduped_centaur[paper] = results_centaur[i]
+        deduped_llama[paper] = results_llama[i]
+
+papers = []
+results_centaur = []
+results_centaur_se = []
+results_llama = []
+for paper in deduped_centaur.keys():
+    papers.append(paper)
+    print(deduped_centaur[paper].shape)
+    results_centaur_se.append(deduped_centaur[paper].std() / math.sqrt(len(deduped_centaur[paper])))
+    results_llama.append(deduped_llama[paper].mean())
+    results_centaur.append(deduped_centaur[paper].mean())
+    
 ax1 = fig.add_subplot(gs[:, 0])
 
 order = np.argsort(results_centaur)
@@ -74,8 +94,8 @@ papers = np.array(papers)[order]
 results_centaur = np.array(results_centaur)[order]
 results_llama = np.array(results_llama)[order]
 
-
-
+print(len(np.unique(papers)))
+print(len(results_centaur))
 
 ax1.barh([len(results_centaur) + 1 ], [np.array(results_centaur).mean()], xerr=[np.array(results_centaur).std() / math.sqrt(len(results_centaur))],  height=0.75, color=color_1, alpha=0.8)
 ax1.barh(np.arange(len(results_centaur)), results_centaur, xerr=results_centaur_se, height=0.75, color=color_1, alpha=0.8)
