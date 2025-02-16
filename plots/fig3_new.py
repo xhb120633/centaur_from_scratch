@@ -8,6 +8,7 @@ import matplotlib.gridspec as gridspec
 from functools import reduce
 import torch
 import math
+from scipy import stats
 
 centaur_70b = torch.load('../generalization/results/generalization_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
 llama_70b = torch.load('../generalization/results/generalization_full_log_likelihoods_unsloth-Meta-Llama-3.1-70B-bnb-4bit.pth')
@@ -32,14 +33,21 @@ for key in centaur_70b.keys():
     sems[key].append(centaur_70b[key].std() / math.sqrt(len(centaur_70b[key])))
     sems[key].append(llama_70b[key].std() / math.sqrt(len(llama_70b[key])))
 
+    print(stats.ttest_ind(centaur_70b[key], llama_70b[key], alternative='less'))
+
+
     if len(baseline) > 0:
         means[key].append(baseline.baseline.item())
+        print(stats.ttest_1samp(centaur_70b[key], baseline.baseline.item(), alternative='two-sided'))
+        print(stats.ttest_1samp(llama_70b[key], baseline.baseline.item(), alternative='two-sided'))
     else:
         means[key].append(0)
     sems[key].append(0)
     means[key].append(random.random.item())
     sems[key].append(0)
     print()
+
+
 
 
 #print(dfgdfgfd)

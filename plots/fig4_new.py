@@ -56,26 +56,31 @@ if red_point.size > 0 and green_point.size > 0:
 #plot feher da silva
 df_centaur_tst = pd.read_csv('../results/feher2023rethinking/schaefer_tst_centaur_alignment.csv')
 df_llama_tst = pd.read_csv('../results/feher2023rethinking/schaefer_tst_llama_alignment.csv')
+df_random_tst = pd.read_csv('../results/feher2023rethinking/schaefer_tst_random_alignment.csv')
 twostep_centaur = df_centaur_tst.values.mean(1)
 twostep_llama = df_llama_tst.values.mean(1)
+twostep_random = df_random_tst.values.mean(1)
 twostep_centaur_se = df_centaur_tst.values.std(1) / math.sqrt(df_centaur_tst.values.shape[1])
 twostep_llama_se = df_llama_tst.values.std(1) / math.sqrt(df_centaur_tst.values.shape[1])
+twostep_random_se = df_random_tst.values.std(1) / math.sqrt(df_random_tst.values.shape[1])
 
-baseline_model = 0.023144136642747695
+baseline_model = 0.023144136642747695 # TODO
 print(twostep_llama)
 print(twostep_centaur)
 
 ax = fig.add_subplot(gs[:, 1])
-ax.errorbar([10, 20, 30, 40], twostep_centaur, yerr=twostep_centaur_se, color='#69005f', alpha=0.8, linewidth=1)
-ax.errorbar([10, 20, 30, 40], twostep_llama, yerr=twostep_llama_se, color='#ff506e', alpha=0.8, linewidth=1)
+ax.errorbar([0, 10, 20, 30, 40], twostep_centaur, yerr=twostep_centaur_se, color='#69005f', alpha=0.8, linewidth=1)
+ax.errorbar([0, 10, 20, 30, 40], twostep_llama, yerr=twostep_llama_se, color='#ff506e', alpha=0.8, linewidth=1)
+ax.errorbar([0, 10, 20, 30, 40], twostep_random, yerr=twostep_random_se, color='grey', alpha=0.8, linewidth=1)
+ax.legend(['Centaur', 'Llama', 'Random initialization'], frameon=False, ncols=3, borderaxespad=0, handlelength=1, columnspacing=0.7, handletextpad=0.5, bbox_to_anchor=(0.51, 1.125), loc='upper center')
 ax.axhline(y=baseline_model, color='grey', linestyle='--', linewidth=1.0)
-ax.text(41, baseline_model - 0.018, 'Cognitive model', fontsize=6, color='grey', horizontalalignment='right')
+ax.text(41, baseline_model - 0.02, 'Cognitive model', fontsize=6, color='grey', horizontalalignment='right')
 ax.text(-0.2, 1.09, 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
-ax.set_ylabel(r'R$^2$')
+ax.set_ylabel('Pearson correlation')
 ax.set_xlabel('Layer')
 ax.set_xlim(1, 41)
-ax.set_ylim(-0.02, 0.24)
-ax.legend(['Centaur', 'Llama'], frameon=False, ncols=2, borderaxespad=0, handlelength=1, columnspacing=0.7, handletextpad=0.5, bbox_to_anchor=(0.51, 1.125), loc='upper center')
+ax.set_ylim(-0.05, 0.65)
+
 
 # plot tuckute
 reading_llama = torch.load('../results/tuckute2024driving/llama.pth')
@@ -89,7 +94,7 @@ ax.axhline(y=0.56, color='black', linestyle='--', linewidth=1.0)
 ax.text(41, 0.357, 'Tuckute et al. (2024)', fontsize=6, color='grey', horizontalalignment='right')
 ax.text(41, 0.57, 'Noise ceiling', fontsize=6, color='black', horizontalalignment='right')
 ax.text(-0.2, 1.09, 'c', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
-ax.set_ylabel(r'R$^2$')
+ax.set_ylabel('Pearson correlation')
 ax.set_xlabel('Layer',)
 ax.set_xlim(1, 41)
 ax.set_ylim(0.3, 0.63)
