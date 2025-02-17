@@ -64,7 +64,7 @@ twostep_centaur_se = df_centaur_tst.values.std(1) / math.sqrt(df_centaur_tst.val
 twostep_llama_se = df_llama_tst.values.std(1) / math.sqrt(df_centaur_tst.values.shape[1])
 twostep_random_se = df_random_tst.values.std(1) / math.sqrt(df_random_tst.values.shape[1])
 
-baseline_model = 0.023144136642747695 # TODO
+baseline_model = 0.20065425519568694
 print(twostep_llama)
 print(twostep_centaur)
 
