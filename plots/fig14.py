@@ -71,7 +71,7 @@ custom_lines_r2 = [Line2D([0], [0], color='#69005f', alpha=0.8, marker="o", line
                    Line2D([0], [0], color='#ff506e', alpha=0.8, marker="o", linestyle='None', markersize=5),
                    Line2D([0], [0], color='#cbc9e2', alpha=0.8, marker="o", linestyle='None', markersize=5), 
                    Line2D([0], [0], color='grey', alpha=0.8, marker="o", linestyle='None', markersize=5),]
-ax.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model', 'Random init'], frameon=False, ncols=4, bbox_to_anchor=(0.5, 1.3), loc='upper center')
+ax.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model', 'Control'], frameon=False, ncols=4, bbox_to_anchor=(0.5, 1.3), loc='upper center')
 ax.text(-0.06, 1.24, 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')
 
 sns.despine()

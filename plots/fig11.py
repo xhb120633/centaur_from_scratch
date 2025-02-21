@@ -21,12 +21,19 @@ results_hermes = []
 results_reflection = []
 for key in centaur.keys():
         print(key)
-        results_centaur.append(centaur[key].mean())
-        results_llama.append(llama[key].mean())
-        results_instruct.append(instruct[key].mean())
-        results_nemotron.append(nemotron[key].mean())
-        results_hermes.append(hermes[key].mean())
-        results_reflection.append(reflection[key].mean())
+        results_centaur.append(centaur[key])
+        results_llama.append(llama[key])
+        results_instruct.append(instruct[key])
+        results_nemotron.append(nemotron[key])
+        results_hermes.append(hermes[key])
+        results_reflection.append(reflection[key])
+
+results_centaur = np.concatenate(results_centaur)
+results_llama = np.concatenate(results_llama)
+results_instruct = np.concatenate(results_instruct)
+results_nemotron = np.concatenate(results_nemotron)
+results_hermes = np.concatenate(results_hermes)
+results_reflection = np.concatenate(results_reflection)
 
 gs = gridspec.GridSpec(1, 1, width_ratios=[1])
 plt.style.use(['nature'])
@@ -60,6 +67,7 @@ ax.containers[1][1].set_alpha(0.8)
 ax.containers[1][2].set_alpha(0.8)
 ax.containers[1][3].set_alpha(0.8)
 ax.containers[1][4].set_alpha(0.8)
+ax.set_ylim(0.9  * min(means), 1.1 * max(means))
 
 sns.despine()
 plt.tight_layout()

@@ -52,23 +52,25 @@ for key in centaur_70b.keys():
 
 #print(dfgdfgfd)
 gs = gridspec.GridSpec(1, 3, width_ratios=[0.3333, 0.3333, 0.3333])
-
+offsets = [0.009, 0.026, 0.024]
 plt.style.use(['nature'])
 fig = plt.figure(figsize=(7.08661, 1.9))
 for task_index, task in enumerate(means.keys()):
     print(task)
     ax = fig.add_subplot(gs[:, task_index])
-    ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#ff506e', '#cbc9e2', 'grey'])
-    print(means[task])
-    ax.set_xticks(np.arange(4), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Random'])
+    ax.bar(np.arange(3), means[task][:-1], yerr=sems[task][:-1], color=['#69005f', '#ff506e', '#cbc9e2'])
+    ax.set_xticks(np.arange(3), ['Centaur', 'Llama', 'Cognitive\nmodel'])
+    ax.axhline(y=means[task][-1], color='grey', linestyle='--', linewidth=1.0)
+    ax.text(2.5, means[task][-1] + offsets[task_index], 'Random guessing', fontsize=6, color='grey', horizontalalignment='right')
 
     if task_index == 2:
-        ax.text(0.575, 0.15, 'N/A', transform=ax.transAxes, va='top')
+        ax.text(0.775, 0.125, 'N/A', transform=ax.transAxes, va='top')
     if task_index == 0:
         ax.set_ylabel('Negative log-likelihood')
     ax.containers[1][0].set_alpha(0.8)
     ax.containers[1][1].set_alpha(0.8)
     ax.containers[1][2].set_alpha(1)
+    ax.set_ylim(0.9  * means[task][0], 1.1 * means[task][-1])
 
 
 sns.despine()

@@ -33,6 +33,7 @@ gs = gridspec.GridSpec(2, 3, width_ratios=[0.3333, 0.3333, 0.3333])
 plt.style.use(['nature'])
 fig = plt.figure(figsize=(7.08661, 3.8))
 
+offsets = [0.01, 0.01, 0.005, 0.01, 0.02, 0.01]
 for i,  key in enumerate(centaur_70b.keys()):
     print(key)
     centaur_70b_r2 = centaur_70b[key].mean().item()
@@ -45,9 +46,13 @@ for i,  key in enumerate(centaur_70b.keys()):
     llama_8b_r2_se = llama_8b[key].std().item()  / math.sqrt(len(llama_8b[key]))
 
     ax = fig.add_subplot(gs[0 if i < 3 else 1, i % 3])
-    ax.bar(np.arange(5), np.array([centaur_70b_r2, centaur_8b_r2, llama_70b_r2, llama_8b_r2, nll_random[key]]), yerr=[centaur_70b_r2_se, centaur_8b_r2_se, llama_70b_r2_se, llama_8b_r2_se, 0], color=['#69005f', '#69005f', '#ff506e', '#ff506e', 'grey'])# 'C0', 'C1'
-    ax.set_xticks(np.arange(5), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Llama\n(70B)', 'Llama\n(8B)', 'Random'])
-    ax.set_ylim(0)
+    values = np.array([centaur_70b_r2, centaur_8b_r2, llama_70b_r2, llama_8b_r2])
+    ax.bar(np.arange(4), values, yerr=[centaur_70b_r2_se, centaur_8b_r2_se, llama_70b_r2_se, llama_8b_r2_se], color=['#69005f', '#69005f', '#ff506e', '#ff506e'])# 'C0', 'C1'
+    ax.set_xticks(np.arange(4), ['Centaur', 'Minitaur', 'Llama\n(70B)', 'Llama\n(8B)'])
+    ax.axhline(y=nll_random[key], color='grey', linestyle='--', linewidth=1.0)
+    ax.text(3.5, nll_random[key] + offsets[i], 'Random guessing', fontsize=6, color='grey', horizontalalignment='right')
+    ax.set_ylim(0.9  * min(nll_random[key], min(values)), 1.1 * max(max(values), nll_random[key]))
+
     if i == 0 or i == 3:
         ax.set_ylabel('Negative log-likelihood')
     ax.containers[1][0].set_alpha(0.8)

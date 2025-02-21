@@ -137,12 +137,12 @@ else:
     ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
 
 ax1.set_yticks(np.arange(len(results_centaur)).tolist() + [len(results_centaur) + 1], papers.tolist() + ['Overall'])
-ax1.set_xlabel('Relative log-likelihoods (%)')
+ax1.set_xlabel('Percentage decrease in negative log-likelihoods')
 ax1.set_xlim(-45, 105)
 ax1.set_ylim(-0.5, len(results_centaur) + 2)
 ax1.axvline(x=0, color='grey', linestyle='--', linewidth=1.0)
 if use_8b:
-    ax1.legend(custom_lines_r2, ['Centaur (70B)', 'Centaur (8B)', 'Cognitive model'], frameon=False, ncols=1)
+    ax1.legend(custom_lines_r2, ['Centaur', 'Minitaur', 'Cognitive model'], frameon=False, ncols=1)
 else:
     ax1.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model'], frameon=False, ncols=1)
 
@@ -179,25 +179,30 @@ if use_8b:
         sems[key].append(0)
         print()
 
+    offsets = [0.0125, 0.03, 0.03]
     titles = ['Modified cover story', 'Modified problem structure', 'Entirely novel domain']
     for task_index, task in enumerate(means.keys()):
         print(task)
         ax = fig.add_subplot(gs[task_index, 1])
-        ax.bar(np.arange(4), means[task], yerr=sems[task], color=['#69005f', '#69005f', '#cbc9e2', 'grey'])
-        ax.set_xticks(np.arange(4), ['Centaur\n(70B)', 'Centaur\n(8B)', 'Cog.\nmodel', 'Random'], size=6)
+        ax.bar(np.arange(3), means[task][:-1], yerr=sems[task][:-1], color=['#69005f', '#69005f', '#cbc9e2'])
+        ax.set_xticks(np.arange(3), ['Centaur', 'Minitaur', 'Cognitive\nmodel'], size=6)
         ax.set_title(titles[task_index], size=6)
+        ax.axhline(y=means[task][-1], color='grey', linestyle='--', linewidth=1.0)
+        ax.text(2.5, means[task][-1] + offsets[task_index], 'Random guessing', fontsize=6, color='grey', horizontalalignment='right')
 
         if task_index == 2:
-            ax.text(0.575, 0.15, 'N/A', transform=ax.transAxes, va='top')
+            ax.text(0.775, 0.15, 'N/A', transform=ax.transAxes, va='top')
 
         ax.set_ylabel('Negative log-likelihood')
         ax.containers[1][0].set_alpha(0.8)
         ax.containers[1][1].set_alpha(0.5)
         ax.containers[1][2].set_alpha(1)
 
+        ax.set_ylim(0.9  * means[task][0], 1.1 * means[task][-1])
+
 else:
-    ax2 = fig.add_subplot(gs[0, 1])
-    ax3 = fig.add_subplot(gs[1, 1])
+    ax2 = fig.add_subplot(gs[1, 1])
+    ax3 = fig.add_subplot(gs[0, 1])
     ax4 = fig.add_subplot(gs[2, 1])
     # subplot 2
     centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_twostep' + str(i) + '.csv')['reward'].values for i in range(1, 3)])
@@ -216,10 +221,10 @@ else:
     custom_lines = [Line2D([0], [0], color=color_1, alpha=0.8, marker="o", linestyle='None', markersize=5), Line2D([0], [0], color='grey', marker="o", linestyle='None', markersize=5)]
     sns.kdeplot(x=humans.rewards, y=humans.model_basednesses, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
     sns.kdeplot(x=centaur.rewards, y=centaur.model_basednesses, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax2, alpha=0.75)
-    ax2.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.2), loc='upper center')
     ax2.set_xlabel('Reward')
     ax2.set_xlim(0.1, 0.9)
     ax2.set_ylabel('Model-basedness')
+    ax2.set_yticks([-0.5, 0, 0.5, 1.0, 1.5], [-0.5, 0, 0.5, 1.0, 1.5])
     ax2.text(-0.13, 1.12, 'b', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
     ax1.text(-2.52, 1.12, 'a', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
 
@@ -241,9 +246,32 @@ else:
     ax3.set_xlim(42, 62)
     ax3.set_xlabel('Reward')
     ax3.set_ylabel('Information bonus')
+    ax3.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.2), loc='upper center')
     ax3.text(-0.13, 1.12, 'c', transform=ax3.transAxes, fontsize=8, fontweight='bold', va='top')
 
     # subplot 4
+    df = pd.read_csv('../openloop/baar2021latent/gameDat.csv')
+    df['correct'] = df['CorrAns'] == df['GivenAns']
+    df = df.groupby('subID').filter(lambda x: ~((x.GivenAns == 'coop').all()))
+    df = df.groupby('subID').filter(lambda x: ~((x.GivenAns == 'def').all()))
+
+    df_nat = df[df['Variant'] == 'nat']
+    df_inv = df[df['Variant'] == 'inv']
+
+    humans_nat = df_nat.groupby('subID')['correct'].mean().values
+    humans_inv = df_inv.groupby('subID')['correct'].mean().values
+
+    df = pd.read_csv('../openloop/baar2021latent/simulation_marcelbinz-Llama-3.1-Centaur-70B-adapter.csv')
+    df['correct'] = df['CorrAns'] == df['GivenAns']
+    df = df.groupby('subID').filter(lambda x: ~((x.GivenAns == 'coop').all()))
+    df = df.groupby('subID').filter(lambda x: ~((x.GivenAns == 'def').all()))
+
+    df_nat = df[df['Variant'] == 'nat']
+    df_inv = df[df['Variant'] == 'inv']
+
+    centaur_nat = df_nat.groupby('subID')['correct'].mean().values
+    centaur_inv = df_inv.groupby('subID')['correct'].mean().values
+    '''
     df_centaur = pd.read_csv('../openloop/jansen2021dunningkruger/simulation.csv')
     df_human = pd.read_csv("../openloop/jansen2021dunningkruger/exp1.csv")
     df_human =  df_human.head(len(df_centaur))
@@ -256,12 +284,16 @@ else:
     predicted_scores = np.concatenate((human_predicted_scores, centaur_predicted_scores))
     df = pd.DataFrame({'predicted_scores': predicted_scores, 'scores': scores, 'agent': ['Humans'] * 1000 + ['Centaur 3.1'] * 1000})
     humans = df.loc[df.agent == "Humans"]
-    centaur = df.loc[df.agent == "Centaur 3.1"]
+    centaur = df.loc[df.agent == "Centaur 3.1"]'''
 
-    sns.kdeplot(x=humans.scores, y=humans.predicted_scores, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
-    sns.kdeplot(x=centaur.scores, y=centaur.predicted_scores, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
-    ax4.set_xlabel('True score')
-    ax4.set_ylabel('Estimated score')
+    sns.kdeplot(x=humans_nat, y=humans_inv, cmap=new_cmap0, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
+    sns.kdeplot(x=centaur_nat, y=centaur_inv, cmap=new_cmap1, shade=True, shade_lowest=False, ax=ax4, alpha=0.75)
+    ax4.set_xlabel('Accuracy (human strategies)')
+    ax4.set_ylabel('Accuracy (artificial strategies)')
+    ax4.set_xlim(0, 1)
+    ax4.set_xlim(0, 1)
+    ax4.set_xticks([0, 0.5, 1.0], [0, 0.5, 1.0])
+    ax4.set_yticks([0, 0.5, 1.0], [0, 0.5, 1.0])
     ax4.text(-0.13, 1.12, 'd', transform=ax4.transAxes, fontsize=8, fontweight='bold', va='top')
 
 plt.tight_layout()

@@ -6,6 +6,7 @@ import math
 import scienceplots
 import matplotlib.gridspec as gridspec
 from functools import reduce
+from brokenaxes import brokenaxes
 
 selected_tasks  = ['peterson2021using', 'ruggeri2022globalizability']
 
@@ -37,6 +38,7 @@ df = reduce(lambda left,right: pd.merge(left,right,on=['task'], how='outer'), [d
 print(df)
 
 model_names = ['random', 'marcelbinz/Llama-3.1-Centaur-70B-adapter', 'unsloth/Meta-Llama-3.1-70B-bnb-4bit', 'baseline', 'ceiling', 'marcelbinz/Llama-3.1-Centaur-70B-adapter-no-history', 'unsloth/Meta-Llama-3.1-70B-bnb-4bit-no-history']
+offsets = [0.01, 0.01]
 
 gs = gridspec.GridSpec(1, 2, width_ratios=[0.5, 0.5])
 plt.style.use(['nature'])
@@ -47,25 +49,30 @@ for task_index, task in enumerate(df['task']):
     df_task = df_task[[1, 2, 3, 4, 5, 6, 0]]
     df_task[df_task != df_task] = 0
     print(df_task)
-    ax = fig.add_subplot(gs[:, task_index])
-    ax.set_ylim(0, 2.8)
-    ax.bar(np.arange(7), df_task, color=['#69005f', '#ff506e', '#cbc9e2', 'white', '#69005f', '#ff506e', 'grey'])
-    ax.set_xticks(np.arange(7), ['Centaur', 'Llama', 'Cognitive\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)', 'Random',])
+    cutoff = (2.67, 2.72) if task_index == 0 else (2.0, 2.05)
+    ax = brokenaxes(ylims=((.4, .74), cutoff), subplot_spec=gs[task_index])
+
+    ax.bar(np.arange(6), df_task[:-1], color=['#69005f', '#ff506e', '#cbc9e2', 'white', '#69005f', '#ff506e'])
+    ax.set_xticks(np.arange(6), ['Centaur', 'Llama', 'Cog.\nmodel', 'Noise\nceiling', 'Centaur\n(ind.)', 'Llama\n(ind.)',])
+    ax.axhline(y=df_task[-1], color='grey', linestyle='--', linewidth=1.0)
+    ax.axs[-1].text(5.65, df_task[-1] + offsets[task_index], 'Random guessing', fontsize=6, color='grey', horizontalalignment='right')
     ax.set_title('choices13k' if task_index == 0 else 'Intertemporal choice', fontsize=8)
-    ax.text(-0.13, 1.12, 'a' if task_index == 0 else 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')
+    fig.axes[-1].text(-0.13, 1.12, 'a' if task_index == 0 else 'b', fontsize=8, fontweight='bold', va='top')
     if task_index == 0:
         ax.set_ylabel('Negative log-likelihood')
-    ax.containers[0][0].set_alpha(0.8)
-    ax.containers[0][1].set_alpha(0.8)
-    ax.containers[0][2].set_alpha(1)
-    ax.containers[0][3].set_alpha(0.5)
-    ax.containers[0][4].set_alpha(0.8)
-    ax.containers[0][5].set_alpha(0.8)
-    ax.containers[0][3].set_edgecolor('black')
-    ax.containers[0][4].set_hatch('///')
-    ax.containers[0][5].set_hatch('///')
+    
+    print(ax.containers)
+    ax.axs[-1].containers[0][0].set_alpha(0.8)
+    ax.axs[-1].containers[0][1].set_alpha(0.8)
+    ax.axs[-1].containers[0][2].set_alpha(1)
+    ax.axs[-1].containers[0][3].set_alpha(0.5)
+    ax.axs[-1].containers[0][4].set_alpha(0.8)
+    ax.axs[-1].containers[0][5].set_alpha(0.8)
+    ax.axs[-1].containers[0][3].set_edgecolor('black')
+    ax.axs[-1].containers[0][4].set_hatch('///')
+    ax.axs[-1].containers[0][5].set_hatch('///')
 
-sns.despine()
-plt.tight_layout()
+#sns.despine()
+#plt.tight_layout()
 plt.savefig('figures/fig8.pdf', bbox_inches='tight')
 plt.show()
