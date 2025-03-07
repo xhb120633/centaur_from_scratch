@@ -41,42 +41,46 @@ gs = gridspec.GridSpec(3, 2, width_ratios=[0.6666, 0.3333])
 
 centaur_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth')
 
-use_8b = True
+use_8b = False
 if use_8b:
     llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-8B-adapter.pth')
 else:
     llama_70b = torch.load('../results/custom_metrics_full_log_likelihoods_unsloth-Meta-Llama-3.1-70B-bnb-4bit.pth')
 
 df_exp = pd.read_csv('../experiments.csv', sep=';')
-df_baseline = pd.read_csv('../results/all_data_baseline.csv')
-df_baseline = df_baseline[df_baseline['unseen'] == 'participants'][['task', 'baseline']]
+baselines_full = torch.load('../results/custom_metrics_full_log_likelihoods_baselines.pth')
 
 papers = []
 results_centaur = []
 results_llama = []
 ll_centaur = []
 ll_llama = []
+ll_baseline = []
 baselines = []
-for key in centaur_70b.keys():
-    baseline = df_baseline[df_baseline['task'] == key]
-    if len(baseline) > 0:
-        papers.append(df_exp[df_exp['path'] == key + '/']['task_name'].item())
-        print(key)
-        print(centaur_70b[key].mean())
-        print(baseline.baseline.item())
-        print()
-        centaur_relative = ((-centaur_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
-        llama_relative = ((-llama_70b[key] + baseline.baseline.item()) / baseline.baseline.item()) * 100
-        results_centaur.append(centaur_relative)
-        results_llama.append(llama_relative)
-        ll_centaur.append(centaur_70b[key])
-        ll_llama.append(llama_70b[key])
-        baselines.append(baseline.baseline.item())
+for key in baselines_full.keys():
+    baseline = baselines_full[key].mean().item()
+    papers.append(df_exp[df_exp['path'] == key + '/']['task_name'].item())
+    print(key)
+    print(len(centaur_70b[key]))
+    print(centaur_70b[key].mean())
+    print(baseline)
+    print()
+    #centaur_relative = ((-centaur_70b[key] + baseline) / baseline) * 100
+    #llama_relative = ((-llama_70b[key] + baseline) / baseline) * 100
+    centaur_relative = -centaur_70b[key] + baseline
+    llama_relative = -llama_70b[key] + baseline
+    results_centaur.append(centaur_relative)
+    results_llama.append(llama_relative)
+    ll_centaur.append(centaur_70b[key])
+    ll_llama.append(llama_70b[key])
+    ll_baseline.append(baselines_full[key])
+    baselines.append(baseline)
 
 #print('Different to Llama: ', (results_centaur - results_llama).mean())
 centaur_full = np.concatenate(ll_centaur)
 llama_full = np.concatenate(ll_llama)
-print('Baselines: ', np.array(baselines).mean())
+baseline_full = np.concatenate(ll_baseline)
+print('Baselines: ', baseline_full.mean())
 print('Centaur: ', centaur_full.mean())
 print('Llama: ', llama_full.mean())
 print('Centaur SEM: ', centaur_full.std() / math.sqrt(len(centaur_full)))
@@ -85,7 +89,8 @@ print(stats.ttest_ind(centaur_full, llama_full, alternative='less'))
 results_centaur_copy = results_centaur
 results_llama_copy = results_llama
 
-print(stats.ttest_1samp(centaur_full, np.array(baselines).mean(), alternative='less'))
+
+print(stats.ttest_1samp(centaur_full, baseline_full.mean(), alternative='less'))
 
 deduped_centaur = {}
 deduped_llama = {}
@@ -137,8 +142,8 @@ else:
     ax1.barh(np.arange(len(results_llama)), results_llama, height=0.75, color=color_2, alpha=0.8)
 
 ax1.set_yticks(np.arange(len(results_centaur)).tolist() + [len(results_centaur) + 1], papers.tolist() + ['Overall'])
-ax1.set_xlabel('Percentage decrease in negative log-likelihoods')
-ax1.set_xlim(-45, 105)
+ax1.set_xlabel(r'$\Delta$ log-likelihood')
+#ax1.set_xlim(-45, 105)
 ax1.set_ylim(-0.5, len(results_centaur) + 2)
 ax1.axvline(x=0, color='grey', linestyle='--', linewidth=1.0)
 if use_8b:
@@ -225,8 +230,8 @@ else:
     ax2.set_xlim(0.1, 0.9)
     ax2.set_ylabel('Model-basedness')
     ax2.set_yticks([-0.5, 0, 0.5, 1.0, 1.5], [-0.5, 0, 0.5, 1.0, 1.5])
-    ax2.text(-0.13, 1.12, 'b', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
-    ax1.text(-2.52, 1.12, 'a', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
+    ax2.text(-0.13, 1.12, 'c', transform=ax2.transAxes, fontsize=8, fontweight='bold', va='top')
+    ax1.text(-1.52, 35.02, 'a', fontsize=8, fontweight='bold', va='top')
 
     # subplot 3
     centaur_rewards = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['reward'].values for i in range(1, 5)])
@@ -246,8 +251,8 @@ else:
     ax3.set_xlim(42, 62)
     ax3.set_xlabel('Reward')
     ax3.set_ylabel('Information bonus')
-    ax3.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.2), loc='upper center')
-    ax3.text(-0.13, 1.12, 'c', transform=ax3.transAxes, fontsize=8, fontweight='bold', va='top')
+    ax3.legend(custom_lines, ['Centaur', 'Humans'], columnspacing=0.7, frameon=False, ncols=2, bbox_to_anchor=(0.5, 1.22), loc='upper center')
+    ax3.text(-0.13, 1.12, 'b', transform=ax3.transAxes, fontsize=8, fontweight='bold', va='top')
 
     # subplot 4
     df = pd.read_csv('../openloop/baar2021latent/gameDat.csv')

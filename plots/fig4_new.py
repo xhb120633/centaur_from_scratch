@@ -12,9 +12,9 @@ from sklearn.manifold import MDS
 import math
 from scipy import stats
 
-gs = gridspec.GridSpec(2, 2, )
+gs = gridspec.GridSpec(1, 3, width_ratios=[0.33333, 0.33333, 0.33333])
 plt.style.use(['nature'])
-fig = plt.figure(figsize=(7.08661*0.6666666, 7.08661*0.6))
+fig = plt.figure(figsize=(7.08661, 7.08661/3))
 
 # plot MDS
 metrics_df = pd.read_csv('../results/CogBench/behaviour.csv')
@@ -29,7 +29,7 @@ metrics_scores = metrics_df.iloc[:, 1:metrics_df.shape[1]//2].values
 agent_names = metrics_df.iloc[:, 0].values
 embedding = reducer.fit_transform(metrics_scores)
 
-ax = fig.add_subplot(gs[0, 1])
+ax = fig.add_subplot(gs[0, 0])
 ax.scatter(embedding[:, 0], embedding[:, 1], c=colors, s=25, alpha=0.8)
 ax.set_xlabel('Embedding dimension 1')
 ax.set_ylabel('Embedding dimension 2')
@@ -45,7 +45,7 @@ for i in range(embedding.shape[0]):
 red_point = embedding[[engine == 'Llama' for engine in metrics_df.Agent]]
 green_point = embedding[[engine == 'Centaur' for engine in metrics_df.Agent]]
 
-ax.text(-0.22, 1.09, 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
+ax.text(-0.22, 1.09, 'a', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
 
 if red_point.size > 0 and green_point.size > 0:
     plt.arrow(
@@ -78,14 +78,14 @@ baseline_model = 0.20065425519568694
 print(twostep_llama)
 print(twostep_centaur)
 
-ax = fig.add_subplot(gs[1, 0])
+ax = fig.add_subplot(gs[0, 1])
 ax.errorbar([0, 10, 20, 30, 40], twostep_centaur, yerr=twostep_centaur_se, color='#69005f', alpha=0.8, linewidth=1)
 ax.errorbar([0, 10, 20, 30, 40], twostep_llama, yerr=twostep_llama_se, color='#ff506e', alpha=0.8, linewidth=1)
 ax.errorbar([0, 10, 20, 30, 40], twostep_random, yerr=twostep_random_se, color='grey', alpha=0.8, linewidth=1)
 ax.legend(['Centaur', 'Llama', 'Control'], frameon=False, ncols=3, borderaxespad=0, handlelength=1, columnspacing=0.7, handletextpad=0.5, bbox_to_anchor=(0.51, 1.125), loc='upper center')
 ax.axhline(y=baseline_model, color='#cbc9e2', linestyle='--', linewidth=1.0)
-ax.text(41, baseline_model - 0.02, 'Cognitive model', fontsize=6, color='#aeabcc', horizontalalignment='right')
-ax.text(-0.2, 1.09, 'c', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
+ax.text(41, baseline_model - 0.0185, 'Cognitive model', fontsize=6, color='#aeabcc', horizontalalignment='right')
+ax.text(-0.2, 1.09, 'b', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
 ax.set_ylabel('Pearson correlation')
 ax.set_xlabel('Layer')
 ax.set_xlim(1, 41)
@@ -103,7 +103,7 @@ reading_random_sem = torch.load('../results/tuckute2024driving/random_sem.pth')
 best_centaur = reading_centaur.argmax()
 best_llama = reading_llama.argmax()
 
-ax = fig.add_subplot(gs[1, 1])
+ax = fig.add_subplot(gs[0, 2])
 ax.errorbar(torch.arange(1, reading_centaur.shape[0] + 1), reading_centaur, yerr=reading_centaur_sem, color='#69005f', alpha=0.8, linewidth=1)
 ax.errorbar(torch.arange(1, reading_llama.shape[0] + 1), reading_llama, yerr=reading_llama_sem, color='#ff506e', alpha=0.8, linewidth=1)
 ax.errorbar(torch.arange(1, reading_random.shape[0] + 1), reading_random, yerr=reading_random_sem, color='grey', alpha=0.8, linewidth=1)
@@ -112,25 +112,12 @@ ax.axhline(y=0.38, color='#cbc9e2', linestyle='--', linewidth=1.0)
 ax.axhline(y=0.56, color='black', linestyle='--', linewidth=1.0)
 ax.text(41, 0.34, 'Tuckute et al. (2024)', fontsize=6, color='#aeabcc', horizontalalignment='right')
 ax.text(41, 0.575, 'Noise ceiling', fontsize=6, color='black', horizontalalignment='right')
-ax.text(-0.2, 1.09, 'd', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
+ax.text(-0.2, 1.09, 'c', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
 ax.set_ylabel('Pearson correlation')
 ax.set_xlabel('Layer',)
 ax.set_xlim(1, 41)
 ax.set_ylim(0.08, 0.64)
 
-ax = fig.add_subplot(gs[0, 0])
-data = np.load('../results/entropy_regression_coef.npy', allow_pickle=True)
-ax.bar(np.arange(12), [i.mean() for i in data], yerr=[i.std()/math.sqrt(len(i)) for i in  data], color='#69005f', alpha=0.8)
-print([i.mean() for i in data])
-print([i.std()/math.sqrt(len(i)) for i in  data])
-
-for i in data:
-    print(len(i))
-    print(stats.ttest_1samp(i, 0, alternative='greater'))
-
-ax.set_ylabel('Entropy coefficient')
-ax.set_xlabel('Experiment')
-ax.text(-0.2, 1.09, 'a', transform=ax.transAxes, fontsize=8, fontweight='bold', va='top')  # Add label (b)
 
 sns.despine()
 plt.tight_layout()
