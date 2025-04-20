@@ -80,5 +80,5 @@ fig.text(0.67, 0.465, 'f', fontsize=8, weight='bold')
 
 sns.despine()
 plt.tight_layout()
-plt.savefig('figures/fig3.jpg', bbox_inches='tight')
+plt.savefig('figures/fig3.jpg', bbox_inches='tight', dpi=300)
 plt.show()

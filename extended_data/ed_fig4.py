@@ -72,5 +72,5 @@ ax.set_yticks([0.5, 0.6, 0.7, 0.8])
 
 sns.despine()
 plt.tight_layout()
-plt.savefig('figures/fig4.jpg', bbox_inches='tight')
+plt.savefig('figures/fig4.jpg', bbox_inches='tight', dpi=300)
 plt.show()

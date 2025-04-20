@@ -89,11 +89,11 @@ custom_lines_r2 = [Line2D([0], [0], color='#69005f', alpha=0.8, linewidth=5, mar
                    Line2D([0], [0], color='grey', alpha=0.8, linewidth=5, markersize=3),]
 ax.legend(custom_lines_r2, ['Centaur', 'Llama', 'Cognitive model', 'Control'], frameon=False, ncols=4, bbox_to_anchor=(0.5, 1.3), loc='upper center')
 
-fig.text(0.012, 0.86, 'a', fontsize=8, weight='bold')
-fig.text(0.33, 0.86, 'b', fontsize=8, weight='bold')
+fig.text(0.012, 0.852, 'a', fontsize=8, weight='bold')
+fig.text(0.33, 0.852, 'b', fontsize=8, weight='bold')
 
 sns.despine()
 plt.tight_layout()
-plt.savefig('figures/fig7.png', bbox_inches='tight')
+plt.savefig('figures/fig7.png', bbox_inches='tight', dpi=300)
 
 plt.show()
