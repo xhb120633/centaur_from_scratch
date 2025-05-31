@@ -9,6 +9,7 @@ from functools import reduce
 import torch
 import math
 from scipy import stats
+import matplotlib as  mpl
 
 def cohen_d(x,y):
     return (np.mean(x) -np. mean(y)) / math.sqrt((np.std(x, ddof=1) ** 2 + np.std(y, ddof=1) ** 2) / 2.0)
@@ -43,6 +44,7 @@ for key in centaur_70b.keys():
     if len(baseline) > 0:
         means[key].append(baseline.baseline.item())
         print(centaur_70b[key].shape)
+        print(stats.ttest_1samp(centaur_70b[key], llama_70b[key].mean().item(), alternative='less'))
         print(stats.ttest_1samp(centaur_70b[key], baseline.baseline.item(), alternative='less'))
         print(stats.ttest_1samp(llama_70b[key], baseline.baseline.item(), alternative='less'))
     else:
@@ -54,31 +56,36 @@ for key in centaur_70b.keys():
     print()
 
 plt.style.use(['nature'])
-fig = plt.figure(figsize=(7.20472, 3.8))
-gs = gridspec.GridSpec(2, 3, width_ratios=[0.3333, 0.3333, 0.3333])
+mpl.rcParams.update({
+    "pdf.fonttype": 42,
+    "pdf.fonttype": 42,
+    "text.usetex": False,
+})
+fig = plt.figure(figsize=(7.20472, 4.5))
+gs = gridspec.GridSpec(2, 3, width_ratios=[0.3333, 0.3333, 0.3333], height_ratios=[1.25, 1])
 
 ax = fig.add_subplot(gs[0, 0])
-image = plt.imread('tstcover.png')
-cax = ax.imshow(image)
+#image = plt.imread('tstcover.png')
+#cax = ax.imshow(image)
 ax.axis('off')
 ax.set_title('Modified cover story', fontsize=7)
 
 ax = fig.add_subplot(gs[0, 1])
-image = plt.imread('bandit.png')
-cax = ax.imshow(image)
+#image = plt.imread('bandit.png')
+#cax = ax.imshow(image)
 ax.axis('off')
 ax.set_title('Modified problem structure', fontsize=7)
 
 ax = fig.add_subplot(gs[0, 2])
-image = plt.imread('logical.png')
-cax = ax.imshow(image)
+#image = plt.imread('logical2.png')
+#cax = ax.imshow(image)
 ax.axis('off')
 ax.set_title('Entirely novel domain', fontsize=7)
 
 
 #print(dfgdfgfd)
 
-offsets = [0.009, 0.026, 0.024]
+offsets = [0.007, 0.021, 0.020]
 for task_index, task in enumerate(means.keys()):
     print(task)
     ax = fig.add_subplot(gs[1, task_index])
@@ -96,11 +103,11 @@ for task_index, task in enumerate(means.keys()):
     ax.containers[1][2].set_alpha(1)
     ax.set_ylim(0.9  * means[task][0], 1.1 * means[task][-1])
 
-fig.text(0.005, 0.953, 'a', fontsize=8, weight='bold')
-fig.text(0.34, 0.953, 'b', fontsize=8, weight='bold')
-fig.text(0.67, 0.953, 'c', fontsize=8, weight='bold')
+fig.text(0.005, 0.961, 'a', fontsize=8, weight='bold')
+fig.text(0.34, 0.961, 'b', fontsize=8, weight='bold')
+fig.text(0.67, 0.961, 'c', fontsize=8, weight='bold')
 
 sns.despine()
 plt.tight_layout()
-plt.savefig('figures/fig3.pdf', bbox_inches='tight')
+plt.savefig('figures/fig3_part1.pdf', bbox_inches='tight')
 plt.show()

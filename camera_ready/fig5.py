@@ -10,6 +10,7 @@ import torch
 import math
 from scipy import stats
 from datasets import load_dataset
+import matplotlib as  mpl
 
 test_data = load_dataset("marcelbinz/Psych-101-test")['test']
 test_participants = test_data.filter(lambda example: example['experiment'] == "hilbig2014generalized/exp1.csv")['participant']
@@ -39,6 +40,11 @@ print(AIC_cog_test)
 
 
 plt.style.use(['nature'])
+mpl.rcParams.update({
+    "pdf.fonttype": 42,
+    "pdf.fonttype": 42,
+    "text.usetex": False,
+})
 gs = gridspec.GridSpec(1, 5, width_ratios=[0.175, 0.1, 0.25, 0.1, 0.325])
 fig = plt.figure(figsize=(7.20472, 2.8))
 
@@ -82,5 +88,5 @@ plt.xlim(-0.5, 17.5)'''
 
 sns.despine()
 plt.tight_layout()
-plt.savefig('figures/fig5.pdf', bbox_inches='tight')
+plt.savefig('figures/fig5_part1.pdf', bbox_inches='tight')
 plt.show()

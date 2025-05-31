@@ -13,6 +13,9 @@ from functools import reduce
 import torch
 import math
 from scipy import stats
+import pingouin as pg
+import matplotlib as  mpl
+
 
 def cohen_d(x,y):
     return (np.mean(x) -np. mean(y)) / math.sqrt((np.std(x, ddof=1) ** 2 + np.std(y, ddof=1) ** 2) / 2.0)
@@ -28,6 +31,12 @@ def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
     return new_cmap
 
 plt.style.use(['nature'])
+mpl.rcParams.update({
+    "pdf.fonttype": 42,
+    "pdf.fonttype": 42,
+    "text.usetex": False,
+})
+
 fig = plt.figure(figsize=(7.20472, 5))
 
 color_1 = '#69005f'
@@ -87,13 +96,10 @@ print('Llama: ', llama_full.mean())
 print('Llama var: ', llama_full.var())
 print('Centaur SEM: ', centaur_full.std() / math.sqrt(len(centaur_full)))
 print('Llama SEM:', llama_full.std() / math.sqrt(len(llama_full)))
-print(stats.ttest_ind(centaur_full, llama_full, alternative='less'))
 results_centaur_copy = results_centaur
 results_llama_copy = results_llama
 
 print(baseline_full)
-print(stats.ttest_ind(centaur_full, baseline_full, alternative='less'))
-print(stats.ttest_1samp(centaur_full, baseline_full.mean(), alternative='less'))
 print("Cohen's d:", cohen_d(centaur_full, llama_full))
 print("Cohen's d:", cohen_d(centaur_full, baseline_full))
 
@@ -184,6 +190,9 @@ print(human_rewards.mean())
 print(human_rewards.std())
 print(human_rewards.shape)
 print(stats.ttest_ind(centaur_rewards, human_rewards, alternative='two-sided'))
+print(pg.tost(x=centaur_rewards, y=human_rewards, bound=3))
+print(pg.ttest(x=centaur_rewards, y=human_rewards, paired=False, alternative='two-sided'))
+
 centaur_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_centaur_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
 human_ib = np.concatenate([pd.read_csv('../openloop/results/baselines_openloop_human_horizon' + str(i) + '.csv')['param'].values for i in range(1, 5)])
 information_bonus = np.concatenate((human_ib, centaur_ib))

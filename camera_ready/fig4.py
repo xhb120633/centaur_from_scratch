@@ -11,9 +11,15 @@ import numpy as np
 from sklearn.manifold import MDS
 import math
 from scipy import stats
+import matplotlib as  mpl
 
 gs = gridspec.GridSpec(1, 3, width_ratios=[0.33333, 0.33333, 0.33333])
 plt.style.use(['nature'])
+mpl.rcParams.update({
+    "pdf.fonttype": 42,
+    "pdf.fonttype": 42,
+    "text.usetex": False,
+})
 fig = plt.figure(figsize=(7.20472, 7.20472/3))
 
 # plot MDS
