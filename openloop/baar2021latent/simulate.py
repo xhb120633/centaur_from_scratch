@@ -83,6 +83,7 @@ if __name__ == '__main__':
                 # simulate confidence
                 confidence = pipe(prompt)[0]['generated_text'][len(prompt):]
                 prompt += str(confidence) + ">>. Your prediction was " + correct + ".\n\n"
+                print(prompt)
       
                 row = [subject, block, df_trial['Player'].item(), df_trial['Type'].item(), df_trial['Variant'].item(), df_trial['Type_Total'].item(), trial, S, T, df_trial['GameType'].item(), df_trial['CorrAns'].item(), response, confidence]
                 data.append(row)
