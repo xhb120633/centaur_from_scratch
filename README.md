@@ -1,262 +1,330 @@
-# Centaur Pretraining from Random Initialization
+# Fair Evaluation of Centaur: Zero-Shot and Context-Free Analysis
 
-A clean, modular codebase for training Centaur models from random initialization, built on top of the original Centaur research code.
+A comprehensive evaluation framework testing whether Centaur's performance relies on unfair advantages or captures genuine cognitive patterns through fair zero-shot and context-free methodologies.
 
-## 🌟 Overview
+## 🎯 Overview
 
-This project allows you to:
+This project provides **fair evaluation** of the Centaur foundation model by removing potential unfair advantages:
 
-1. **Train** Centaur models from random weights (rather than fine-tuning from pretrained Llama)
-2. **Evaluate** models using the original evaluation scripts  
-3. **Compare** your models against original Centaur and cognitive baselines
-4. **Visualize** results with publication-quality plots
+1. **Zero-Shot Evaluation**: Tests Centaur without behavioral history (like humans in first encounters)
+2. **Context-Free Evaluation**: Tests whether Centaur captures behavioral patterns without task-specific context
+3. **Statistical Comparison**: Rigorous comparison against cognitive models and random baselines
+4. **Multi-Dataset Analysis**: Evaluation across diverse psychology experiments
+
+### Key Question
+**Does Centaur truly capture human cognitive patterns, or does it rely on unfair advantages like behavioral history and task-specific context?**
+
+## 📊 Methodology
+
+### Original Centaur (Potentially Unfair)
+- Uses **full behavioral history** from previous trials
+- Includes **complete task context** and instructions
+- May benefit from **in-context learning** rather than cognitive modeling
+
+### Our Fair Evaluations
+
+#### 1. Zero-Shot Evaluation
+```python
+# Original: Full history + context
+"You choose between X and Y. You chose X. You chose Y. You chose X. You choose <<X>>"
+
+# Zero-Shot: Individual trials only  
+"You choose between X and Y. You choose <<X>>"
+```
+
+#### 2. Context-Free Evaluation  
+```python
+# Original: Full task description + behavioral history
+"Task: Choose between temporal rewards... You chose X. You chose Y. You choose <<X>>"
+
+# Context-Free: Behavioral patterns only
+"You chose X. You chose Y. You choose <<X>>"
+```
 
 ## 📁 Project Structure
 
 ```
-├── src/                    # Clean modular source code
-│   ├── training/          # Training utilities
-│   ├── evaluation/        # Evaluation utilities  
-│   ├── plotting/          # Plotting utilities
-│   └── utils/             # Configuration and utilities
-├── original/              # Original research codebase
-├── configs/               # Configuration files
-├── results/               # Training outputs and results
-├── logs/                  # Training logs
-├── plots/                 # Generated plots
-└── run_experiment.py      # Main entry point
+├── evaluate_zero_shot_centaur.py     # Fair zero-shot evaluation
+├── evaluate_history_only_centaur.py  # Context-free evaluation  
+├── visualize_all_datasets.py         # Comprehensive plotting
+├── collect_trial_level_nlls.py       # Statistical analysis
+├── statistical_analysis.py           # Significance testing
+├── original/                         # Original Centaur codebase
+├── configs/                          # Evaluation configurations
+├── all_datasets_plots/              # Generated visualizations
+├── statistical_tests/               # Statistical test results
+└── requirements.txt                 # Dependencies
 ```
+
+## 🗂️ Data Availability
+
+**Results and datasets are available on OSF**: [OSF Project Link - Coming Soon]
+
+Due to size constraints, the following directories are stored externally:
+- `eval_results/` - Zero-shot evaluation results  
+- `context_free_eval/` - Context-free evaluation results
+- `test_datasets/` - Psychology experiment datasets (Psych-101 test set)
 
 ## 🚀 Quick Start
 
 ### 1. Setup Environment
 
 ```bash
-# Install dependencies (same as original)
-pip install unsloth transformers datasets torch trl
-pip install scienceplots seaborn matplotlib pandas
+# Install dependencies
+pip install -r requirements.txt
+
+# Additional for plotting (optional)
+pip install scienceplots
 ```
 
-### 2. Full Pipeline (Train + Evaluate + Plot)
+### 2. Run Fair Evaluations
+
+#### Zero-Shot Evaluation
+```bash
+# Evaluate specific dataset
+python evaluate_zero_shot_centaur.py --task hebart2023things
+
+# List available datasets
+python evaluate_zero_shot_centaur.py --list-datasets
+
+# Large dataset with efficient processing
+python evaluate_zero_shot_centaur.py --task dubois2022value --skip-detailed-analysis
+```
+
+#### Context-Free Evaluation
+```bash
+# Evaluate with behavioral patterns only
+python evaluate_history_only_centaur.py --task ruggeri2022globalizability
+
+# Multiple tasks supported
+python evaluate_history_only_centaur.py --task hilbig2014generalized
+python evaluate_history_only_centaur.py --task hebart2023things
+```
+
+### 3. Visualization and Analysis
 
 ```bash
-# Run complete experiment with defaults
-python run_experiment.py --full
+# Generate comparison plots for all datasets
+python visualize_all_datasets.py
 
-# Custom experiment
-python run_experiment.py --full --epochs 25 --learning_rate 1e-4 --name "my_experiment"
+# Collect trial-level data for statistical testing
+python collect_trial_level_nlls.py
+
+# Run statistical significance tests
+python statistical_analysis.py
 ```
 
-### 3. Individual Components
+## 📋 Supported Datasets
 
-```bash
-# Training only
-python run_experiment.py --train --epochs 10 --learning_rate 2e-4
+| Dataset | Task Type | Choices | Description |
+|---------|-----------|---------|-------------|
+| `ruggeri2022globalizability` | Temporal Decision | Binary | Intertemporal choice task |
+| `hilbig2014generalized` | Multi-attribute | Binary | Decision-making with expert ratings |
+| `hebart2023things` | Odd-one-out | 3-choice | THINGS object similarity task |
+| `collsioo2023MCPL_all` | Sequential Learning | 9-choice | Multi-cue judgment task |
+| `wu2018generalisation_exp1` | Exploration | 30-choice | Multi-armed bandit task |
+| `dubois2022value` | Sequential Value | Binary | Value-based decision making |
 
-# Evaluate existing model
-python run_experiment.py --evaluate --model results/my-model
-
-# Create comparison plots
-python run_experiment.py --plot --model results/my-model
-```
-
-## ⚙️ Configuration
-
-### Using Config Files
-
-```bash
-# Create default config
-python run_experiment.py --create_config
-
-# Use custom config
-python run_experiment.py --full --config configs/my_config.json
-```
-
-### Command Line Overrides
-
-```bash
-python run_experiment.py --train \
-    --epochs 50 \
-    --learning_rate 1e-4 \
-    --batch_size 2 \
-    --output_dir results/my-experiment \
-    --name "centaur_50_epochs" \
-    --description "Testing longer training"
-```
-
-## 🧪 Example Configurations
-
-### Quick Test (5 epochs)
-```bash
-python run_experiment.py --full --config configs/quick_test.json
-```
-
-### Full Training (25 epochs - recommended)
-```bash
-python run_experiment.py --full --epochs 25 --learning_rate 1e-4
-```
-
-### Fine-tuning from Pretrained (comparison)
-```bash
-# Create config with random_init: false
-python run_experiment.py --train --config configs/finetune_config.json
-```
-
-## 📊 Evaluation & Results
-
-The evaluation automatically runs:
-
-1. **Main Tasks** (36 psychology experiments) - `test_adapter.py`
-2. **Custom Metrics** (10 held-out tasks) - `test_adapter_custom_metrics.py`
-3. **Full Log Likelihoods** - `test_adapter_full_log_likelihoods.py`
-
-### Understanding Results
-
-- **Pseudo-R²**: `1 - (model_loss / random_loss)` - higher is better
-- **Main Tasks**: Performance on same experiments, different participants
-- **Held-out Tasks**: Performance on completely unseen experiments
-
-## 📈 Plotting & Visualization
+## 🎨 Visualization
 
 ### Automatic Comparison Plots
 
-The plotting module creates publication-ready figures comparing:
+The visualization generates publication-ready square plots comparing:
 
-- 🤖 **Your Pretrained Model** (trained from random)
-- 🦙 **Original Centaur** (fine-tuned from Llama)  
-- 🧠 **Cognitive Models** (domain-specific baselines)
+- 🟦 **Original Centaur** (potentially unfair)
+- 🟪 **Cognitive Models** (Hyperbolic discounting, GP-UCB, etc.)  
+- 🟧 **Centaur without Psychological Task** (context-free)
+- 🟩 **Zero-Shot Centaur** (fair evaluation)
+- ⚫ **Random Guessing** (baseline)
 
-### Example Output
-
+### Example Usage
+```bash
+python visualize_all_datasets.py
+# Generates: all_datasets_plots/[dataset]_comprehensive_comparison.png/pdf
 ```
-📊 Performance Summary:
-🤖 Centaur-Random-Init: 0.245
-🦙 Original Centaur: 0.387
-🧠 Cognitive Models: 0.298
-📈 Your Model vs Cognitive Models: -0.053
-📊 Your Model vs Original Centaur: -0.142
+
+## 📊 Statistical Analysis
+
+### Trial-Level Analysis
+```bash
+python collect_trial_level_nlls.py
+# Outputs:
+# - trial_level_nlls_all_methods.npz (numpy arrays)
+# - trial_level_nlls_long_format.csv (for statistical testing)
+# - trial_level_nlls_metadata.json (dataset information)
+```
+
+### Significance Testing
+```bash
+python statistical_analysis.py
+# Generates:
+# - statistical_tests/[dataset]_statistical_analysis.json
+# - Wilcoxon signed-rank tests
+# - Effect size calculations
+# - Bonferroni corrections
+```
+
+## 🔬 Key Findings
+
+### Expected Results
+
+1. **Zero-Shot < Original Centaur**: Fair evaluation should perform worse than unfair
+2. **Context-Free ≈ Cognitive Models**: Pure behavioral patterns vs domain expertise  
+3. **Both > Random**: Even fair evaluations should beat chance
+4. **Performance Gaps**: Quantify the unfair advantage
+
+### Research Questions Addressed
+
+- ✅ **Does Centaur rely on behavioral history?** (Zero-shot evaluation)
+- ✅ **Does Centaur capture cognitive patterns?** (Context-free evaluation)  
+- ✅ **How much advantage comes from context?** (Statistical comparison)
+- ✅ **Is performance genuine or artifactual?** (Fair vs unfair comparison)
+
+## ⚙️ Advanced Configuration
+
+### Custom Evaluation Parameters
+
+```bash
+# Adjust batch size for memory constraints
+python evaluate_zero_shot_centaur.py --task hebart2023things --batch-size 2
+
+# Skip detailed analysis for large datasets  
+python evaluate_zero_shot_centaur.py --task dubois2022value --skip-detailed-analysis
+
+# Use KV caching optimization
+python evaluate_zero_shot_centaur.py --task dubois2022value --use-kv-caching
+```
+
+### Model Configuration
+
+The evaluations use the pre-trained Centaur model:
+- **Model**: `marcelbinz/Llama-3.1-Centaur-70B-adapter`
+- **Tokenizer**: Same as base model
+- **Inference**: 4-bit quantization for efficiency
+- **Context Length**: 32,768 tokens
+
+## 🧪 Evaluation Pipeline
+
+### 1. Dataset-Specific Parsing
+Each dataset requires custom parsing to extract fair prompts:
+
+```python
+# Example for THINGS dataset
+def create_zero_shot_prompts_hebart(original_file, output_file):
+    # Extract: "A: object1, B: object2, C: object3. You press <<A>>."
+    # Convert to: "You press <<A>>." (individual trials)
+```
+
+### 2. Progressive NLL Extraction
+For behavioral history evaluation:
+```python
+# Single forward pass per participant
+# Extract NLL for each choice token progressively
+# Maintains computational efficiency
+```
+
+### 3. Statistical Comparison
+```python
+# Compare distributions using:
+# - Wilcoxon signed-rank test (non-parametric)
+# - Effect size calculation (Cohen's d)
+# - Multiple comparison correction (Bonferroni)
 ```
 
 ## 🔧 Technical Details
 
-### Model Architecture
-- **Base**: Llama 3.1-70B with random initialization
-- **Adaptation**: LoRA (Low-Rank Adaptation)
-- **Training**: Supervised fine-tuning on psychology tasks
-- **Masking**: Only trains on choice tokens (`<<choice>>`)
+### Memory Optimization
+- **4-bit quantization** reduces memory usage
+- **Batch processing** for large datasets
+- **Progressive NLL extraction** avoids redundant computation
+- **KV caching** for sequential tasks
 
-### Key Differences from Original
-- Starts from **random weights** instead of pretrained Llama
-- **Modular architecture** for easy experimentation
-- **Clean configuration system** for reproducibility
-- **Automated evaluation pipeline** 
-
-### Training Settings
-```python
-# Default configuration
-learning_rate: 1e-4      # Higher than fine-tuning (5e-5)
-num_epochs: 25           # More than fine-tuning (5)  
-warmup_steps: 1000       # More warmup for random init
-batch_size: 1            # Same as original
-gradient_accumulation: 32 # Same as original
-```
-
-## 🎯 Expected Results
-
-Based on our understanding of the task:
-
-1. **Random initialization will perform worse** than fine-tuning from pretrained
-2. **But should still beat random baselines** and potentially some cognitive models
-3. **Training from scratch requires more epochs** (25+ vs 5 for fine-tuning)
-4. **Performance gap quantifies the value** of language pretraining for psychology
-
-## 🛠️ Advanced Usage
-
-### Custom Training Scripts
-
-```python
-from src.training.train_from_random import CentaurTrainer
-from src.utils.config import TrainingConfig
-
-config = TrainingConfig()
-config.num_epochs = 50
-config.learning_rate = 2e-4
-
-trainer = CentaurTrainer(config)
-model_path = trainer.run_full_pipeline()
-```
-
-### Custom Evaluation
-
-```python
-from src.evaluation.evaluate_model import ModelEvaluator
-
-evaluator = ModelEvaluator()
-results = evaluator.evaluate_model("results/my-model")
-evaluator.print_summary("my-model")
-```
-
-### Custom Plotting
-
-```python
-from src.plotting.compare_models import ModelComparator
-
-comparator = ModelComparator()
-plot_path = comparator.create_main_comparison_plot("results/my-model")
-```
+### Computational Requirements
+- **GPU**: H100/H200 recommended (70B model)
+- **Memory**: ~40GB base + 15GB per batch unit
+- **Time**: ~1-3 hours per dataset (varies by size)
 
 ## 🤝 Integration with Original Codebase
 
-This codebase is designed to seamlessly use the original research code:
+This evaluation framework:
+- **Preserves original evaluation logic** (same metrics, same baselines)
+- **Uses identical model weights** (marcelbinz/Llama-3.1-Centaur-70B-adapter)
+- **Maintains compatibility** with original result formats
+- **Only changes prompt structure** for fair evaluation
 
-- **Imports evaluation scripts** from `original/` directory
-- **Uses same datasets** (Psych-101, Psych-101-test)
-- **Compatible result formats** for plotting
-- **Leverages existing infrastructure** while providing clean interface
+## 📋 Reproducibility
 
-## 📋 TODO / Extensions
+### Configuration Files
+```bash
+# Example: configs/quick_test.json
+{
+  "model_name": "marcelbinz/Llama-3.1-Centaur-70B-adapter",
+  "batch_size": 4,
+  "max_seq_length": 32768,
+  "quantization": "4bit"
+}
+```
 
-- [ ] Multi-GPU training support
-- [ ] Hyperparameter optimization
-- [ ] Additional model sizes (8B, other architectures)
-- [ ] Comparison with other pretrained models
-- [ ] Analysis of which psychology domains benefit most from pretraining
+### Seed Management
+```python
+# Consistent random seeds for reproducible results
+# Statistical noise generation uses fixed seeds
+# Ensures reproducible fair evaluations
+```
 
-## 🐛 Troubleshooting
+## 🛠️ Troubleshooting
 
 ### Common Issues
 
-1. **CUDA out of memory**: Reduce batch size or use gradient checkpointing
-2. **Import errors**: Ensure `original/` directory contains the research code
-3. **Missing results**: Run evaluation before plotting
-4. **Permission errors**: Check file permissions in results/ and logs/
+1. **CUDA out of memory**
+   ```bash
+   python evaluate_zero_shot_centaur.py --task [dataset] --batch-size 1
+   ```
 
-### Getting Help
+2. **Missing datasets**
+   - Download from OSF project (link above)
+   - Place in appropriate directories
 
+3. **Slow evaluation**
+   ```bash
+   python evaluate_zero_shot_centaur.py --skip-detailed-analysis
+   ```
+
+4. **Plot overlapping labels**
+   - Automatically handled with 45° rotation and size adjustment
+
+### Debug Mode
 ```bash
-# Check configuration
-python run_experiment.py --create_config
-
-# Validate setup
-python -c "from src.training.train_from_random import CentaurTrainer; print('✅ Setup OK')"
-
-# Debug training
-python run_experiment.py --train --config configs/quick_test.json
+# Test with small subset
+python evaluate_zero_shot_centaur.py --task ruggeri2022globalizability --batch-size 1
 ```
 
 ## 📄 Citation
 
-If you use this codebase, please cite both the original Centaur paper and acknowledge this implementation:
-
 ```bibtex
 @article{binz2024centaur,
   title={Centaur: a foundation model of human cognition},
-  author={Binz, Marcel and Akata, Elif and Bethge, Matthias and Brändle, Franziska and Callaway, Fred and Gijsbers, Pieter and Gökce, Ozan and Gronau, Quentin F and Lampinen, Andrew K and Lawson, Tobias and others},
+  author={Binz, Marcel and Akata, Elif and Bethge, Matthias and others},
   journal={arXiv preprint arXiv:2410.20268},
   year={2024}
+}
+
+@misc{centaur_fair_evaluation,
+  title={Fair Evaluation of Centaur: Zero-Shot and Context-Free Analysis},
+  author={[Your Name]},
+  year={2024},
+  howpublished={GitHub repository and OSF project}
 }
 ```
 
 ## 🏆 Acknowledgments
 
-This implementation builds upon the excellent work by Binz et al. in the original Centaur research. We provide a clean, modular interface while preserving all the core functionality and evaluation capabilities of the original codebase. 
+This fair evaluation framework builds upon the excellent Centaur research by Binz et al. We aim to provide rigorous, unbiased assessment of cognitive modeling capabilities while preserving the core insights of the original work.
+
+**Data**: Original psychology experiments from the Centaur dataset and Psych-101 test set.  
+**Infrastructure**: Evaluation pipeline adapted from the original Centaur codebase.  
+**Methodology**: Novel fair evaluation approaches designed to address potential unfair advantages.
+
+---
+
+**🔗 Data Availability**: Complete results, datasets, and supplementary materials available on OSF: [Coming Soon] 
