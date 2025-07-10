@@ -1,221 +1,262 @@
-# A foundation model to predict and capture human cognition
+# Centaur Pretraining from Random Initialization
 
+A clean, modular codebase for training Centaur models from random initialization, built on top of the original Centaur research code.
 
-<img src="https://marcelbinz.github.io/imgs/centaur.png" width="200"/>
+## 🌟 Overview
 
-- **Paper:** [A foundation model to predict and capture human cognition](https://www.nature.com/articles/s41586-025-09215-4)
-- **Point of Contact:** [Marcel Binz](mailto:marcel.binz@helmholtz-munich.de)
+This project allows you to:
 
-Establishing a unified theory of cognition has been a major goal of psychology. While there have been previous attempts to instantiate such theories by building computational models, we currently do not have one model that captures the human mind in its entirety. A first step in this direction is to create a model that can predict human behavior in a wide range of settings. Here we introduce Centaur, a computational model that can predict and simulate human behavior in any experiment expressible in natural language. We derived Centaur by finetuning a state-of-the-art language model on a novel, large-scale data set called Psych-101. Psych-101 reaches an unprecedented scale, covering trial-by-trial data from over 60,000 participants performing over 10,000,000 choices in 160 experiments. Centaur not only captures the behavior of held-out participants better than existing cognitive models, but also generalizes to new cover stories, structural task modifications, and entirely new domains. Furthermore, we find that the model's internal representations become more aligned with human neural activity after finetuning. Taken together, our results demonstrate that it is possible to discover computational models that capture human behavior across a wide range of domains. We believe that such models provide tremendous potential for guiding the development of cognitive theories and present a case study to demonstrate this. 
+1. **Train** Centaur models from random weights (rather than fine-tuning from pretrained Llama)
+2. **Evaluate** models using the original evaluation scripts  
+3. **Compare** your models against original Centaur and cognitive baselines
+4. **Visualize** results with publication-quality plots
 
-## Usage
+## 📁 Project Structure
 
-Note that Centaur is trained on a data set in which human choices are encapsuled by "<<" and ">>" tokens. For optimal performance, it is recommended to adjust prompts accordingly.
+```
+├── src/                    # Clean modular source code
+│   ├── training/          # Training utilities
+│   ├── evaluation/        # Evaluation utilities  
+│   ├── plotting/          # Plotting utilities
+│   └── utils/             # Configuration and utilities
+├── original/              # Original research codebase
+├── configs/               # Configuration files
+├── results/               # Training outputs and results
+├── logs/                  # Training logs
+├── plots/                 # Generated plots
+└── run_experiment.py      # Main entry point
+```
 
-The recommended usage is by loading the low-rank adapter using unsloth:
+## 🚀 Quick Start
+
+### 1. Setup Environment
+
+```bash
+# Install dependencies (same as original)
+pip install unsloth transformers datasets torch trl
+pip install scienceplots seaborn matplotlib pandas
+```
+
+### 2. Full Pipeline (Train + Evaluate + Plot)
+
+```bash
+# Run complete experiment with defaults
+python run_experiment.py --full
+
+# Custom experiment
+python run_experiment.py --full --epochs 25 --learning_rate 1e-4 --name "my_experiment"
+```
+
+### 3. Individual Components
+
+```bash
+# Training only
+python run_experiment.py --train --epochs 10 --learning_rate 2e-4
+
+# Evaluate existing model
+python run_experiment.py --evaluate --model results/my-model
+
+# Create comparison plots
+python run_experiment.py --plot --model results/my-model
+```
+
+## ⚙️ Configuration
+
+### Using Config Files
+
+```bash
+# Create default config
+python run_experiment.py --create_config
+
+# Use custom config
+python run_experiment.py --full --config configs/my_config.json
+```
+
+### Command Line Overrides
+
+```bash
+python run_experiment.py --train \
+    --epochs 50 \
+    --learning_rate 1e-4 \
+    --batch_size 2 \
+    --output_dir results/my-experiment \
+    --name "centaur_50_epochs" \
+    --description "Testing longer training"
+```
+
+## 🧪 Example Configurations
+
+### Quick Test (5 epochs)
+```bash
+python run_experiment.py --full --config configs/quick_test.json
+```
+
+### Full Training (25 epochs - recommended)
+```bash
+python run_experiment.py --full --epochs 25 --learning_rate 1e-4
+```
+
+### Fine-tuning from Pretrained (comparison)
+```bash
+# Create config with random_init: false
+python run_experiment.py --train --config configs/finetune_config.json
+```
+
+## 📊 Evaluation & Results
+
+The evaluation automatically runs:
+
+1. **Main Tasks** (36 psychology experiments) - `test_adapter.py`
+2. **Custom Metrics** (10 held-out tasks) - `test_adapter_custom_metrics.py`
+3. **Full Log Likelihoods** - `test_adapter_full_log_likelihoods.py`
+
+### Understanding Results
+
+- **Pseudo-R²**: `1 - (model_loss / random_loss)` - higher is better
+- **Main Tasks**: Performance on same experiments, different participants
+- **Held-out Tasks**: Performance on completely unseen experiments
+
+## 📈 Plotting & Visualization
+
+### Automatic Comparison Plots
+
+The plotting module creates publication-ready figures comparing:
+
+- 🤖 **Your Pretrained Model** (trained from random)
+- 🦙 **Original Centaur** (fine-tuned from Llama)  
+- 🧠 **Cognitive Models** (domain-specific baselines)
+
+### Example Output
+
+```
+📊 Performance Summary:
+🤖 Centaur-Random-Init: 0.245
+🦙 Original Centaur: 0.387
+🧠 Cognitive Models: 0.298
+📈 Your Model vs Cognitive Models: -0.053
+📊 Your Model vs Original Centaur: -0.142
+```
+
+## 🔧 Technical Details
+
+### Model Architecture
+- **Base**: Llama 3.1-70B with random initialization
+- **Adaptation**: LoRA (Low-Rank Adaptation)
+- **Training**: Supervised fine-tuning on psychology tasks
+- **Masking**: Only trains on choice tokens (`<<choice>>`)
+
+### Key Differences from Original
+- Starts from **random weights** instead of pretrained Llama
+- **Modular architecture** for easy experimentation
+- **Clean configuration system** for reproducibility
+- **Automated evaluation pipeline** 
+
+### Training Settings
+```python
+# Default configuration
+learning_rate: 1e-4      # Higher than fine-tuning (5e-5)
+num_epochs: 25           # More than fine-tuning (5)  
+warmup_steps: 1000       # More warmup for random init
+batch_size: 1            # Same as original
+gradient_accumulation: 32 # Same as original
+```
+
+## 🎯 Expected Results
+
+Based on our understanding of the task:
+
+1. **Random initialization will perform worse** than fine-tuning from pretrained
+2. **But should still beat random baselines** and potentially some cognitive models
+3. **Training from scratch requires more epochs** (25+ vs 5 for fine-tuning)
+4. **Performance gap quantifies the value** of language pretraining for psychology
+
+## 🛠️ Advanced Usage
+
+### Custom Training Scripts
 
 ```python
-from unsloth import FastLanguageModel
+from src.training.train_from_random import CentaurTrainer
+from src.utils.config import TrainingConfig
 
-model_name = "marcelbinz/Llama-3.1-Centaur-70B-adapter"
-model, tokenizer = FastLanguageModel.from_pretrained(
-  model_name = model_name,
-  max_seq_length = 32768,
-  dtype = None,
-  load_in_4bit = True,
-)
+config = TrainingConfig()
+config.num_epochs = 50
+config.learning_rate = 2e-4
 
-FastLanguageModel.for_inference(model)
+trainer = CentaurTrainer(config)
+model_path = trainer.run_full_pipeline()
 ```
 
-This requires 80 GB GPU memory. [test_adapter.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test_adapter.py) shows an example of this type of usage.
-
-You can alternatively use the model with the HuggingFace Transformers library:
+### Custom Evaluation
 
 ```python
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from src.evaluation.evaluate_model import ModelEvaluator
 
-model_name = "marcelbinz/Llama-3.1-Centaur-70B"
-model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, device_map="auto")
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+evaluator = ModelEvaluator()
+results = evaluator.evaluate_model("results/my-model")
+evaluator.print_summary("my-model")
 ```
 
-This requires at least 160 GB GPU memory (even more for longer prompts). [test.py](https://github.com/marcelbinz/Llama-3.1-Centaur-70B/blob/main/test.py) shows an example of this type of usage.
+### Custom Plotting
 
+```python
+from src.plotting.compare_models import ModelComparator
 
-### Reference
-
+comparator = ModelComparator()
+plot_path = comparator.create_main_comparison_plot("results/my-model")
 ```
-@misc{binz2024centaurfoundationmodelhuman,
-      title={Centaur: a foundation model of human cognition}, 
-      author={Marcel Binz and Elif Akata and Matthias Bethge and Franziska Brändle and Fred Callaway and Julian Coda-Forno and Peter Dayan and Can Demircan and Maria K. Eckstein and Noémi Éltető and Thomas L. Griffiths and Susanne Haridi and Akshay K. Jagadish and Li Ji-An and Alexander Kipnis and Sreejan Kumar and Tobias Ludwig and Marvin Mathony and Marcelo Mattar and Alireza Modirshanechi and Surabhi S. Nath and Joshua C. Peterson and Milena Rmus and Evan M. Russek and Tankred Saanum and Natalia Scharfenberg and Johannes A. Schubert and Luca M. Schulze Buschoff and Nishad Singhi and Xin Sui and Mirko Thalmann and Fabian Theis and Vuong Truong and Vishaal Udandarao and Konstantinos Voudouris and Robert Wilson and Kristin Witte and Shuchen Wu and Dirk Wulff and Huadong Xiong and Eric Schulz},
-      year={2024},
-      eprint={2410.20268},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2410.20268}, 
+
+## 🤝 Integration with Original Codebase
+
+This codebase is designed to seamlessly use the original research code:
+
+- **Imports evaluation scripts** from `original/` directory
+- **Uses same datasets** (Psych-101, Psych-101-test)
+- **Compatible result formats** for plotting
+- **Leverages existing infrastructure** while providing clean interface
+
+## 📋 TODO / Extensions
+
+- [ ] Multi-GPU training support
+- [ ] Hyperparameter optimization
+- [ ] Additional model sizes (8B, other architectures)
+- [ ] Comparison with other pretrained models
+- [ ] Analysis of which psychology domains benefit most from pretraining
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **CUDA out of memory**: Reduce batch size or use gradient checkpointing
+2. **Import errors**: Ensure `original/` directory contains the research code
+3. **Missing results**: Run evaluation before plotting
+4. **Permission errors**: Check file permissions in results/ and logs/
+
+### Getting Help
+
+```bash
+# Check configuration
+python run_experiment.py --create_config
+
+# Validate setup
+python -c "from src.training.train_from_random import CentaurTrainer; print('✅ Setup OK')"
+
+# Debug training
+python run_experiment.py --train --config configs/quick_test.json
+```
+
+## 📄 Citation
+
+If you use this codebase, please cite both the original Centaur paper and acknowledge this implementation:
+
+```bibtex
+@article{binz2024centaur,
+  title={Centaur: a foundation model of human cognition},
+  author={Binz, Marcel and Akata, Elif and Bethge, Matthias and Brändle, Franziska and Callaway, Fred and Gijsbers, Pieter and Gökce, Ozan and Gronau, Quentin F and Lampinen, Andrew K and Lawson, Tobias and others},
+  journal={arXiv preprint arXiv:2410.20268},
+  year={2024}
 }
 ```
 
-### Dependencies
+## 🏆 Acknowledgments
 
-The code was tested using the following packages and versions.
-
-```
-_libgcc_mutex=0.1=main
-_openmp_mutex=5.1=1_gnu
-accelerate=0.30.1=pypi_0
-aiohttp=3.9.5=pypi_0
-aiosignal=1.3.1=pypi_0
-asttokens=2.4.1=pypi_0
-async-timeout=4.0.3=pypi_0
-attrs=23.2.0=pypi_0
-bitsandbytes=0.43.1=pypi_0
-blas=1.0=mkl
-bzip2=1.0.8=h5eee18b_6
-ca-certificates=2024.3.11=h06a4308_0
-certifi=2024.2.2=pypi_0
-charset-normalizer=3.3.2=pypi_0
-click=8.1.7=pypi_0
-contourpy=1.3.0=pypi_0
-cuda-cudart=12.1.105=0
-cuda-cupti=12.1.105=0
-cuda-libraries=12.1.0=0
-cuda-nvrtc=12.1.105=0
-cuda-nvtx=12.1.105=0
-cuda-opencl=12.4.127=0
-cuda-runtime=12.1.0=0
-cudatoolkit=11.7.0=hd8887f6_10
-cycler=0.12.1=pypi_0
-datasets=2.19.1=pypi_0
-decorator=5.1.1=pypi_0
-dill=0.3.8=pypi_0
-docker-pycreds=0.4.0=pypi_0
-docstring-parser=0.16=pypi_0
-einops=0.8.0=pypi_0
-exceptiongroup=1.2.1=pypi_0
-executing=2.0.1=pypi_0
-filelock=3.13.1=py310h06a4308_0
-fonttools=4.53.1=pypi_0
-frozenlist=1.4.1=pypi_0
-fsspec=2024.3.1=pypi_0
-gitdb=4.0.11=pypi_0
-gitpython=3.1.43=pypi_0
-gmp=6.2.1=h295c915_3
-gmpy2=2.1.2=py310heeb90bb_0
-huggingface-hub=0.26.2=pypi_0
-idna=3.7=pypi_0
-inquirerpy=0.3.4=pypi_0
-intel-openmp=2023.1.0=hdb19cb5_46306
-ipdb=0.13.13=pypi_0
-ipython=8.26.0=pypi_0
-ivon-opt=0.1.2=pypi_0
-jedi=0.19.1=pypi_0
-jinja2=3.1.3=py310h06a4308_0
-joblib=1.4.2=pypi_0
-jsonlines=4.0.0=pypi_0
-kiwisolver=1.4.6=pypi_0
-ld_impl_linux-64=2.38=h1181459_1
-libcublas=12.1.0.26=0
-libcufft=11.0.2.4=0
-libcufile=1.9.1.3=0
-libcurand=10.3.5.147=0
-libcusolver=11.4.4.55=0
-libcusparse=12.0.2.55=0
-libffi=3.4.4=h6a678d5_1
-libgcc-ng=11.2.0=h1234567_1
-libgomp=11.2.0=h1234567_1
-libnpp=12.0.2.50=0
-libnvjitlink=12.1.105=0
-libnvjpeg=12.1.1.14=0
-libstdcxx-ng=11.2.0=h1234567_1
-libuuid=1.41.5=h5eee18b_0
-llvm-openmp=14.0.6=h9e868ea_0
-markdown-it-py=3.0.0=pypi_0
-markupsafe=2.1.3=py310h5eee18b_0
-matplotlib=3.9.2=pypi_0
-matplotlib-inline=0.1.7=pypi_0
-mdurl=0.1.2=pypi_0
-mkl=2023.1.0=h213fc3f_46344
-mpc=1.1.0=h10f8cd9_1
-mpfr=4.0.2=hb69a4c5_1
-mpmath=1.3.0=py310h06a4308_0
-multidict=6.0.5=pypi_0
-multiprocess=0.70.16=pypi_0
-natsort=8.4.0=pypi_0
-ncurses=6.4=h6a678d5_0
-networkx=3.1=py310h06a4308_0
-nibabel=5.2.1=pypi_0
-numpy=1.26.4=pypi_0
-openssl=3.0.13=h7f8727e_1
-packaging=24.0=pypi_0
-pandas=2.2.2=pypi_0
-parso=0.8.4=pypi_0
-peft=0.10.0=pypi_0
-pexpect=4.9.0=pypi_0
-pfzy=0.3.4=pypi_0
-pillow=10.4.0=pypi_0
-pip=24.0=py310h06a4308_0
-platformdirs=4.2.1=pypi_0
-prompt-toolkit=3.0.47=pypi_0
-protobuf=3.20.3=pypi_0
-psutil=5.9.8=pypi_0
-ptyprocess=0.7.0=pypi_0
-pure-eval=0.2.2=pypi_0
-pyarrow=16.0.0=pypi_0
-pyarrow-hotfix=0.6=pypi_0
-pygments=2.18.0=pypi_0
-pyparsing=3.1.4=pypi_0
-python=3.10.14=h955ad1f_1
-python-dateutil=2.9.0.post0=pypi_0
-pytorch=2.3.0=py3.10_cuda12.1_cudnn8.9.2_0
-pytorch-cuda=12.1=ha16c6d3_5
-pytorch-mutex=1.0=cuda
-pytz=2024.1=pypi_0
-pyyaml=6.0.1=py310h5eee18b_0
-readline=8.2=h5eee18b_0
-regex=2024.5.10=pypi_0
-requests=2.31.0=pypi_0
-rich=13.7.1=pypi_0
-safetensors=0.4.3=pypi_0
-schedulefree=1.2.6=pypi_0
-scikit-learn=1.5.0=pypi_0
-scipy=1.14.0=pypi_0
-sentencepiece=0.2.0=pypi_0
-sentry-sdk=2.1.1=pypi_0
-setproctitle=1.3.3=pypi_0
-setuptools=69.5.1=py310h06a4308_0
-shtab=1.7.1=pypi_0
-simple-parsing=0.1.5=pypi_0
-six=1.16.0=pypi_0
-smmap=5.0.1=pypi_0
-sqlite=3.45.3=h5eee18b_0
-stack-data=0.6.3=pypi_0
-sympy=1.12=py310h06a4308_0
-tbb=2021.8.0=hdb19cb5_0
-threadpoolctl=3.5.0=pypi_0
-tk=8.6.14=h39e8969_0
-tokenizers=0.19.1=pypi_0
-tomli=2.0.1=pypi_0
-torcheval=0.0.7=pypi_0
-torchtriton=2.3.0=py310
-tqdm=4.66.4=pypi_0
-traitlets=5.14.3=pypi_0
-transformers=4.43.3=pypi_0
-trl=0.8.6=pypi_0
-typing_extensions=4.11.0=py310h06a4308_0
-tyro=0.8.4=pypi_0
-tzdata=2024.1=pypi_0
-unsloth=2024.8=pypi_0
-urllib3=2.2.1=pypi_0
-wandb=0.17.0=pypi_0
-wcwidth=0.2.13=pypi_0
-wheel=0.43.0=py310h06a4308_0
-xformers=0.0.26.post1=py310_cu12.1.0_pyt2.3.0
-xxhash=3.4.1=pypi_0
-xz=5.4.6=h5eee18b_1
-yaml=0.2.5=h7b6447c_0
-yarl=1.9.4=pypi_0
-zlib=1.2.13=h5eee18b_1
-```
+This implementation builds upon the excellent work by Binz et al. in the original Centaur research. We provide a clean, modular interface while preserving all the core functionality and evaluation capabilities of the original codebase. 

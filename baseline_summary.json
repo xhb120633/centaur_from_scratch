@@ -1,0 +1,384 @@
+{
+  "metadata": {
+    "source_file": "original/results/custom_metrics_full_log_likelihoods_baselines.pth",
+    "conversion_date": "2025-07-05T15:19:07.653553",
+    "description": "Cognitive model baseline log-likelihoods",
+    "num_experiments": 37,
+    "data_type": "log_likelihoods"
+  },
+  "summary": {
+    "total_experiments": 37,
+    "experiments": {
+      "enkavi2019gonogo": {
+        "total_trials": 21240,
+        "non_zero_trials": 21240,
+        "zero_trials": 0,
+        "mean_nll": 0.07567044945745931,
+        "std_nll": 0.3636810091708618,
+        "min_nll": 0.0079458337277174,
+        "max_nll": 4.839076995849609,
+        "median_nll": 0.0079458337277174
+      },
+      "waltz2020differential": {
+        "total_trials": 850,
+        "non_zero_trials": 838,
+        "zero_trials": 12,
+        "mean_nll": 0.2768678764578151,
+        "std_nll": 0.32955833488894165,
+        "min_nll": 0.0032444954849779606,
+        "max_nll": 4.885625839233398,
+        "median_nll": 0.18038883805274963
+      },
+      "levering2020revisiting": {
+        "total_trials": 6300,
+        "non_zero_trials": 6300,
+        "zero_trials": 0,
+        "mean_nll": 0.5313461502970466,
+        "std_nll": 0.5967336982858497,
+        "min_nll": 0.013964647218927989,
+        "max_nll": 4.115701663654976,
+        "median_nll": 0.3136630093459219
+      },
+      "schulz2020finding": {
+        "total_trials": 21000,
+        "non_zero_trials": 21000,
+        "zero_trials": 0,
+        "mean_nll": 1.0530145296546276,
+        "std_nll": 1.2012348508835333,
+        "min_nll": 2.407998726994265e-05,
+        "max_nll": 12.335533142089844,
+        "median_nll": 0.44246040284633636
+      },
+      "gershman2020reward": {
+        "total_trials": 6119,
+        "non_zero_trials": 6119,
+        "zero_trials": 0,
+        "mean_nll": 0.8574817234278578,
+        "std_nll": 0.8668863839740444,
+        "min_nll": 0.011901560239493847,
+        "max_nll": 5.3612961769104,
+        "median_nll": 0.5468422770500183
+      },
+      "hebart2023things": {
+        "total_trials": 265640,
+        "non_zero_trials": 265640,
+        "zero_trials": 0,
+        "mean_nll": 0.8252710198494859,
+        "std_nll": 0.6831365887326826,
+        "min_nll": 0.0013003236381337047,
+        "max_nll": 6.207038879394531,
+        "median_nll": 0.6597043573856354
+      },
+      "steingroever2015data": {
+        "total_trials": 7090,
+        "non_zero_trials": 7090,
+        "zero_trials": 0,
+        "mean_nll": 1.1554810715232398,
+        "std_nll": 0.6219550753618813,
+        "min_nll": 0.014572732150554657,
+        "max_nll": 5.01239013671875,
+        "median_nll": 1.1045762300491333
+      },
+      "wu2023chunking": {
+        "total_trials": 20000,
+        "non_zero_trials": 20000,
+        "zero_trials": 0,
+        "mean_nll": 0.19617211710857227,
+        "std_nll": 0.7919913524767319,
+        "min_nll": 0.02745686285197735,
+        "max_nll": 5.960079669952393,
+        "median_nll": 0.04708237946033478
+      },
+      "wu2018generalisation": {
+        "total_trials": 408,
+        "non_zero_trials": 408,
+        "zero_trials": 0,
+        "mean_nll": 2.7635354425977257,
+        "std_nll": 1.3338725149525998,
+        "min_nll": 0.19594264030456543,
+        "max_nll": 9.299505233764648,
+        "median_nll": 3.2830686569213867
+      },
+      "wilson2014humans": {
+        "total_trials": 17715,
+        "non_zero_trials": 17677,
+        "zero_trials": 38,
+        "mean_nll": 0.5560149825576917,
+        "std_nll": 0.408490409150904,
+        "min_nll": 0.006163043901324272,
+        "max_nll": 3.858060598373413,
+        "median_nll": 0.4622294306755066
+      },
+      "bahrami2020four": {
+        "total_trials": 14400,
+        "non_zero_trials": 13864,
+        "zero_trials": 536,
+        "mean_nll": 0.9392747895240481,
+        "std_nll": 0.9054295736577563,
+        "min_nll": 0.02524091862142086,
+        "max_nll": 4.995752811431885,
+        "median_nll": 0.5385810136795044
+      },
+      "feng2021dynamics": {
+        "total_trials": 3360,
+        "non_zero_trials": 3353,
+        "zero_trials": 7,
+        "mean_nll": 0.3602170137175498,
+        "std_nll": 0.32884902593323945,
+        "min_nll": 0.0035998323000967503,
+        "max_nll": 2.6232357025146484,
+        "median_nll": 0.27819496393203735
+      },
+      "xiong2023neural": {
+        "total_trials": 14400,
+        "non_zero_trials": 14400,
+        "zero_trials": 0,
+        "mean_nll": 0.43775970374686746,
+        "std_nll": 0.5640578599293192,
+        "min_nll": 0.00402379035949707,
+        "max_nll": 4.447085857391357,
+        "median_nll": 0.21079786866903305
+      },
+      "collsi\u00f6\u00f62023MCPL": {
+        "total_trials": 6136,
+        "non_zero_trials": 6136,
+        "zero_trials": 0,
+        "mean_nll": 1.91568495820209,
+        "std_nll": 0.9491454347432375,
+        "min_nll": 0.9658380961446952,
+        "max_nll": 11.222141092321284,
+        "median_nll": 1.5205531711848796
+      },
+      "badham2017deficits": {
+        "total_trials": 3840,
+        "non_zero_trials": 3664,
+        "zero_trials": 176,
+        "mean_nll": 0.6400891939893548,
+        "std_nll": 0.42797112334779625,
+        "min_nll": 0.060291762816176486,
+        "max_nll": 2.6622146931393473,
+        "median_nll": 0.5397829770606757
+      },
+      "plonsky2018when": {
+        "total_trials": 18000,
+        "non_zero_trials": 18000,
+        "zero_trials": 0,
+        "mean_nll": 0.6606885876869204,
+        "std_nll": 0.23607329469654978,
+        "min_nll": 0.20067351469681466,
+        "max_nll": 1.704735405780796,
+        "median_nll": 0.6788657322303723
+      },
+      "kool2016when": {
+        "total_trials": 4500,
+        "non_zero_trials": 4187,
+        "zero_trials": 313,
+        "mean_nll": 0.6494699424310205,
+        "std_nll": 0.2573601414022522,
+        "min_nll": 0.3755185306072235,
+        "max_nll": 1.1613495349884033,
+        "median_nll": 0.693124532699585
+      },
+      "peterson2021using": {
+        "total_trials": 116920,
+        "non_zero_trials": 116920,
+        "zero_trials": 0,
+        "mean_nll": 0.6563356637520528,
+        "std_nll": 0.2483304967940692,
+        "min_nll": 0.08018381326135,
+        "max_nll": 2.3016814184422913,
+        "median_nll": 0.6336773993177103
+      },
+      "frey2017cct": {
+        "total_trials": 62530,
+        "non_zero_trials": 62530,
+        "zero_trials": 0,
+        "mean_nll": 0.262850181377555,
+        "std_nll": 0.6468102499515183,
+        "min_nll": 0.041835203828643544,
+        "max_nll": 3.194861775675612,
+        "median_nll": 0.07368021979478008
+      },
+      "sadeghiyeh2020temporal": {
+        "total_trials": 4303,
+        "non_zero_trials": 4301,
+        "zero_trials": 2,
+        "mean_nll": 0.6653649093489249,
+        "std_nll": 0.3340052851929179,
+        "min_nll": 0.05258047953248024,
+        "max_nll": 2.6616592407226562,
+        "median_nll": 0.6036847233772278
+      },
+      "tomov2021multitask": {
+        "total_trials": 7878,
+        "non_zero_trials": 7878,
+        "zero_trials": 0,
+        "mean_nll": 1.042358137786343,
+        "std_nll": 0.44344685029951536,
+        "min_nll": 0.2912718653678894,
+        "max_nll": 2.6188249588012695,
+        "median_nll": 0.9624814391136169
+      },
+      "gershman2018deconstructing": {
+        "total_trials": 1800,
+        "non_zero_trials": 1800,
+        "zero_trials": 0,
+        "mean_nll": 0.41872111919463656,
+        "std_nll": 0.5796196438755955,
+        "min_nll": 1.6093124941107817e-05,
+        "max_nll": 5.690586566925049,
+        "median_nll": 0.18163888901472092
+      },
+      "enkavi2019recentprobes": {
+        "total_trials": 3876,
+        "non_zero_trials": 3876,
+        "zero_trials": 0,
+        "mean_nll": 0.38677337024480074,
+        "std_nll": 0.76438813376774,
+        "min_nll": 0.10824824124574661,
+        "max_nll": 3.7934560775756836,
+        "median_nll": 0.1677917242050171
+      },
+      "speekenbrink2008learning": {
+        "total_trials": 400,
+        "non_zero_trials": 400,
+        "zero_trials": 0,
+        "mean_nll": 0.6266652535462851,
+        "std_nll": 0.3700538418953526,
+        "min_nll": 0.08806824148891622,
+        "max_nll": 1.961484699974542,
+        "median_nll": 0.5798025226074479
+      },
+      "enkavi2019digitspan": {
+        "total_trials": 10328,
+        "non_zero_trials": 10328,
+        "zero_trials": 0,
+        "mean_nll": 0.9359012688217955,
+        "std_nll": 1.4360985840150413,
+        "min_nll": 0.035769809037446976,
+        "max_nll": 5.9116339683532715,
+        "median_nll": 0.2581559121608734
+      },
+      "enkavi2019adaptivenback": {
+        "total_trials": 20394,
+        "non_zero_trials": 20394,
+        "zero_trials": 0,
+        "mean_nll": 0.5787072114948199,
+        "std_nll": 0.710139335509265,
+        "min_nll": 0.18579992651939392,
+        "max_nll": 3.6546361446380615,
+        "median_nll": 0.18579992651939392
+      },
+      "flesch2018comparing": {
+        "total_trials": 13200,
+        "non_zero_trials": 13200,
+        "zero_trials": 0,
+        "mean_nll": 0.9105396398484089,
+        "std_nll": 0.4088382519721939,
+        "min_nll": 0.0754592192124294,
+        "max_nll": 2.6837564282901645,
+        "median_nll": 0.8403734673877068
+      },
+      "jansen2021dunningkruger": {
+        "total_trials": 9044,
+        "non_zero_trials": 9044,
+        "zero_trials": 0,
+        "mean_nll": 1.4126625875244225,
+        "std_nll": 0.9092125374826642,
+        "min_nll": 0.13246171176433563,
+        "max_nll": 5.874929428100586,
+        "median_nll": 1.4104493856430054
+      },
+      "somerville2017charting": {
+        "total_trials": 7840,
+        "non_zero_trials": 7838,
+        "zero_trials": 2,
+        "mean_nll": 0.4426905139580865,
+        "std_nll": 0.41919158672260365,
+        "min_nll": 0.0030706420075148344,
+        "max_nll": 3.9789254665374756,
+        "median_nll": 0.34146633744239807
+      },
+      "ludwig2023human": {
+        "total_trials": 2520,
+        "non_zero_trials": 2520,
+        "zero_trials": 0,
+        "mean_nll": 0.6046735432545935,
+        "std_nll": 0.4012471665708276,
+        "min_nll": 0.04373583570122719,
+        "max_nll": 2.856088161468506,
+        "median_nll": 0.4820474684238434
+      },
+      "wulff2018description": {
+        "total_trials": 3200,
+        "non_zero_trials": 3200,
+        "zero_trials": 0,
+        "mean_nll": 0.6120401785465343,
+        "std_nll": 0.3508647791291042,
+        "min_nll": 0.0029470907410839068,
+        "max_nll": 4.379344461305442,
+        "median_nll": 0.6226974020950222
+      },
+      "lefebvre2017behavioural": {
+        "total_trials": 768,
+        "non_zero_trials": 768,
+        "zero_trials": 0,
+        "mean_nll": 0.5046921529246902,
+        "std_nll": 0.6063671850833265,
+        "min_nll": 0.011724846437573433,
+        "max_nll": 4.005922794342041,
+        "median_nll": 0.27044668793678284
+      },
+      "ruggeri2022globalizability": {
+        "total_trials": 15421,
+        "non_zero_trials": 15421,
+        "zero_trials": 0,
+        "mean_nll": 0.6591303194070108,
+        "std_nll": 0.2545407152767398,
+        "min_nll": 0.42632508277893066,
+        "max_nll": 1.0581539869308472,
+        "median_nll": 0.45203515887260437
+      },
+      "wulff2018sampling": {
+        "total_trials": 104424,
+        "non_zero_trials": 104424,
+        "zero_trials": 0,
+        "mean_nll": 0.540390571782968,
+        "std_nll": 0.5103569866078838,
+        "min_nll": 0.1301015466451645,
+        "max_nll": 2.10878849029541,
+        "median_nll": 0.25593122839927673
+      },
+      "frey2017risk": {
+        "total_trials": 192724,
+        "non_zero_trials": 192724,
+        "zero_trials": 0,
+        "mean_nll": 0.09219690338970359,
+        "std_nll": 0.5417720730737439,
+        "min_nll": 0.01779964007437229,
+        "max_nll": 4.0374627113342285,
+        "median_nll": 0.01779964007437229
+      },
+      "kool2017cost": {
+        "total_trials": 4800,
+        "non_zero_trials": 4744,
+        "zero_trials": 56,
+        "mean_nll": 0.6433475850743648,
+        "std_nll": 0.20844409229233432,
+        "min_nll": 0.4196486473083496,
+        "max_nll": 1.0704830884933472,
+        "median_nll": 0.6929786205291748
+      },
+      "hilbig2014generalized": {
+        "total_trials": 576,
+        "non_zero_trials": 576,
+        "zero_trials": 0,
+        "mean_nll": 0.1921723034675231,
+        "std_nll": 0.35227449865887234,
+        "min_nll": 0.0339156599516835,
+        "max_nll": 1.4650703076492058,
+        "median_nll": 0.041211196576353935
+      }
+    }
+  }
+}

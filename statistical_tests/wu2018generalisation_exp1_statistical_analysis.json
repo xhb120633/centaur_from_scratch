@@ -1,0 +1,76 @@
+{
+  "dataset_info": {
+    "title": "Spatially correlated multi-armed bandit task (Sequential)",
+    "citation": "Wu et al., 2018",
+    "description": "Multi-environment exploration task"
+  },
+  "analysis_timestamp": "2025-07-09T16:01:17.921186",
+  "dataset_name": "wu2018generalisation_exp1",
+  "data_summary": {
+    "zero_shot_trials": 0,
+    "context_free_trials": 360,
+    "total_comparisons": 2,
+    "multiple_comparison_correction": "bonferroni"
+  },
+  "baseline_metrics": {
+    "original_centaur": 1.8321380615234373,
+    "cognitive_models": 2.792812824249268,
+    "random": 3.4011973816621555
+  },
+  "statistical_tests": [
+    {
+      "comparison": "Context-free history-only Centaur vs Original Centaur",
+      "group1_name": "Context-free history-only Centaur",
+      "group2_name": "Original Centaur",
+      "group1_n": 360,
+      "group2_n": 360,
+      "group1_mean": 2.484635416666667,
+      "group2_mean": 1.8327310165261754,
+      "group1_std": 1.257047076177091,
+      "group2_std": 0.17845287817952946,
+      "mean_difference": 0.6519044001404914,
+      "t_statistic": 9.742062743410118,
+      "degrees_of_freedom": 718,
+      "p_value_original": 3.797532794687058e-21,
+      "cohens_d": 0.7261304845111037,
+      "effect_size_interpretation": "medium",
+      "p_value_corrected": 7.595065589374117e-21,
+      "significant_original": true,
+      "significant_corrected": true
+    },
+    {
+      "comparison": "Context-free history-only Centaur vs Cognitive Models",
+      "group1_name": "Context-free history-only Centaur",
+      "group2_name": "Cognitive Models",
+      "group1_n": 360,
+      "group2_n": 360,
+      "group1_mean": 2.484635416666667,
+      "group2_mean": 2.784225485969908,
+      "group1_std": 1.257047076177091,
+      "group2_std": 0.2746998275954651,
+      "mean_difference": -0.29959006930324117,
+      "t_statistic": -4.417711677481342,
+      "degrees_of_freedom": 718,
+      "p_value_original": 1.151353274336323e-05,
+      "cohens_d": -0.3292767871947635,
+      "effect_size_interpretation": "small",
+      "p_value_corrected": 2.302706548672646e-05,
+      "significant_original": true,
+      "significant_corrected": true
+    }
+  ],
+  "interpretation": {
+    "summary": [
+      "Context-free history-only Centaur vs Original Centaur: Statistically significant difference (p = 0.0000, medium effect size). Group 1 performs worse than Group 2.",
+      "Context-free history-only Centaur vs Cognitive Models: Statistically significant difference (p = 0.0000, small effect size). Group 1 performs better than Group 2."
+    ],
+    "key_findings": [
+      "Strong evidence for difference in Context-free history-only Centaur vs Original Centaur"
+    ],
+    "limitations": [
+      "Baseline trial data was simulated based on aggregate metrics",
+      "Actual trial-level baseline data would provide more accurate statistical tests",
+      "Multiple comparison correction applied using Bonferroni method"
+    ]
+  }
+}

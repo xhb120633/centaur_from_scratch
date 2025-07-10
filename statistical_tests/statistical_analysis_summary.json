@@ -1,0 +1,19 @@
+{
+  "analysis_summary": {
+    "total_datasets": 5,
+    "successful_analyses": 5,
+    "analysis_timestamp": "2025-07-09T16:01:17.921186",
+    "methods": "Independent t-tests with Bonferroni correction for multiple comparisons"
+  },
+  "datasets_analyzed": [
+    "collsioo2023MCPL_all",
+    "hebart2023things",
+    "hilbig2014generalized",
+    "ruggeri2022globalizability",
+    "wu2018generalisation_exp1"
+  ],
+  "overall_findings": [
+    "Performed 16 statistical tests across 5 datasets",
+    "Found 15 statistically significant differences (93.8%)"
+  ]
+}

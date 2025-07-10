@@ -1,0 +1,119 @@
+{
+  "dataset_info": {
+    "title": "Inter-temporal Choice (Non-sequential)",
+    "citation": "Ruggeri et al., 2022",
+    "description": "Temporal decision making task"
+  },
+  "analysis_timestamp": "2025-07-09T16:01:17.918195",
+  "dataset_name": "ruggeri2022globalizability",
+  "data_summary": {
+    "zero_shot_trials": 15421,
+    "context_free_trials": 15421,
+    "total_comparisons": 4,
+    "multiple_comparison_correction": "bonferroni"
+  },
+  "baseline_metrics": {
+    "original_centaur": 0.4382756948471069,
+    "cognitive_models": 0.6590430736541748,
+    "random": 0.6931471805599453
+  },
+  "statistical_tests": [
+    {
+      "comparison": "Context-free history-only Centaur vs Original Centaur",
+      "group1_name": "Context-free history-only Centaur",
+      "group2_name": "Original Centaur",
+      "group1_n": 15421,
+      "group2_n": 15421,
+      "group1_mean": 0.6562418941702872,
+      "group2_mean": 0.43845781949640705,
+      "group1_std": 0.4284715679928632,
+      "group2_std": 0.043732248266180364,
+      "mean_difference": 0.21778407467388017,
+      "t_statistic": 62.79281737322309,
+      "degrees_of_freedom": 30840,
+      "p_value_original": 0.0,
+      "cohens_d": 0.7151031623037201,
+      "effect_size_interpretation": "medium",
+      "p_value_corrected": 0.0,
+      "significant_original": true,
+      "significant_corrected": true
+    },
+    {
+      "comparison": "Context-free history-only Centaur vs Cognitive Models",
+      "group1_name": "Context-free history-only Centaur",
+      "group2_name": "Cognitive Models",
+      "group1_n": 15421,
+      "group2_n": 15421,
+      "group1_mean": 0.6562418941702872,
+      "group2_mean": 0.6580187782108181,
+      "group1_std": 0.4284715679928632,
+      "group2_std": 0.06723629758912839,
+      "mean_difference": -0.0017768840405308906,
+      "t_statistic": -0.5087577344508647,
+      "degrees_of_freedom": 30840,
+      "p_value_original": 0.6109256878587558,
+      "cohens_d": -0.005793883440360361,
+      "effect_size_interpretation": "negligible",
+      "p_value_corrected": 1.0,
+      "significant_original": false,
+      "significant_corrected": false
+    },
+    {
+      "comparison": "Zero-shot Centaur vs Original Centaur",
+      "group1_name": "Zero-shot Centaur",
+      "group2_name": "Original Centaur",
+      "group1_n": 15421,
+      "group2_n": 15421,
+      "group1_mean": 0.6673314291388367,
+      "group2_mean": 0.43817525904006976,
+      "group1_std": 0.32878811244659567,
+      "group2_std": 0.043918580734424124,
+      "mean_difference": 0.22915617009876693,
+      "t_statistic": 85.78894961097893,
+      "degrees_of_freedom": 30840,
+      "p_value_original": 0.0,
+      "cohens_d": 0.9769899126024293,
+      "effect_size_interpretation": "large",
+      "p_value_corrected": 0.0,
+      "significant_original": true,
+      "significant_corrected": true
+    },
+    {
+      "comparison": "Zero-shot Centaur vs Cognitive Models",
+      "group1_name": "Zero-shot Centaur",
+      "group2_name": "Cognitive Models",
+      "group1_n": 15421,
+      "group2_n": 15421,
+      "group1_mean": 0.6673314291388367,
+      "group2_mean": 0.6590321433546472,
+      "group1_std": 0.32878811244659567,
+      "group2_std": 0.06655566258686103,
+      "mean_difference": 0.00829928578418948,
+      "t_statistic": 3.0722769360623006,
+      "degrees_of_freedom": 30840,
+      "p_value_original": 0.0021261761762054803,
+      "cohens_d": 0.03498799774172588,
+      "effect_size_interpretation": "negligible",
+      "p_value_corrected": 0.008504704704821921,
+      "significant_original": true,
+      "significant_corrected": true
+    }
+  ],
+  "interpretation": {
+    "summary": [
+      "Context-free history-only Centaur vs Original Centaur: Statistically significant difference (p = 0.0000, medium effect size). Group 1 performs worse than Group 2.",
+      "Context-free history-only Centaur vs Cognitive Models: No statistically significant difference (p = 1.0000).",
+      "Zero-shot Centaur vs Original Centaur: Statistically significant difference (p = 0.0000, large effect size). Group 1 performs worse than Group 2.",
+      "Zero-shot Centaur vs Cognitive Models: Statistically significant difference (p = 0.0085, negligible effect size). Group 1 performs worse than Group 2."
+    ],
+    "key_findings": [
+      "Strong evidence for difference in Context-free history-only Centaur vs Original Centaur",
+      "Strong evidence for difference in Zero-shot Centaur vs Original Centaur"
+    ],
+    "limitations": [
+      "Baseline trial data was simulated based on aggregate metrics",
+      "Actual trial-level baseline data would provide more accurate statistical tests",
+      "Multiple comparison correction applied using Bonferroni method"
+    ]
+  }
+}
