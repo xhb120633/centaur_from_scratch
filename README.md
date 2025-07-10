@@ -58,7 +58,7 @@ This project provides **fair evaluation** of the Centaur foundation model by rem
 
 ## 🗂️ Data Availability
 
-**Results and datasets are available on OSF**: [OSF Project Link - Coming Soon]
+**Results and datasets are available on OSF**: [[OSF Project Link](https://osf.io/9nz76/)]
 
 Due to size constraints, the following directories are stored externally:
 - `eval_results/` - Zero-shot evaluation results  
