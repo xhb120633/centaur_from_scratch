@@ -327,4 +327,4 @@ This fair evaluation framework builds upon the excellent Centaur research by Bin
 
 ---
 
-**🔗 Data Availability**: Complete results, datasets, and supplementary materials available on OSF: [Coming Soon] 
+**🔗 Data Availability**: Complete results, datasets, and supplementary materials available on OSF: [OSF Project Link](https://osf.io/9nz76/) 
