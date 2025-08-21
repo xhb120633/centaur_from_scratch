@@ -452,28 +452,21 @@ def create_history_only_prompts_collsioo(original_prompts_file, output_file):
         
         minimal_context = '\n'.join(basic_context_lines)
         
-        # Extract all trials from the original prompt
+        # Extract all choices by directly scanning each "You say ... <<>>" line (robust to missing Progladine/Amalydine)
         import re
-        trial_pattern = r'Progladine: ([^.]*?)\. Amalydine: ([^.]*?)\. You say that the Caldionine concentration is <<([^>]+)>>\. That is ([^.]*?)\. The correct concentration of Caldionine is ([^.]*?)\.'
-        trials = re.findall(trial_pattern, prompt_text)
+        choice_only_pattern = r'You say that the Caldionine concentration is <<([^>]+)>>'
+        choices = re.findall(choice_only_pattern, prompt_text)
         
-        if not trials:
-            # Try alternative pattern for different format
-            alt_pattern = r'Progladine: ([^.]*?)\. Amalydine: ([^.]*?)\. You say that the Caldionine concentration is <<([^>]+)>>'
-            trials = re.findall(alt_pattern, prompt_text)
-            # For alternative pattern, we don't have feedback info
-            trials = [(prog, amal, choice, "unknown", "unknown") for prog, amal, choice in trials]
+        print(f"   Participant {participant_data['participant']}: found {len(choices)} choices")
         
-        print(f"   Participant {participant_data['participant']}: found {len(trials)} trials")
-        
-        if trials:
+        if choices:
             # Build ultra-minimal history prompt: minimal context + choice sequence only (NO state info, NO feedback)
             full_history_prompt = minimal_context + "\n\n"
             
             choice_positions = []  # Track where each choice token appears for NLL extraction
             
-            for i, (prog, amal, choice, feedback, correct) in enumerate(trials):
-                # Ultra-minimal format: ONLY the choice statements, no context or feedback
+            for i, choice in enumerate(choices):
+                # Ultra-minimal format: ONLY the choice statements
                 choice_statement = f"You say that the Caldionine concentration is <<{choice}>>."
                 
                 # Mark the position of this choice for later NLL extraction
@@ -481,11 +474,7 @@ def create_history_only_prompts_collsioo(original_prompts_file, output_file):
                 choice_positions.append({
                     'choice_index': i,
                     'choice': choice,
-                    'choice_start_pos': choice_start_pos,
-                    'progladine': prog,  # Keep for analysis but not in prompt
-                    'amalydine': amal,   # Keep for analysis but not in prompt
-                    'feedback': feedback,
-                    'correct': correct
+                    'choice_start_pos': choice_start_pos
                 })
                 
                 full_history_prompt += choice_statement + "\n"
@@ -495,20 +484,10 @@ def create_history_only_prompts_collsioo(original_prompts_file, output_file):
                 'text': full_history_prompt.strip(),
                 'participant': participant_data['participant'],
                 'experiment': participant_data['experiment'],
-                'num_trials': len(trials),
+                'num_trials': len(choices),
                 'choice_positions': choice_positions,  # For progressive NLL extraction
                 'basic_instruction': minimal_context,
-                'trials': [
-                    {
-                        'trial_number': i + 1,
-                        'progladine': prog,
-                        'amalydine': amal,
-                        'choice': choice,
-                        'feedback': feedback,
-                        'correct': correct
-                    }
-                    for i, (prog, amal, choice, feedback, correct) in enumerate(trials)
-                ],
+                'trials': [ { 'trial_number': i + 1, 'choice': choice } for i, choice in enumerate(choices) ],
                 'original_length': len(prompt_text),
                 'history_only_length': len(full_history_prompt)
             }
@@ -594,24 +573,19 @@ def create_history_only_prompts_collsioo_multi(experiment_files, output_file):
                 
                 minimal_context = '\n'.join(basic_context_lines)
                 
-                # Extract all trials
+                # Extract all choices by directly scanning each "You say ... <<>>" line (robust to missing Progladine/Amalydine)
                 import re
-                trial_pattern = r'Progladine: ([^.]*?)\. Amalydine: ([^.]*?)\. You say that the Caldionine concentration is <<([^>]+)>>\. That is ([^.]*?)\. The correct concentration of Caldionine is ([^.]*?)\.'
-                trials = re.findall(trial_pattern, prompt_text)
+                choice_only_pattern = r'You say that the Caldionine concentration is <<([^>]+)>>'
+                choices = re.findall(choice_only_pattern, prompt_text)
                 
-                if not trials:
-                    alt_pattern = r'Progladine: ([^.]*?)\. Amalydine: ([^.]*?)\. You say that the Caldionine concentration is <<([^>]+)>>'
-                    trials = re.findall(alt_pattern, prompt_text)
-                    trials = [(prog, amal, choice, "unknown", "unknown") for prog, amal, choice in trials]
-                
-                if trials:
+                if choices:
                     # Build ultra-minimal history prompt: minimal context + choice sequence only (NO state info, NO feedback)
                     full_history_prompt = minimal_context + "\n\n"
                     
                     choice_positions = []  # Track where each choice token appears for NLL extraction
                     
-                    for i, (prog, amal, choice, feedback, correct) in enumerate(trials):
-                        # Ultra-minimal format: ONLY the choice statements, no context or feedback
+                    for i, choice in enumerate(choices):
+                        # Ultra-minimal format: ONLY the choice statements
                         choice_statement = f"You say that the Caldionine concentration is <<{choice}>>."
                         
                         # Mark the position of this choice for later NLL extraction
@@ -619,11 +593,7 @@ def create_history_only_prompts_collsioo_multi(experiment_files, output_file):
                         choice_positions.append({
                             'choice_index': i,
                             'choice': choice,
-                            'choice_start_pos': choice_start_pos,
-                            'progladine': prog,  # Keep for analysis but not in prompt
-                            'amalydine': amal,   # Keep for analysis but not in prompt
-                            'feedback': feedback,
-                            'correct': correct
+                            'choice_start_pos': choice_start_pos
                         })
                         
                         full_history_prompt += choice_statement + "\n"
@@ -634,20 +604,10 @@ def create_history_only_prompts_collsioo_multi(experiment_files, output_file):
                         'participant': participant_data['participant'],
                         'experiment': participant_data['experiment'],
                         'exp_tag': exp_tag,
-                        'num_trials': len(trials),
+                        'num_trials': len(choices),
                         'choice_positions': choice_positions,  # For progressive NLL extraction
                         'basic_instruction': minimal_context,
-                        'trials': [
-                            {
-                                'trial_number': i + 1,
-                                'progladine': prog,
-                                'amalydine': amal,
-                                'choice': choice,
-                                'feedback': feedback,
-                                'correct': correct
-                            }
-                            for i, (prog, amal, choice, feedback, correct) in enumerate(trials)
-                        ],
+                        'trials': [ { 'trial_number': i + 1, 'choice': choice } for i, choice in enumerate(choices) ],
                         'original_length': len(prompt_text),
                         'history_only_length': len(full_history_prompt)
                     }
@@ -1408,7 +1368,7 @@ def evaluate_wu2018_with_progressive_nll(model, tokenizer, dataset_list, conditi
     
     return overall_nll, len(valid_trial_nlls), basic_results, detailed_results
 
-def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condition_name, batch_size=4):
+def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condition_name, batch_size=4, debug_alignment=False, use_first_choice_token_only=False):
     """
     Unified progressive NLL extraction for all datasets.
     One forward pass per participant, extract NLL for each choice token progressively.
@@ -1428,6 +1388,7 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
     # Use tqdm for better progress tracking
     from tqdm import tqdm
     
+    multi_token_printed = 0
     for participant_idx, participant_data in tqdm(enumerate(dataset_list), 
                                                   total=len(dataset_list),
                                                   desc="Processing participants",
@@ -1464,11 +1425,21 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
             # Single forward pass for the entire participant prompt
             outputs = model(**inputs)
             logits = outputs.logits[0]  # Shape: [seq_len, vocab_size]
+
+            if debug_alignment and participant_idx == 0:
+                # Basic prompt/logits diagnostics
+                try:
+                    tokenized_full = tokenizer(prompt_text, return_tensors="pt", truncation=True, max_length=32768)
+                    full_len_tokens = int(tokenized_full['input_ids'].shape[1])
+                except Exception:
+                    full_len_tokens = -1
+                print(f"\n[DEBUG] Prompt chars: {len(prompt_text)}; tokenized length: {full_len_tokens}; logits shape: {logits.shape}")
             
             # Extract NLL for each choice token progressively
             for choice_idx, match in enumerate(choice_matches):
                 choice_value = match.group(1)  # The content inside <<>>
-                choice_start_pos = match.end() - len(choice_value) - 2  # Position of choice content
+                # Exact character start of the choice content using capture group span
+                choice_start_pos = match.start(1)
                 
                 # Tokenize text up to the choice to find token position
                 text_before_choice = prompt_text[:choice_start_pos]
@@ -1478,11 +1449,38 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
                 # Tokenize just the choice content
                 choice_tokens = tokenizer(choice_value, return_tensors="pt", add_special_tokens=False)
                 choice_token_ids = choice_tokens['input_ids'][0]
+
+                if debug_alignment and participant_idx == 0 and choice_idx < 2:
+                    # Compare alignments: using -1 vs starting at exact length
+                    alt_pos = len(tokens_before['input_ids'][0])
+                    # Compute first-token NLL at both alignments if within bounds
+                    def nll_at(pos_index: int) -> float:
+                        if pos_index < 0 or pos_index >= logits.shape[0]:
+                            return float('inf')
+                        lp = torch.nn.functional.log_softmax(logits[pos_index], dim=-1)
+                        return float(-lp[choice_token_ids[0]].item())
+                    nll_minus1 = nll_at(choice_start_token_pos)
+                    nll_no_minus1 = nll_at(alt_pos)
+
+                    # Try to locate the token subsequence of "<<" + choice in the full tokenization
+                    try:
+                        seq_tokens = tokenizer(prompt_text, return_tensors="pt", truncation=True, max_length=32768, add_special_tokens=True)['input_ids'][0]
+                        target_tokens = tokenizer("<<" + choice_value, return_tensors="pt", add_special_tokens=False)['input_ids'][0]
+                        # naive subsequence search
+                        found_idx = -1
+                        for s in range(0, len(seq_tokens) - len(target_tokens) + 1):
+                            if torch.equal(seq_tokens[s:s+len(target_tokens)], target_tokens):
+                                found_idx = s
+                                break
+                    except Exception:
+                        found_idx = -1
+
+                    print(f"[DEBUG] choice='{choice_value}' | prefix_token_len={len(tokens_before['input_ids'][0])} | start_tok_pos(-1)={choice_start_token_pos} | alt_pos={alt_pos} | first-token NLL: -1={nll_minus1:.4f} vs no-(-1)={nll_no_minus1:.4f} | found_seq_start={found_idx}")
                 
                 # Extract logits for predicting the choice tokens
                 if choice_start_token_pos + len(choice_token_ids) <= len(logits):
                     choice_logits = logits[choice_start_token_pos:choice_start_token_pos + len(choice_token_ids)]
-                    
+
                     # Compute NLL for each choice token
                     individual_token_nlls = []
                     for i, token_id in enumerate(choice_token_ids):
@@ -1491,11 +1489,24 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
                             log_probs = torch.nn.functional.log_softmax(token_logits, dim=-1)
                             token_nll = -log_probs[token_id].item()
                             individual_token_nlls.append(token_nll)
-                    
-                    # Average NLL for this choice
+
+                    # Optionally print multi-token exceptions for comparison with original evaluation
+                    if len(choice_token_ids) > 1 and multi_token_printed < 50:
+                        token_pieces = tokenizer.convert_ids_to_tokens(choice_token_ids.tolist())
+                        print(f"[MULTI-TOKEN CHOICE] participant={participant_data.get('participant')} idx={choice_idx} choice='{choice_value}'")
+                        print(f"  tokens: {token_pieces}")
+                        print(f"  token_ids: {choice_token_ids.tolist()}")
+                        print(f"  token_nlls: {[round(x, 6) for x in individual_token_nlls]}")
+                        multi_token_printed += 1
+
+                    # Aggregate NLL according to setting
                     if individual_token_nlls:
-                        choice_nll = sum(individual_token_nlls) / len(individual_token_nlls)
-                        all_individual_token_nlls.extend(individual_token_nlls)
+                        if use_first_choice_token_only:
+                            choice_nll = individual_token_nlls[0]
+                            all_individual_token_nlls.append(individual_token_nlls[0])
+                        else:
+                            choice_nll = sum(individual_token_nlls) / len(individual_token_nlls)
+                            all_individual_token_nlls.extend(individual_token_nlls)
                     else:
                         choice_nll = float('inf')
                 else:
@@ -1653,7 +1664,8 @@ def get_dataset_config(dataset_name):
     
     return configs[dataset_name]
 
-def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_size=4, skip_detailed_analysis=False):
+def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_size=4, skip_detailed_analysis=False,
+                                use_first_choice_token_only: bool = False, debug_alignment: bool = False):
     """Evaluate Centaur on a set of prompts using progressive NLL extraction for all datasets"""
     print(f"🔍 Evaluating {model_name} on {condition_name}")
     print(f"   Using prompts: {prompts_file}")
@@ -1667,6 +1679,11 @@ def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_
         dtype=None,
         load_in_4bit=True,  # Same as original
     )
+    # Ensure deterministic inference behavior (disable dropout etc.)
+    try:
+        model.eval()
+    except Exception:
+        pass
     
     # Load dataset from file (same format as original)
     dataset_list = []
@@ -1678,7 +1695,8 @@ def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_
     
     # Use progressive NLL extraction for all datasets (simplified unified approach)
     nll, num_samples, basic_results, detailed_results = evaluate_with_progressive_nll_unified(
-        model, tokenizer, dataset_list, condition_name, batch_size
+        model, tokenizer, dataset_list, condition_name, batch_size,
+        debug_alignment=debug_alignment, use_first_choice_token_only=use_first_choice_token_only
     )
     
     return nll, num_samples, basic_results, detailed_results
@@ -1829,6 +1847,8 @@ def main():
                        help='Skip detailed per-trial analysis to avoid hanging (saves basic results only)')
     parser.add_argument('--run-original', action='store_true',
                        help='Run original full-context evaluation (default: use existing baseline)')
+    parser.add_argument('--use-first-choice-token-only', action='store_true',
+                       help='Score only the first token inside << >> for each choice (to mirror masked-loss behavior)')
     
     args = parser.parse_args()
     
@@ -1846,6 +1866,8 @@ def main():
     
     # File paths from config
     original_prompts_file = dataset_config['original_prompts_file']
+    # Token scoring mode suffix for filenames/metadata
+    scoring_suffix = "firsttok" if args.use_first_choice_token_only else "fullspan"
     
     # Create context_free_eval directory
     eval_results_dir = Path("context_free_eval")
@@ -1861,6 +1883,7 @@ def main():
     print(f"   Batch size: {args.batch_size}")
     print(f"   Original prompts: {original_prompts_file}")
     print(f"   History-only prompts: {history_only_file}")
+    print(f"   Token scoring: {'first token only' if args.use_first_choice_token_only else 'average over full span'}")
     print(f"   Original Centaur baseline: {'Will evaluate' if args.run_original else 'Use existing baseline'}")
     
     # Check if original prompts file(s) exist
@@ -1896,7 +1919,8 @@ def main():
     print("\n🔍 Evaluating History-Only condition...")
     # Use efficient evaluation for large datasets, detailed analysis otherwise
     history_nll, history_samples, history_basic, history_detailed = evaluate_centaur_on_prompts(
-        args.model_name, history_only_file, "History-Only", args.batch_size, args.skip_detailed_analysis
+        args.model_name, history_only_file, "History-Only", args.batch_size, args.skip_detailed_analysis,
+        use_first_choice_token_only=args.use_first_choice_token_only, debug_alignment=False
     )
     results_dict['History-Only'] = {
         'nll': history_nll, 
@@ -1931,7 +1955,7 @@ def main():
     # Step 3: Create comparison plot
     print(f"\n=== Step 3: Create Comparison Plot ===")
     try:
-        plot_file = eval_results_dir / f"{task_name}_context_free_comparison.png"
+        plot_file = eval_results_dir / f"{task_name}_context_free_comparison_{scoring_suffix}.png"
         comparison_data = create_comparison_plot(history_nll, dataset_config, task_name, plot_file)
     except Exception as e:
         print(f"   ❌ Error creating comparison plot: {e}")
@@ -1953,7 +1977,7 @@ def main():
     comprehensive_results = {
         'metadata': {
             'evaluation_date': datetime.now().isoformat(),
-            'script_version': 'context_free_centaur_evaluation_v2.0',
+            'script_version': 'context_free_centaur_evaluation_v2.1',
             'dataset_name': task_name,
             'dataset_description': dataset_config['description'],
             'model_name': model_name,
@@ -1962,7 +1986,8 @@ def main():
             'method': 'Context-free evaluation with behavioral history only',
             'difference': 'Removes task-specific context, keeps behavioral patterns',
             'parsing_method': f'Dataset-specific parsing for {task_name}',
-            'purpose': 'Test whether Centaur captures cognitive patterns vs superficial behavioral patterns'
+            'purpose': 'Test whether Centaur captures cognitive patterns vs superficial behavioral patterns',
+            'token_scoring_mode': 'first_token_only' if args.use_first_choice_token_only else 'full_span_average'
         },
         'prompt_data': {
             'original_prompts_count': len(history_only_prompts),
@@ -1976,6 +2001,7 @@ def main():
                 'nll': history_nll,
                 'basic_results': history_basic,
                 'detailed_results': history_detailed,
+                'token_scoring_mode': 'first_token_only' if args.use_first_choice_token_only else 'full_span_average',
                 'trial_specific_data': {
                     'description': 'Individual NLL for each choice prediction',
                     'total_trials': len(history_detailed['per_trial_results']) if history_detailed and 'per_trial_results' in history_detailed else 0,
@@ -2020,7 +2046,10 @@ def main():
             'comparison_data': comparison_data
         },
         'visualization': {
-            'plot_files': [f'context_free_eval/{task_name}_context_free_comparison.png', f'context_free_eval/{task_name}_context_free_comparison.pdf'],
+            'plot_files': [
+                f'context_free_eval/{task_name}_context_free_comparison_{scoring_suffix}.png',
+                f'context_free_eval/{task_name}_context_free_comparison_{scoring_suffix}.pdf'
+            ],
             'color_scheme': {
                 'context_free_centaur': '#ff7f0e',
                 'original_centaur': '#69005f',
@@ -2040,7 +2069,8 @@ def main():
             'detailed_results': results_dict['Original (Full Context)'].get('detailed_results')
         }
     
-    results_file = eval_results_dir / f"{task_name}_context_free_results.json"
+    suffix = scoring_suffix
+    results_file = eval_results_dir / f"{task_name}_context_free_results_{suffix}.json"
     try:
         with open(results_file, 'w') as f:
             json.dump(comprehensive_results, f, indent=2)
@@ -2053,7 +2083,7 @@ def main():
             'evaluation_results': comprehensive_results['evaluation_results'],
             'comparison_analysis': comprehensive_results['comparison_analysis']
         }
-        simplified_file = eval_results_dir / f"{task_name}_simplified_context_free_results.json"
+        simplified_file = eval_results_dir / f"{task_name}_simplified_context_free_results_{suffix}.json"
         with open(simplified_file, 'w') as f:
             json.dump(simplified_results, f, indent=2)
         print(f"   ✅ Saved simplified results to {simplified_file}")
@@ -2072,7 +2102,7 @@ def main():
     else:
         print(f"   Cognitive Models NLL: Not available")
     print(f"   Random NLL: {random_nll:.4f}")
-    print(f"📈 Plots saved as: context_free_eval/{task_name}_context_free_comparison.png & context_free_eval/{task_name}_context_free_comparison.pdf")
+    print(f"📈 Plots saved as: context_free_eval/{task_name}_context_free_comparison_{suffix}.png & context_free_eval/{task_name}_context_free_comparison_{suffix}.pdf")
     print(f"   Plot shows: Context-Free Centaur, Original Centaur, Cognitive Models, Random line")
     print(f"📄 Comprehensive results saved as: {results_file}")
     print(f"   Data includes: All baselines and detailed per-trial analysis")

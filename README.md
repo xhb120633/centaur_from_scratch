@@ -32,7 +32,13 @@ This project provides **fair evaluation** of the Centaur foundation model by rem
 "You choose between X and Y. You choose <<X>>"
 ```
 
-#### 2. Context-Free Evaluation  
+Implementation details:
+- **Per-trial forward pass**: Each trial is evaluated independently with a dedicated forward pass.
+- **Choice-token NLL**: We locate the choice span (between `<<` and `>>`), tokenize it without special tokens, and compute the negative log-likelihood (NLL) by summing token-wise cross-entropy from the model's logits at the corresponding positions. The choice span includes all tokens within the delimiters (not just the first token).
+- **Averaging policy**: Report per-trial NLL as the average across the choice tokens; aggregate across trials by mean.
+- **Robustness**: If a choice span cannot be aligned reliably to token positions, the trial is skipped and reported.
+
+#### 2. Context-Free (History-Only) Evaluation  
 ```python
 # Original: Full task description + behavioral history
 "Task: Choose between temporal rewards... You chose X. You chose Y. You choose <<X>>"
@@ -40,6 +46,28 @@ This project provides **fair evaluation** of the Centaur foundation model by rem
 # Context-Free: Behavioral patterns only
 "You chose X. You chose Y. You choose <<X>>"
 ```
+
+Implementation details:
+- **Single forward pass per participant**: One long prompt per participant containing all prior choices; we only extract likelihoods for marked choice spans.
+- **No per-trial forward passes**: All per-trial (per-choice) NLLs are derived from the same forward pass' logits using sequential probing; we do not re-run the model for each trial.
+- **Progressive NLL extraction**: While building prompts, we record exact character offsets for each upcoming `<<choice>>` span. At evaluation time:
+  - Tokenize the entire prompt once and run a single forward pass to obtain logits.
+  - For each recorded choice, search locally around the expected offset to find the exact `<<choice>>` substring.
+  - Tokenize the substring (no special tokens) and align to the sequence positions to slice the corresponding logits window.
+  - Compute token-wise log-probabilities via `log_softmax`, then NLL per token as `-log_prob[token_id]` and average across tokens for the trial NLL.
+- **Aggregation**: Combine token-wise NLLs across trials for a participant, then across participants; report both overall NLL and counts of valid trials.
+- **Efficiency**: This avoids repeated passes and mirrors the original evaluation logic while removing task context.
+- **Multi-token choices**: The `<<choice>>` span is scored across all tokens inside the delimiters (not only the first token), using teacher-forced next-token likelihoods.
+
+### Explicit Modes: Zero-Shot vs History-Only
+- **Zero-Shot**:
+  - Keeps task instructions/context; removes behavioral history
+  - Per-trial forward pass with choice-token NLL per trial
+  - Aggregate by mean across trials
+- **History-Only (Context-Free)**:
+  - Keeps behavioral history; removes task instructions/stimulus content
+  - Single forward pass per participant with sequential probing of marked `<<choice>>` spans
+  - Progressive, token-position-aligned NLLs aggregated across trials and participants
 
 ## 📁 Project Structure
 
@@ -64,6 +92,20 @@ Due to size constraints, the following directories are stored externally:
 - `eval_results/` - Zero-shot evaluation results  
 - `context_free_eval/` - Context-free evaluation results
 - `test_datasets/` - Psychology experiment datasets (Psych-101 test set)
+
+### Dataset acquisition
+- **Psych-101 test set**: We obtain the test split via the Hugging Face dataset repository `marcelbinz/Psych-101-test`. Access requires agreeing to the repository terms.
+  - Repository page: [Hugging Face: marcelbinz/Psych-101-test](https://huggingface.co/datasets/marcelbinz/Psych-101-test)
+  - Download helper:
+    ```bash
+    # (Optional) set HF_TOKEN after accepting access on the dataset page
+    setx HF_TOKEN "<your_hf_token>"
+
+    # Download to datasets_downloads/ using our helper script
+    python scripts/download_hf_dataset.py marcelbinz/Psych-101-test --local-dir datasets_downloads
+    ```
+- **Task structure via `original/experiments.csv`**: We use `original/experiments.csv` to map each dataset to its task name, type, split, and number of actions. This metadata helps us reorganize files from the Hugging Face repository so each task is clearly separated (train/validation/test) and matched to our evaluation routines.
+- **Inspecting JSONL**: Use `scripts/inspect_jsonl.py datasets_downloads/prompts_testing_t1.jsonl` to preview schema, keys, and examples for quick sanity checks.
 
 ## 🚀 Quick Start
 
@@ -223,6 +265,11 @@ For behavioral history evaluation:
 # Maintains computational efficiency
 ```
 
+Concretely, we:
+- Create a participant-level prompt and record `choice_positions` (expected character offsets for each `<<choice>>`).
+- Tokenize once, compute logits, and for each choice: locate the substring, tokenize it without special tokens, align its token window, and compute token-wise NLLs via `log_softmax` followed by negation.
+- Average per choice (trial) and aggregate across all trials and participants.
+
 ### 3. Statistical Comparison
 ```python
 # Compare distributions using:
@@ -314,6 +361,16 @@ python evaluate_zero_shot_centaur.py --task ruggeri2022globalizability --batch-s
   author={[Your Name]},
   year={2024},
   howpublished={GitHub repository and OSF project}
+}
+
+@misc{xie2025centaur_shortcut,
+  title={Centaur May Have Learned a Shortcut that Explains Away Psychological Tasks},
+  author={Xie, Hanbo and Zhu, Junteng},
+  year={2025},
+  month={July 12},
+  publisher={PsyArXiv},
+  doi={10.31234/osf.io/u7z4t_v1},
+  url={https://doi.org/10.31234/osf.io/u7z4t_v1}
 }
 ```
 
