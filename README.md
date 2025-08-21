@@ -86,7 +86,7 @@ Implementation details:
 
 ## 🗂️ Data Availability
 
-**Results and datasets are available on OSF**: [OSF Project Link - Coming Soon]
+**Results and datasets are available on OSF**: [[OSF Project Link](https://osf.io/9nz76/)]
 
 Due to size constraints, the following directories are stored externally:
 - `eval_results/` - Zero-shot evaluation results  
@@ -384,4 +384,4 @@ This fair evaluation framework builds upon the excellent Centaur research by Bin
 
 ---
 
-**🔗 Data Availability**: Complete results, datasets, and supplementary materials available on OSF: [Coming Soon] 
+**🔗 Data Availability**: Complete results, datasets, and supplementary materials available on OSF: [OSF Project Link](https://osf.io/9nz76/) 
