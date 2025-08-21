@@ -356,18 +356,11 @@ python evaluate_zero_shot_centaur.py --task ruggeri2022globalizability --batch-s
   year={2024}
 }
 
-@misc{centaur_fair_evaluation,
-  title={Fair Evaluation of Centaur: Zero-Shot and Context-Free Analysis},
-  author={[Your Name]},
-  year={2024},
-  howpublished={GitHub repository and OSF project}
-}
-
 @misc{xie2025centaur_shortcut,
   title={Centaur May Have Learned a Shortcut that Explains Away Psychological Tasks},
-  author={Xie, Hanbo and Zhu, Junteng},
+  author={Xie, Hanbo and Zhu, Jian-Qiao},
   year={2025},
-  month={July 12},
+  month={July},
   publisher={PsyArXiv},
   doi={10.31234/osf.io/u7z4t_v1},
   url={https://doi.org/10.31234/osf.io/u7z4t_v1}
