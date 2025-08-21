@@ -1039,7 +1039,7 @@ def evaluate_collsioo_with_progressive_nll(model, tokenizer, dataset_list, condi
     
     # Compute summary statistics
     valid_trial_nlls = [r['trial_nll'] for r in per_trial_results if r['trial_nll'] != float('inf')]
-    overall_nll = sum(all_individual_token_nlls) / len(all_individual_token_nlls) if all_individual_token_nlls else float('inf')
+    overall_nll = sum(valid_trial_nlls) / len(valid_trial_nlls) if valid_trial_nlls else float('inf')
     
     print(f"   ✅ Progressive NLL extraction complete")
     print(f"   🎯 Overall NLL: {overall_nll:.4f}")
@@ -1209,7 +1209,7 @@ def evaluate_hilbig_with_progressive_nll(model, tokenizer, dataset_list, conditi
     
     # Compute summary statistics
     valid_trial_nlls = [r['trial_nll'] for r in per_trial_results if r['trial_nll'] != float('inf')]
-    overall_nll = sum(all_individual_token_nlls) / len(all_individual_token_nlls) if all_individual_token_nlls else float('inf')
+    overall_nll = sum(valid_trial_nlls) / len(valid_trial_nlls) if valid_trial_nlls else float('inf')
     
     print(f"   ✅ Progressive NLL extraction complete")
     print(f"   🎯 Overall NLL: {overall_nll:.4f}")
@@ -1333,7 +1333,7 @@ def evaluate_wu2018_with_progressive_nll(model, tokenizer, dataset_list, conditi
     
     # Compute summary statistics
     valid_trial_nlls = [r['trial_nll'] for r in per_trial_results if r['trial_nll'] != float('inf')]
-    overall_nll = sum(all_individual_token_nlls) / len(all_individual_token_nlls) if all_individual_token_nlls else float('inf')
+    overall_nll = sum(valid_trial_nlls) / len(valid_trial_nlls) if valid_trial_nlls else float('inf')
     
     print(f"   ✅ Progressive NLL extraction complete")
     print(f"   🎯 Overall NLL: {overall_nll:.4f}")
@@ -1534,7 +1534,7 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
     
     # Compute summary statistics
     valid_trial_nlls = [r['trial_nll'] for r in per_trial_results if r['trial_nll'] != float('inf')]
-    overall_nll = sum(all_individual_token_nlls) / len(all_individual_token_nlls) if all_individual_token_nlls else float('inf')
+    overall_nll = sum(valid_trial_nlls) / len(valid_trial_nlls) if valid_trial_nlls else float('inf')
     
     print(f"   ✅ Progressive NLL extraction complete")
     print(f"   🎯 Overall NLL: {overall_nll:.4f}")

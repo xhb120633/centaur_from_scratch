@@ -17,6 +17,10 @@ from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 import pickle
 
+# Root directory for our evaluation outputs (zero-shot, context-free, etc.)
+# Change this if your results live elsewhere.
+RESULTS_ROOT = Path(r"E:\reanalyzing_centaur")
+
 def load_pth_file(file_path: str) -> Optional[Dict[str, Any]]:
     """Load .pth file safely."""
     try:
@@ -36,8 +40,8 @@ def extract_zero_shot_nlls(dataset_name: str) -> Optional[np.ndarray]:
     
     # Try different file types in order of preference
     file_patterns = [
-        f"eval_results/{dataset_name}_detailed_evaluation_results.json",
-        f"eval_results/{dataset_name}_comprehensive_zero_shot_results.json"
+        RESULTS_ROOT / "eval_results" / f"{dataset_name}_detailed_evaluation_results.json",
+        RESULTS_ROOT / "eval_results" / f"{dataset_name}_comprehensive_zero_shot_results.json"
     ]
     
     for file_path in file_patterns:
@@ -91,7 +95,7 @@ def extract_zero_shot_nlls(dataset_name: str) -> Optional[np.ndarray]:
 
 def extract_context_free_nlls(dataset_name: str) -> Optional[np.ndarray]:
     """Extract trial-level NLLs from context-free evaluation results."""
-    file_path = f"context_free_eval/{dataset_name}_context_free_results.json"
+    file_path = RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"
     
     print(f"    Looking for context-free file: {file_path}")
     
@@ -207,7 +211,7 @@ def get_all_evaluated_datasets() -> List[str]:
     datasets = set()
     
     # From zero-shot evaluations
-    eval_results_dir = Path("eval_results")
+    eval_results_dir = RESULTS_ROOT / "eval_results"
     if eval_results_dir.exists():
         for file in eval_results_dir.glob("*_detailed_evaluation_results.json"):
             dataset_name = file.stem.replace("_detailed_evaluation_results", "")
@@ -220,7 +224,7 @@ def get_all_evaluated_datasets() -> List[str]:
             datasets.add(dataset_name)
     
     # From context-free evaluations
-    context_free_dir = Path("context_free_eval")
+    context_free_dir = RESULTS_ROOT / "context_free_eval"
     if context_free_dir.exists():
         for file in context_free_dir.glob("*_context_free_results.json"):
             dataset_name = file.stem.replace("_context_free_results", "")

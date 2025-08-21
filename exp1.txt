@@ -1,0 +1,89 @@
+from unsloth import FastLanguageModel
+from datasets import load_dataset
+import re
+from transformers import TrainingArguments
+from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
+from datasets import load_dataset
+import pandas as pd
+import argparse
+import torch
+import gc
+from tqdm import tqdm
+
+def parse_logits(logits, labels):
+    nll = torch.nn.functional.cross_entropy(logits, labels, reduction='none').cpu()
+    total_loss = []
+    item_loss = 0
+    item_counter = 0
+    for i in range(nll.shape[0]):
+        if labels[i] != -100:
+            item_loss += nll[i]
+            item_counter += 1
+        else:
+            if item_counter != 0:
+                total_loss.append(item_loss)
+                item_loss = 0
+                item_counter = 0
+    return torch.Tensor(total_loss)
+
+def tokenization(example, max_seq_length):
+    prompt = example['text']
+    tokenized = tokenizer([prompt], max_length=max_seq_length, truncation=True)
+    return tokenized
+
+def collate(example):
+    collated = collator(example['input_ids'])
+    return collated
+
+def add_prefix(example):
+
+    lines = example["text"].splitlines()
+    first  = lines[0] if len(lines) > 0 else ""
+    third  = lines[2] if len(lines) > 2 else ""
+
+    task_instructions = first.replace(" based on information about the amount of two other hormones, Progladine and Amalydine, in multiple individuals' urine", "") + '\n' + third + '\n\n'
+
+    pattern = r"You say that the Caldionine concentration is <<\s*.*?\s*>>\."
+
+    example["text"] = task_instructions + "\n".join(re.findall(pattern, example["text"])) + '\n'
+    return example
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+  model_name = 'marcelbinz/Llama-3.1-Centaur-70B-adapter',
+  max_seq_length = 32768,
+  dtype = None,
+  load_in_4bit = True,
+)
+l_id = tokenizer(" <<").input_ids[1:]
+r_id = tokenizer(">>").input_ids[1:]
+collator = DataCollatorForCompletionOnlyLM(response_template=l_id, instruction_template=r_id, tokenizer=tokenizer)
+
+print(l_id)
+print(r_id)
+
+dataset = load_dataset("marcelbinz/Psych-101-test")['test'].filter(lambda example: example['experiment'].startswith('collsiöö2023MCPL'))
+dataset = dataset.map(add_prefix)
+for point in dataset:
+    print(point['text'])
+    
+dataset = dataset.map(tokenization, num_proc=8, fn_kwargs={"max_seq_length": 32768})
+dataset = dataset.map(collate, num_proc=8)
+dataset.set_format(type="torch", columns=["input_ids", "attention_mask", "labels"], output_all_columns=True)
+
+nlls = {}
+with torch.no_grad():
+    for participant in tqdm(dataset):
+        model_outputs = model(participant['input_ids'].to(device), participant['attention_mask'].to(device), return_dict=True)
+        labels = participant['labels'][0, 1:].to(device)
+
+        participant_nll = parse_logits(model_outputs['logits'][0, :-1], labels)
+        nlls[participant['participant'] + "_" + participant['experiment']] = participant_nll
+
+        del labels
+        del model_outputs
+        torch.cuda.empty_cache()
+        gc.collect()
+
+    torch.save(nlls, 'exp1.pth')
