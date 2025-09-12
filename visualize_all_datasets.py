@@ -24,6 +24,8 @@ except ImportError:
     SCIENCEPLOTS_AVAILABLE = False
     print("⚠️ scienceplots not available - install with: pip install scienceplots")
 
+RESULTS_ROOT = Path(r"E:\reanalyzing_centaur")
+
 def extract_nll_from_results(results_file):
     """Extract NLL value from results file"""
     try:
@@ -289,7 +291,7 @@ def find_available_datasets():
     datasets = []
     
     # Check eval_results directory for zero-shot results
-    eval_dir = Path("eval_results")
+    eval_dir = RESULTS_ROOT / "eval_results"
     if eval_dir.exists():
         for file in eval_dir.glob("*_basic_evaluation_results.json"):
             dataset = file.stem.replace("_basic_evaluation_results", "")
@@ -302,12 +304,16 @@ def find_available_datasets():
                 datasets.append(dataset)
     
     # Check context_free_eval directory for history-only results
-    context_dir = Path("context_free_eval")
+    context_dir = RESULTS_ROOT / "context_free_eval"
     if context_dir.exists():
         for file in context_dir.glob("*_context_free_results.json"):
             dataset = file.stem.replace("_context_free_results", "")
             if dataset not in datasets:
                 datasets.append(dataset)
+        # Also include special Collsiöö file if present
+        special = context_dir / "collsioo2023MCPL_all_results_contextfree_sum.json"
+        if special.exists() and "collsioo2023MCPL_all" not in datasets:
+            datasets.append("collsioo2023MCPL_all")
     
     # Also check for datasets that have baselines even if no eval results
     baseline_datasets = ["ruggeri2022globalizability", "hilbig2014generalized", "wu2018generalisation_exp1", 
@@ -325,8 +331,8 @@ def process_dataset(dataset_name):
     print(f"{'='*60}")
     
     # Check for zero-shot results
-    zero_shot_basic = f"eval_results/{dataset_name}_basic_evaluation_results.json"
-    zero_shot_comprehensive = f"eval_results/{dataset_name}_comprehensive_zero_shot_results.json"
+    zero_shot_basic = RESULTS_ROOT / "eval_results" / f"{dataset_name}_basic_evaluation_results.json"
+    zero_shot_comprehensive = RESULTS_ROOT / "eval_results" / f"{dataset_name}_comprehensive_zero_shot_results.json"
     
     zero_shot_nll = None
     zero_shot_samples = 0
@@ -343,19 +349,27 @@ def process_dataset(dataset_name):
     if zero_shot_nll is None:
         print(f"   ❌ No zero-shot results found")
     
-    # Check for history-only results
-    history_only_file = f"context_free_eval/{dataset_name}_context_free_results.json"
-    
+    # Check for history-only results (with special-case preference)
+    if dataset_name == "collsioo2023MCPL_all":
+        cf_candidates = [
+            RESULTS_ROOT / "context_free_eval" / "collsioo2023MCPL_all_results_contextfree_sum.json",
+            RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
+        ]
+    else:
+        cf_candidates = [RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"]
+    history_only_file = None
+    for cand in cf_candidates:
+        if Path(cand).exists():
+            history_only_file = cand
+            break
     history_only_nll = None
     history_only_samples = 0
-    
-    if Path(history_only_file).exists():
+    if history_only_file and Path(history_only_file).exists():
         history_only_nll, history_only_samples = extract_nll_from_results(history_only_file)
         if history_only_nll is not None:
-            print(f"   ✅ Found history-only results: {history_only_nll:.4f} ({history_only_samples} samples)")
-    
+            print(f"   ✅ Found history-only results: {history_only_nll:.4f} ({history_only_samples} samples) from {history_only_file}")
     if history_only_nll is None:
-        print(f"   ❌ No history-only results found")
+        print(f"   ❌ No history-only results found (searched: {[str(p) for p in cf_candidates]})")
     
     # Create visualization if we have at least one result OR baseline data exists
     baselines = get_dataset_baselines(dataset_name)

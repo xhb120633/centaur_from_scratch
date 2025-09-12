@@ -1368,7 +1368,7 @@ def evaluate_wu2018_with_progressive_nll(model, tokenizer, dataset_list, conditi
     
     return overall_nll, len(valid_trial_nlls), basic_results, detailed_results
 
-def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condition_name, batch_size=4, debug_alignment=False, use_first_choice_token_only=False):
+def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condition_name, batch_size=4, debug_alignment=False, use_first_choice_token_only=False, choice_nll_aggregation: str = "average"):
     """
     Unified progressive NLL extraction for all datasets.
     One forward pass per participant, extract NLL for each choice token progressively.
@@ -1505,7 +1505,10 @@ def evaluate_with_progressive_nll_unified(model, tokenizer, dataset_list, condit
                             choice_nll = individual_token_nlls[0]
                             all_individual_token_nlls.append(individual_token_nlls[0])
                         else:
-                            choice_nll = sum(individual_token_nlls) / len(individual_token_nlls)
+                            if choice_nll_aggregation == "sum":
+                                choice_nll = sum(individual_token_nlls)
+                            else:
+                                choice_nll = sum(individual_token_nlls) / len(individual_token_nlls)
                             all_individual_token_nlls.extend(individual_token_nlls)
                     else:
                         choice_nll = float('inf')
@@ -1665,7 +1668,8 @@ def get_dataset_config(dataset_name):
     return configs[dataset_name]
 
 def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_size=4, skip_detailed_analysis=False,
-                                use_first_choice_token_only: bool = False, debug_alignment: bool = False):
+                                use_first_choice_token_only: bool = False, debug_alignment: bool = False,
+                                choice_nll_aggregation: str = "average"):
     """Evaluate Centaur on a set of prompts using progressive NLL extraction for all datasets"""
     print(f"🔍 Evaluating {model_name} on {condition_name}")
     print(f"   Using prompts: {prompts_file}")
@@ -1696,18 +1700,19 @@ def evaluate_centaur_on_prompts(model_name, prompts_file, condition_name, batch_
     # Use progressive NLL extraction for all datasets (simplified unified approach)
     nll, num_samples, basic_results, detailed_results = evaluate_with_progressive_nll_unified(
         model, tokenizer, dataset_list, condition_name, batch_size,
-        debug_alignment=debug_alignment, use_first_choice_token_only=use_first_choice_token_only
+        debug_alignment=debug_alignment, use_first_choice_token_only=use_first_choice_token_only,
+        choice_nll_aggregation=choice_nll_aggregation
     )
     
     return nll, num_samples, basic_results, detailed_results
 
-def create_comparison_plot(history_only_nll, dataset_config, task_name, output_file):
-    """Create comparison plot showing History-Only Centaur vs baselines"""
+def create_comparison_plot(our_nll, dataset_config, task_name, output_file, our_label):
+    """Create comparison plot showing our result vs baselines"""
     print(f"📊 Creating comparison plot...")
     
     # Build comparison data, filtering out None values
     comparison_data = [
-        {'Model': 'History-Only Centaur\n(Context-Free)', 'NLL': history_only_nll, 'Type': 'Our Approach'}
+        {'Model': our_label, 'NLL': our_nll, 'Type': 'Our Approach'}
     ]
     
     # Add baselines only if available
@@ -1768,7 +1773,7 @@ def create_comparison_plot(history_only_nll, dataset_config, task_name, output_f
     ax.set_axisbelow(True)
     
     # Add note
-    note_text = 'Note: History-Only evaluation uses behavioral patterns without task-specific context'
+    note_text = 'Note: Our result computed with selected prompt and NLL aggregation options'
     plt.figtext(0.02, 0.02, note_text, fontsize=7, style='italic', color='gray')
     
     plt.tight_layout()
@@ -1846,9 +1851,13 @@ def main():
     parser.add_argument('--skip-detailed-analysis', action='store_true',
                        help='Skip detailed per-trial analysis to avoid hanging (saves basic results only)')
     parser.add_argument('--run-original', action='store_true',
-                       help='Run original full-context evaluation (default: use existing baseline)')
+                       help='Only meaningful with --prompt-mode=context_free: also evaluate original full-context in this run. Ignored if --prompt-mode=centaur.')
     parser.add_argument('--use-first-choice-token-only', action='store_true',
-                       help='Score only the first token inside << >> for each choice (to mirror masked-loss behavior)')
+                       help='Score only the first token inside << >> for each choice (for diagnostics)')
+    parser.add_argument('--choice-nll-agg', type=str, choices=['average','sum'], default='average',
+                       help='Aggregate token NLLs within << >> by average (length-normalized) or sum (joint log-prob)')
+    parser.add_argument('--prompt-mode', type=str, choices=['context_free','centaur'], default='context_free',
+                       help='Use context_free (history-only minimal prompts) or centaur (original prompts)')
     
     args = parser.parse_args()
     
@@ -1874,7 +1883,11 @@ def main():
     eval_results_dir.mkdir(exist_ok=True)
     
     # Output files
-    history_only_file = eval_results_dir / f"{task_name}_history_only_prompts.jsonl"
+    # Suffixes for filenames reflecting options
+    prompt_suffix = 'centaur' if args.prompt_mode == 'centaur' else 'contextfree'
+    agg_suffix = 'sum' if args.choice_nll_agg == 'sum' else 'avg'
+
+    history_only_file = eval_results_dir / f"{task_name}_{prompt_suffix}_prompts.jsonl"
     
     print(f"📋 Configuration:")
     print(f"   Dataset: {task_name}")
@@ -1883,7 +1896,8 @@ def main():
     print(f"   Batch size: {args.batch_size}")
     print(f"   Original prompts: {original_prompts_file}")
     print(f"   History-only prompts: {history_only_file}")
-    print(f"   Token scoring: {'first token only' if args.use_first_choice_token_only else 'average over full span'}")
+    print(f"   Token scoring: {'first token only' if args.use_first_choice_token_only else args.choice_nll_agg} within << >>")
+    print(f"   Prompt mode: {args.prompt_mode}")
     print(f"   Original Centaur baseline: {'Will evaluate' if args.run_original else 'Use existing baseline'}")
     
     # Check if original prompts file(s) exist
@@ -1902,13 +1916,31 @@ def main():
             print(f"❌ Error: Original prompts file not found: {original_prompts_file}")
             return None
     
-    # Step 1: Create history-only prompts
-    print(f"\n=== Step 1: Create History-Only Prompts ===")
-    print(f"   Using dataset-specific parsing for: {task_name}")
-    
-    # Create history-only prompts
-    print("📝 Creating history-only prompts...")
-    history_only_prompts = create_history_only_prompts(original_prompts_file, history_only_file, task_name)
+    # Step 1: Prepare prompts per selected mode
+    if args.prompt_mode == 'centaur':
+        print(f"\n=== Step 1: Use Original Centaur Prompts ===")
+        # Simply copy/point to original prompts file(s)
+        if isinstance(original_prompts_file, list):
+            # Concatenate into a single file for unified processing
+            print("   Concatenating multiple original prompt files...")
+            with open(history_only_file, 'w') as out_f:
+                for src in original_prompts_file:
+                    with open(src, 'r') as in_f:
+                        for line in in_f:
+                            out_f.write(line)
+        else:
+            # Symlink or copy path by writing a passthrough file list
+            print("   Using single original prompt file as input")
+            # Create a lightweight copy to our eval dir to keep artifacts together
+            with open(original_prompts_file, 'r') as src_f, open(history_only_file, 'w') as dst_f:
+                for line in src_f:
+                    dst_f.write(line)
+        history_only_prompts = []  # We won't keep prompts in memory for centaur mode
+    else:
+        print(f"\n=== Step 1: Create History-Only Prompts ===")
+        print(f"   Using dataset-specific parsing for: {task_name}")
+        print("📝 Creating history-only prompts...")
+        history_only_prompts = create_history_only_prompts(original_prompts_file, history_only_file, task_name)
     
     # Step 2: Evaluate different conditions
     print(f"\n=== Step 2: Evaluate Different Conditions ===")
@@ -1918,9 +1950,11 @@ def main():
     # Evaluate history-only (our main focus)
     print("\n🔍 Evaluating History-Only condition...")
     # Use efficient evaluation for large datasets, detailed analysis otherwise
+    our_label = f"Our Result\n({args.prompt_mode}, {agg_suffix})"
     history_nll, history_samples, history_basic, history_detailed = evaluate_centaur_on_prompts(
-        args.model_name, history_only_file, "History-Only", args.batch_size, args.skip_detailed_analysis,
-        use_first_choice_token_only=args.use_first_choice_token_only, debug_alignment=False
+        args.model_name, history_only_file, our_label, args.batch_size, args.skip_detailed_analysis,
+        use_first_choice_token_only=args.use_first_choice_token_only, debug_alignment=False,
+        choice_nll_aggregation=args.choice_nll_agg
     )
     results_dict['History-Only'] = {
         'nll': history_nll, 
@@ -1955,8 +1989,8 @@ def main():
     # Step 3: Create comparison plot
     print(f"\n=== Step 3: Create Comparison Plot ===")
     try:
-        plot_file = eval_results_dir / f"{task_name}_context_free_comparison_{scoring_suffix}.png"
-        comparison_data = create_comparison_plot(history_nll, dataset_config, task_name, plot_file)
+        plot_file = eval_results_dir / f"{task_name}_comparison_{prompt_suffix}_{agg_suffix}.png"
+        comparison_data = create_comparison_plot(history_nll, dataset_config, task_name, plot_file, our_label)
     except Exception as e:
         print(f"   ❌ Error creating comparison plot: {e}")
         print(f"   ⚠️  Continuing without plot...")
@@ -1974,6 +2008,12 @@ def main():
     cognitive_models_nll = dataset_config['cognitive_nll']
     random_nll = dataset_config['random_nll']
     
+    token_scoring_mode = (
+        'first_token_only' if args.use_first_choice_token_only else (
+            'full_span_sum' if args.choice_nll_agg == 'sum' else 'full_span_average'
+        )
+    )
+
     comprehensive_results = {
         'metadata': {
             'evaluation_date': datetime.now().isoformat(),
@@ -1983,11 +2023,12 @@ def main():
             'model_name': model_name,
             'original_prompts_file': original_prompts_file,
             'history_only_prompts_file': str(history_only_file),
-            'method': 'Context-free evaluation with behavioral history only',
-            'difference': 'Removes task-specific context, keeps behavioral patterns',
+            'method': f'Evaluation with selected prompt mode ({args.prompt_mode}) and token scoring aggregation ({args.choice_nll_agg})',
+            'difference': 'context_free removes task-specific context; centaur uses original prompts',
             'parsing_method': f'Dataset-specific parsing for {task_name}',
             'purpose': 'Test whether Centaur captures cognitive patterns vs superficial behavioral patterns',
-            'token_scoring_mode': 'first_token_only' if args.use_first_choice_token_only else 'full_span_average'
+            'token_scoring_mode': token_scoring_mode,
+            'prompt_mode': args.prompt_mode
         },
         'prompt_data': {
             'original_prompts_count': len(history_only_prompts),
@@ -2001,7 +2042,7 @@ def main():
                 'nll': history_nll,
                 'basic_results': history_basic,
                 'detailed_results': history_detailed,
-                'token_scoring_mode': 'first_token_only' if args.use_first_choice_token_only else 'full_span_average',
+                'token_scoring_mode': token_scoring_mode,
                 'trial_specific_data': {
                     'description': 'Individual NLL for each choice prediction',
                     'total_trials': len(history_detailed['per_trial_results']) if history_detailed and 'per_trial_results' in history_detailed else 0,
@@ -2069,8 +2110,8 @@ def main():
             'detailed_results': results_dict['Original (Full Context)'].get('detailed_results')
         }
     
-    suffix = scoring_suffix
-    results_file = eval_results_dir / f"{task_name}_context_free_results_{suffix}.json"
+    suffix = f"{prompt_suffix}_{agg_suffix}"
+    results_file = eval_results_dir / f"{task_name}_results_{suffix}.json"
     try:
         with open(results_file, 'w') as f:
             json.dump(comprehensive_results, f, indent=2)

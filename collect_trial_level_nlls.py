@@ -94,20 +94,34 @@ def extract_zero_shot_nlls(dataset_name: str) -> Optional[np.ndarray]:
     return None
 
 def extract_context_free_nlls(dataset_name: str) -> Optional[np.ndarray]:
-    """Extract trial-level NLLs from context-free evaluation results."""
-    file_path = RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"
-    
-    print(f"    Looking for context-free file: {file_path}")
-    
-    if not Path(file_path).exists():
-        print(f"    Context-free file not found: {file_path}")
+    """Extract trial-level NLLs from context-free (or selected) evaluation results."""
+    # Prefer explicit file for Collsiöö tasks if requested/available
+    if dataset_name == "collsioo2023MCPL_all":
+        candidates = [
+            RESULTS_ROOT / "context_free_eval" / "collsioo2023MCPL_all_results_contextfree_sum.json",
+            RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
+        ]
+    else:
+        candidates = [
+            RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
+        ]
+
+    file_path = None
+    for cand in candidates:
+        if Path(cand).exists():
+            file_path = cand
+            break
+
+    print(f"    Looking for context-free file among: {[str(c) for c in candidates]}")
+    if file_path is None:
+        print("    Context-free file not found in candidates")
         return None
-    
+
     try:
         with open(file_path, 'r') as f:
             data = json.load(f)
         
-        print(f"    Context-free file loaded successfully")
+        print(f"    Loaded: {file_path}")
         
         nlls = []
         
@@ -282,11 +296,11 @@ def collect_all_trial_nlls():
     print("="*80)
     
     # Load original data
-    baseline_path = "original/results/custom_metrics_full_log_likelihoods_baselines.pth"
-    centaur_path = "original/results/custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth"
+    baseline_path = RESULTS_ROOT / "original" / "results" / "custom_metrics_full_log_likelihoods_baselines.pth"
+    centaur_path = RESULTS_ROOT / "original" / "results" / "custom_metrics_full_log_likelihoods_marcelbinz-Llama-3.1-Centaur-70B-adapter.pth"
     
-    baseline_data = load_pth_file(baseline_path) if Path(baseline_path).exists() else None
-    centaur_data = load_pth_file(centaur_path) if Path(centaur_path).exists() else None
+    baseline_data = load_pth_file(str(baseline_path)) if Path(baseline_path).exists() else None
+    centaur_data = load_pth_file(str(centaur_path)) if Path(centaur_path).exists() else None
     
     print(f"Baseline data loaded: {baseline_data is not None}")
     print(f"Centaur data loaded: {centaur_data is not None}")

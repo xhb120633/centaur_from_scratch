@@ -3,15 +3,15 @@
     "counts": {
       "zero_shot": 0,
       "context_free": 6136,
-      "baseline": 6136,
-      "original_centaur": 6136,
+      "baseline": 0,
+      "original_centaur": 0,
       "random_baseline": 6136
     },
     "has_data": {
       "zero_shot": false,
       "context_free": true,
-      "baseline": true,
-      "original_centaur": true,
+      "baseline": false,
+      "original_centaur": false,
       "random_baseline": true
     },
     "theoretical_random_nll": 2.1972245773362196
@@ -37,15 +37,15 @@
     "counts": {
       "zero_shot": 265640,
       "context_free": 265640,
-      "baseline": 265640,
-      "original_centaur": 242647,
+      "baseline": 0,
+      "original_centaur": 0,
       "random_baseline": 265640
     },
     "has_data": {
       "zero_shot": true,
       "context_free": true,
-      "baseline": true,
-      "original_centaur": true,
+      "baseline": false,
+      "original_centaur": false,
       "random_baseline": true
     },
     "theoretical_random_nll": 1.0986122886681098
@@ -54,15 +54,15 @@
     "counts": {
       "zero_shot": 576,
       "context_free": 576,
-      "baseline": 576,
-      "original_centaur": 576,
+      "baseline": 0,
+      "original_centaur": 0,
       "random_baseline": 576
     },
     "has_data": {
       "zero_shot": true,
       "context_free": true,
-      "baseline": true,
-      "original_centaur": true,
+      "baseline": false,
+      "original_centaur": false,
       "random_baseline": true
     },
     "theoretical_random_nll": 0.6931471805599453
@@ -71,15 +71,15 @@
     "counts": {
       "zero_shot": 15421,
       "context_free": 15421,
-      "baseline": 15421,
-      "original_centaur": 15421,
+      "baseline": 0,
+      "original_centaur": 0,
       "random_baseline": 15421
     },
     "has_data": {
       "zero_shot": true,
       "context_free": true,
-      "baseline": true,
-      "original_centaur": true,
+      "baseline": false,
+      "original_centaur": false,
       "random_baseline": true
     },
     "theoretical_random_nll": 0.6931471805599453
@@ -88,15 +88,15 @@
     "counts": {
       "zero_shot": 0,
       "context_free": 360,
-      "baseline": 408,
-      "original_centaur": 360,
-      "random_baseline": 408
+      "baseline": 0,
+      "original_centaur": 0,
+      "random_baseline": 360
     },
     "has_data": {
       "zero_shot": false,
       "context_free": true,
-      "baseline": true,
-      "original_centaur": true,
+      "baseline": false,
+      "original_centaur": false,
       "random_baseline": true
     },
     "theoretical_random_nll": 3.4011973816621555

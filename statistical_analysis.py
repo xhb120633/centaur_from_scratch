@@ -23,6 +23,8 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+RESULTS_ROOT = Path(r"E:\reanalyzing_centaur")
+
 def extract_trial_level_nlls(results_file, evaluation_type):
     """Extract trial-level NLL data from evaluation results"""
     try:
@@ -201,9 +203,21 @@ def analyze_dataset(dataset_name):
     dataset_info = get_dataset_info(dataset_name)
     
     # Load our evaluation results
-    zero_shot_file = f"eval_results/{dataset_name}_comprehensive_zero_shot_results.json"
-    zero_shot_basic = f"eval_results/{dataset_name}_basic_evaluation_results.json"
-    context_free_file = f"context_free_eval/{dataset_name}_context_free_results.json"
+    zero_shot_file = RESULTS_ROOT / "eval_results" / f"{dataset_name}_comprehensive_zero_shot_results.json"
+    zero_shot_basic = RESULTS_ROOT / "eval_results" / f"{dataset_name}_basic_evaluation_results.json"
+    # Prefer explicit file for Collsiöö tasks if available
+    if dataset_name == "collsioo2023MCPL_all":
+        cf_candidates = [
+            RESULTS_ROOT / "context_free_eval" / "collsioo2023MCPL_all_results_contextfree_sum.json",
+            RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
+        ]
+    else:
+        cf_candidates = [RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"]
+    context_free_file = None
+    for cand in cf_candidates:
+        if cand.exists():
+            context_free_file = cand
+            break
     
     # Extract trial-level data
     zero_shot_nlls = None
@@ -211,7 +225,7 @@ def analyze_dataset(dataset_name):
     
     # Try to load zero-shot data
     if Path(zero_shot_file).exists():
-        zero_shot_nlls = extract_trial_level_nlls(zero_shot_file, "zero_shot")
+        zero_shot_nlls = extract_trial_level_nlls(str(zero_shot_file), "zero_shot")
         if zero_shot_nlls is not None:
             print(f"   ✅ Loaded zero-shot data: {len(zero_shot_nlls)} trials")
     elif Path(zero_shot_basic).exists():
@@ -220,12 +234,12 @@ def analyze_dataset(dataset_name):
         print(f"   ❌ No zero-shot results found")
     
     # Try to load context-free data
-    if Path(context_free_file).exists():
-        context_free_nlls = extract_trial_level_nlls(context_free_file, "context_free")
+    if context_free_file and Path(context_free_file).exists():
+        context_free_nlls = extract_trial_level_nlls(str(context_free_file), "context_free")
         if context_free_nlls is not None:
-            print(f"   ✅ Loaded context-free data: {len(context_free_nlls)} trials")
+            print(f"   ✅ Loaded context-free data: {len(context_free_nlls)} trials from {context_free_file}")
     else:
-        print(f"   ❌ No context-free results found")
+        print(f"   ❌ No context-free results found (searched: {[str(p) for p in cf_candidates]})")
     
     # Load baseline data (this would need to be implemented based on the original baseline files)
     # For now, we'll use the aggregate metrics and simulate trial data if needed
@@ -452,8 +466,8 @@ def main():
     datasets = []
     
     # Check for datasets with results
-    eval_dir = Path("eval_results")
-    context_dir = Path("context_free_eval")
+    eval_dir = RESULTS_ROOT / "eval_results"
+    context_dir = RESULTS_ROOT / "context_free_eval"
     
     if eval_dir.exists():
         for file in eval_dir.glob("*_comprehensive_zero_shot_results.json"):
