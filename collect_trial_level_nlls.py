@@ -102,9 +102,15 @@ def extract_context_free_nlls(dataset_name: str) -> Optional[np.ndarray]:
             RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
         ]
     else:
-        candidates = [
-            RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json",
-        ]
+        candidates = [RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"]
+        # Also consider new naming pattern: {dataset}_results_contextfree_{avg|sum}.json
+        try:
+            globbed = list((RESULTS_ROOT / "context_free_eval").glob(f"{dataset_name}_results_contextfree_*.json"))
+            # Sort by modified time descending to prefer the latest
+            globbed = sorted(globbed, key=lambda p: p.stat().st_mtime, reverse=True)
+            candidates = globbed + candidates
+        except Exception:
+            pass
 
     file_path = None
     for cand in candidates:
@@ -263,6 +269,13 @@ def get_all_evaluated_datasets() -> List[str]:
 def get_random_nll_for_dataset(dataset_name: str) -> float:
     """Get the theoretical random guessing NLL for each dataset."""
     random_nlls = {
+        "predictive_rl_exp1": 0.6931471805599453,            # ln(2)
+        "wcst_predictive": 1.3862943611198906,               # ln(4)
+        "wilson2014humans_all": 0.6931471805599453,          # ln(2)
+        "wilson2014humans_exp1": 0.6931471805599453,         # ln(2)
+        "wilson2014humans_exp3": 0.6931471805599453,         # ln(2)
+        "wilson2014humans_exp4": 0.6931471805599453,         # ln(2)
+        "wilson2014humans_exp5": 0.6931471805599453,         # ln(2)
         "ruggeri2022globalizability": 0.6931471805599453,  # ln(2) for binary choice
         "hilbig2014generalized": 0.6931471805599453,       # ln(2) for binary choice  
         "hebart2023things": 1.0986122886681098,            # ln(3) for 3-choice

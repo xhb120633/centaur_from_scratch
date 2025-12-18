@@ -70,6 +70,48 @@ def extract_nll_from_results(results_file):
 def get_dataset_baselines(dataset_name):
     """Get baseline values for a dataset"""
     baselines = {
+        "predictive_rl_exp1": {
+            "original_centaur": None,            # computed dynamically in "both" mode if available
+            "cognitive_models": 0.4253,
+            "random": 0.6931471805599453,
+            "description": "Reversal Learning Task (Sequential)"
+        },
+        "wcst_predictive": {
+            "original_centaur": None,            # not established
+            "cognitive_models": 0.871,
+            "random": 1.3862943611198906,        # ln(4)
+            "description": "Wisconsin Card Sorting Task (Sequential)"
+        },
+        "wilson2014humans_all": {
+            "original_centaur": 0.4487724900245666,
+            "cognitive_models": 0.5560149825576917,
+            "random": 0.6931471805599453,
+            "description": "Horizon Task (Sequential)"
+        },
+        "wilson2014humans_exp1": {
+            "original_centaur": 0.4487724900245666,
+            "cognitive_models": 0.5560149825576917,
+            "random": 0.6931471805599453,
+            "description": "Horizon Task (Sequential)"
+        },
+        "wilson2014humans_exp3": {
+            "original_centaur": 0.4487724900245666,
+            "cognitive_models": 0.5560149825576917,
+            "random": 0.6931471805599453,
+            "description": "Horizon Task (Sequential)"
+        },
+        "wilson2014humans_exp4": {
+            "original_centaur": 0.4487724900245666,
+            "cognitive_models": 0.5560149825576917,
+            "random": 0.6931471805599453,
+            "description": "Horizon Task (Sequential)"
+        },
+        "wilson2014humans_exp5": {
+            "original_centaur": 0.4487724900245666,
+            "cognitive_models": 0.5560149825576917,
+            "random": 0.6931471805599453,
+            "description": "Horizon Task (Sequential)"
+        },
         "ruggeri2022globalizability": {
             "original_centaur": 0.4382756948471069,
             "cognitive_models": 0.6590430736541748,
@@ -107,6 +149,13 @@ def get_dataset_baselines(dataset_name):
 def get_dataset_title(dataset_name):
     """Get appropriate title for each dataset"""
     titles = {
+        "predictive_rl_exp1": "Reversal Learning Task (Sequential)\nPredictive RL",
+        "wcst_predictive": "Wisconsin Card Sorting Task (Sequential)\nWCST",
+        "wilson2014humans_all": "Horizon Task (Sequential)\nWilson et al., 2014",
+        "wilson2014humans_exp1": "Horizon Task (Sequential, Exp 1)\nWilson et al., 2014",
+        "wilson2014humans_exp3": "Horizon Task (Sequential, Exp 3)\nWilson et al., 2014",
+        "wilson2014humans_exp4": "Horizon Task (Sequential, Exp 4)\nWilson et al., 2014",
+        "wilson2014humans_exp5": "Horizon Task (Sequential, Exp 5)\nWilson et al., 2014",
         "ruggeri2022globalizability": "Inter-temporal Choice (Non-sequential)\nRuggeri et al., 2022",
         "hilbig2014generalized": "Multi-attributes decision-making (Non-sequential)\nHilbig et al., 2014",
         "wu2018generalisation_exp1": "Spatially correlated multi-armed bandit task (Sequential)\nWu et al., 2018", 
@@ -117,7 +166,7 @@ def get_dataset_title(dataset_name):
     return titles.get(dataset_name, f"Dataset: {dataset_name.replace('_', ' ').title()}")
 
 def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll=None, 
-                             output_dir="all_datasets_plots"):
+                             output_dir="all_datasets_plots", original_override: float = None):
     """Create comprehensive comparison plot for a dataset"""
     print(f"📊 Creating plot for {dataset_name}")
     
@@ -126,6 +175,9 @@ def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll
     if not baselines:
         print(f"   ❌ No baselines available for {dataset_name}")
         return None
+    # Allow dynamic override of Original Centaur (e.g., from 'both' runs written by evaluate_history_only_centaur.py)
+    if original_override is not None:
+        baselines['original_centaur'] = original_override
     
     # Map datasets to specific cognitive model names
     cognitive_model_names = {
@@ -133,7 +185,14 @@ def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll
         "collsioo2023MCPL_all": "Cognitive Models\n(Linear regression)",
         "hilbig2014generalized": "Cognitive Models\n(Weighted additive)",
         "hebart2023things": "Cognitive Models\n(Odd-one-out)",
-        "wu2018generalisation_exp1": "Cognitive Models\n(GP-UCB)"
+        "wu2018generalisation_exp1": "Cognitive Models\n(GP-UCB)",
+        "predictive_rl_exp1": "Cognitive Models\n(Reversal Learning)",
+        "wilson2014humans_all": "Cognitive Models\n(Horizon Task)",
+        "wilson2014humans_exp1": "Cognitive Models\n(Horizon Task)",
+        "wilson2014humans_exp3": "Cognitive Models\n(Horizon Task)",
+        "wilson2014humans_exp4": "Cognitive Models\n(Horizon Task)",
+        "wilson2014humans_exp5": "Cognitive Models\n(Horizon Task)",
+        "wcst_predictive": "Cognitive Models\n(WCST)"
     }
     
     cognitive_label = cognitive_model_names.get(dataset_name, "Cognitive\nModels")
@@ -141,21 +200,23 @@ def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll
     # Build comparison data with fixed ordering: Centaur, Cog Model, Context-free, Zero-shot
     comparison_data = []
     
-    # 1. Original Centaur (always first)
-    comparison_data.append({
-        'Model': 'Original\nCentaur', 
-        'NLL': baselines['original_centaur'], 
-        'Type': 'Published Paper',
-        'Method': 'Original'
-    })
+    # 1. Original Centaur (if available)
+    if 'original_centaur' in baselines and baselines['original_centaur'] is not None:
+        comparison_data.append({
+            'Model': 'Original\nCentaur', 
+            'NLL': baselines['original_centaur'], 
+            'Type': 'Published Paper',
+            'Method': 'Original'
+        })
     
-    # 2. Cognitive Models (always second) - with specific model name
-    comparison_data.append({
-        'Model': cognitive_label, 
-        'NLL': baselines['cognitive_models'], 
-        'Type': 'Published Paper',
-        'Method': 'Cognitive'
-    })
+    # 2. Cognitive Models (if available) - with specific model name
+    if 'cognitive_models' in baselines and baselines['cognitive_models'] is not None:
+        comparison_data.append({
+            'Model': cognitive_label, 
+            'NLL': baselines['cognitive_models'], 
+            'Type': 'Published Paper',
+            'Method': 'Cognitive'
+        })
     
     # 3. Context-free (if available)
     if history_only_nll is not None:
@@ -214,25 +275,31 @@ def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll
     ax.set_xticklabels(comp_df['Model'], rotation=0, ha='center', fontsize=6.5)
     
     # Smart Y-axis handling for random baseline
-    random_nll = baselines['random']
+    random_nll = baselines.get('random', None)
     model_nlls = comp_df['NLL'].tolist()
     max_model_nll = max(model_nlls)
     min_model_nll = min(model_nlls)
     model_range = max_model_nll - min_model_nll
-    
     # Set intelligent y-limits
-    y_bottom = max(0, min_model_nll - 0.1 * model_range)
-    y_top = max(random_nll + 0.05 * random_nll, max_model_nll + 0.15 * model_range)
-    ax.set_ylim(y_bottom, y_top)
-    
-    # Add random baseline line
-    ax.axhline(y=random_nll, color='gray', linestyle='--', linewidth=1.8, alpha=0.7)
-    ax.text(len(comp_df)/2 - 1.0, random_nll + (y_top - y_bottom) * 0.03, 'Random guessing', 
-           fontsize=8, color='gray', horizontalalignment='center', verticalalignment='bottom', fontweight='bold')
+    if random_nll is not None:
+        y_bottom = max(0, min_model_nll - 0.1 * model_range)
+        y_top = max(random_nll + 0.05 * random_nll, max_model_nll + 0.15 * model_range)
+        ax.set_ylim(y_bottom, y_top)
+        # Add random baseline line
+        ax.axhline(y=random_nll, color='gray', linestyle='--', linewidth=1.8, alpha=0.7)
+        ax.text(len(comp_df)/2 - 1.0, random_nll + (y_top - y_bottom) * 0.03, 'Random guessing', 
+               fontsize=8, color='gray', horizontalalignment='center', verticalalignment='bottom', fontweight='bold')
+    else:
+        y_bottom = max(0, min_model_nll - 0.1 * model_range)
+        y_top = max_model_nll + 0.15 * model_range
+        ax.set_ylim(y_bottom, y_top)
     
     # Smart Y-axis tick spacing if random is much higher
-    random_gap = random_nll - max_model_nll
-    if random_gap > 0.5:
+    if random_nll is not None:
+        random_gap = random_nll - max_model_nll
+    else:
+        random_gap = 0.0
+    if random_nll is not None and random_gap > 0.5:
         # Dense ticks in model comparison range
         model_ticks = np.linspace(min_model_nll, max_model_nll, 4)
         # Add random baseline and one intermediate
@@ -310,14 +377,30 @@ def find_available_datasets():
             dataset = file.stem.replace("_context_free_results", "")
             if dataset not in datasets:
                 datasets.append(dataset)
+        # New naming pattern: {dataset}_results_contextfree_{avg|sum}.json
+        for file in context_dir.glob("*_results_contextfree_*.json"):
+            stem = file.stem
+            # Split at the first occurrence of the suffix marker
+            if "_results_contextfree_" in stem:
+                dataset = stem.split("_results_contextfree_", 1)[0]
+                if dataset and dataset not in datasets:
+                    datasets.append(dataset)
         # Also include special Collsiöö file if present
         special = context_dir / "collsioo2023MCPL_all_results_contextfree_sum.json"
         if special.exists() and "collsioo2023MCPL_all" not in datasets:
             datasets.append("collsioo2023MCPL_all")
     
     # Also check for datasets that have baselines even if no eval results
-    baseline_datasets = ["ruggeri2022globalizability", "hilbig2014generalized", "wu2018generalisation_exp1", 
-                        "collsioo2023MCPL_all", "hebart2023things"]
+    baseline_datasets = [
+        "predictive_rl_exp1",
+        "wcst_predictive",
+        "wilson2014humans_all",
+        "ruggeri2022globalizability",
+        "hilbig2014generalized",
+        "wu2018generalisation_exp1", 
+        "collsioo2023MCPL_all",
+        "hebart2023things"
+    ]
     for dataset in baseline_datasets:
         if dataset not in datasets:
             datasets.append(dataset)
@@ -357,6 +440,10 @@ def process_dataset(dataset_name):
         ]
     else:
         cf_candidates = [RESULTS_ROOT / "context_free_eval" / f"{dataset_name}_context_free_results.json"]
+        # Add new naming pattern files and prefer the most recent
+        globbed = list((RESULTS_ROOT / "context_free_eval").glob(f"{dataset_name}_results_contextfree_*.json"))
+        globbed = sorted(globbed, key=lambda p: p.stat().st_mtime, reverse=True)
+        cf_candidates = globbed + cf_candidates
     history_only_file = None
     for cand in cf_candidates:
         if Path(cand).exists():
@@ -364,17 +451,40 @@ def process_dataset(dataset_name):
             break
     history_only_nll = None
     history_only_samples = 0
+    original_override = None
     if history_only_file and Path(history_only_file).exists():
-        history_only_nll, history_only_samples = extract_nll_from_results(history_only_file)
-        if history_only_nll is not None:
-            print(f"   ✅ Found history-only results: {history_only_nll:.4f} ({history_only_samples} samples) from {history_only_file}")
+        # Prefer extracting both context-free and original (if present) from comprehensive results
+        try:
+            with open(history_only_file, 'r') as f:
+                data = json.load(f)
+            if isinstance(data, dict) and 'evaluation_results' in data:
+                ev = data['evaluation_results']
+                if 'context_free_centaur' in ev and isinstance(ev['context_free_centaur'], dict):
+                    history_only_nll = ev['context_free_centaur'].get('nll', history_only_nll)
+                    if 'detailed_results' in ev['context_free_centaur']:
+                        details = ev['context_free_centaur']['detailed_results']
+                        if isinstance(details, dict) and 'summary_statistics' in details:
+                            history_only_samples = details['summary_statistics'].get('valid_trials', 0)
+                if 'original_full_context' in ev and isinstance(ev['original_full_context'], dict):
+                    original_override = ev['original_full_context'].get('nll', original_override)
+            if history_only_nll is None:
+                # Fallback to generic extractor
+                history_only_nll, history_only_samples = extract_nll_from_results(history_only_file)
+            if history_only_nll is not None:
+                print(f"   ✅ Found history-only results: {history_only_nll:.4f} ({history_only_samples} samples) from {history_only_file}")
+            if original_override is not None:
+                print(f"   ✅ Found original (full-context) NLL in same file: {original_override:.4f}")
+        except Exception as e:
+            print(f"   ⚠️ Could not parse comprehensive results from {history_only_file}: {e}")
+            # Fallback to old behavior
+            history_only_nll, history_only_samples = extract_nll_from_results(history_only_file)
     if history_only_nll is None:
         print(f"   ❌ No history-only results found (searched: {[str(p) for p in cf_candidates]})")
     
     # Create visualization if we have at least one result OR baseline data exists
     baselines = get_dataset_baselines(dataset_name)
     if zero_shot_nll is not None or history_only_nll is not None or baselines:
-        comparison_data = create_comprehensive_plot(dataset_name, zero_shot_nll, history_only_nll)
+        comparison_data = create_comprehensive_plot(dataset_name, zero_shot_nll, history_only_nll, original_override=original_override)
         
         # Show quick analysis
         print(f"   📊 Quick Analysis:")

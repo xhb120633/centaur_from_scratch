@@ -1,0 +1,2006 @@
+{
+  "summary": {
+    "main_test_tasks": 75,
+    "generalization_tasks": 3,
+    "held_out_tasks": 6,
+    "zero_shot_tasks": 2,
+    "total_tasks": 86
+  },
+  "main_test_tasks": [
+    {
+      "task_name": "badham2017deficits/exp1.csv",
+      "clean_name": "badham2017deficits_exp1",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/badham2017deficits_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 29167,
+        "num_you_press": 384,
+        "num_i_press": 0,
+        "num_choice_tokens": 384,
+        "contains_history": true,
+        "first_100_chars": "You will be shown several examples of geometric objects.\nYour task is to learn a rule that allows yo",
+        "last_100_chars": "e correct category is N.\nYou see a small black triangle. You press <<N>>. The correct category is N."
+      }
+    },
+    {
+      "task_name": "bahrami2020four/exp.csv",
+      "clean_name": "bahrami2020four_exp",
+      "num_samples": 96,
+      "output_file": "datasets/main_test_tasks/bahrami2020four_exp.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 5729,
+        "num_you_press": 147,
+        "num_i_press": 0,
+        "num_choice_tokens": 147,
+        "contains_history": true,
+        "first_100_chars": "You will be asked to repeatedly choose between four different options labeled E, X, O, and S.\nYou se",
+        "last_100_chars": "<<O>> and get 70.0 points.\nYou press <<O>> and get 60.0 points.\nYou press <<O>> and get 56.0 points."
+      }
+    },
+    {
+      "task_name": "collsi\u00f6\u00f62023MCPL/exp1.csv",
+      "clean_name": "collsi\u00f6\u00f62023MCPL_exp1",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/collsi\u00f6\u00f62023MCPL_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 39684,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 280,
+        "contains_history": false,
+        "first_100_chars": "Your task is to estimate the blood concentration of the hormone Caldionine based on information abou",
+        "last_100_chars": "ation is <<40>>. \nProgladine: 1. Amalydine: 1. You say that the Caldionine concentration is <<50>>. "
+      }
+    },
+    {
+      "task_name": "collsi\u00f6\u00f62023MCPL/exp2.csv",
+      "clean_name": "collsi\u00f6\u00f62023MCPL_exp2",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/collsi\u00f6\u00f62023MCPL_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 42415,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 280,
+        "contains_history": false,
+        "first_100_chars": "Your task is to estimate the blood concentration of the hormone Caldionine based on information abou",
+        "last_100_chars": "<normal>>. \nProgladine: 4. Amalydine: 1. You say that the Caldionine concentration is <<very low>>. "
+      }
+    },
+    {
+      "task_name": "collsi\u00f6\u00f62023MCPL/exp3.csv",
+      "clean_name": "collsi\u00f6\u00f62023MCPL_exp3",
+      "num_samples": 12,
+      "output_file": "datasets/main_test_tasks/collsi\u00f6\u00f62023MCPL_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 24674,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 138,
+        "contains_history": false,
+        "first_100_chars": "Your task is to estimate the blood concentration of the hormone Caldionine based on information abou",
+        "last_100_chars": "extremely high>>. That is correct. The correct concentration of Caldionine is indeed extremely high."
+      }
+    },
+    {
+      "task_name": "cox2017information/exp1.csv",
+      "clean_name": "cox2017information_exp1",
+      "num_samples": 38,
+      "output_file": "datasets/main_test_tasks/cox2017information_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 20125,
+        "num_you_press": 180,
+        "num_i_press": 0,
+        "num_choice_tokens": 254,
+        "contains_history": true,
+        "first_100_chars": "You study the following 20 word pairs:\nAPPLE, FAIRLY\nCHALLENGE, GLANCE\nWOODEN, PERFECTLY\nPOCKET, SUF",
+        "last_100_chars": "u press <<A>>.\nYou view the word EXPRESS. You press <<K>>.\nYou view the word DRIED. You press <<A>>."
+      }
+    },
+    {
+      "task_name": "enkavi2019adaptivenback/exp1.csv",
+      "clean_name": "enkavi2019adaptivenback_exp1",
+      "num_samples": 52,
+      "output_file": "datasets/main_test_tasks/enkavi2019adaptivenback_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 16812,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 406,
+        "contains_history": false,
+        "first_100_chars": "You will view a stream of letters on the screen, one letter at a time.\nAt the beginning of a block, ",
+        "last_100_chars": "tter T and press <<T>>.\nYou see the letter b and press <<T>>.\nYou see the letter B and press <<T>>.\n"
+      }
+    },
+    {
+      "task_name": "enkavi2019digitspan/exp1.csv",
+      "clean_name": "enkavi2019digitspan_exp1",
+      "num_samples": 50,
+      "output_file": "datasets/main_test_tasks/enkavi2019digitspan_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 12255,
+        "num_you_press": 236,
+        "num_i_press": 0,
+        "num_choice_tokens": 236,
+        "contains_history": true,
+        "first_100_chars": "\nYou will view a series of digits and are then asked to recall them in the order you have seen them ",
+        "last_100_chars": "ou press <<5>>.\nYou press <<8>>.\nYou press <<2>>.\nYou press <<5>>.\nYou press <<8>>.\nYou press <<G>>."
+      }
+    },
+    {
+      "task_name": "enkavi2019gonogo/exp1.csv",
+      "clean_name": "enkavi2019gonogo_exp1",
+      "num_samples": 59,
+      "output_file": "datasets/main_test_tasks/enkavi2019gonogo_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 15869,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 322,
+        "contains_history": false,
+        "first_100_chars": "In this task, you need to emit responses to certain stimuli and omit responses to others.\nYou will s",
+        "last_100_chars": "in 334.0ms.\nYou see colour1 and press <<X>> in 448.0ms.\nYou see colour1 and press <<X>> in 324.0ms.\n"
+      }
+    },
+    {
+      "task_name": "enkavi2019recentprobes/exp1.csv",
+      "clean_name": "enkavi2019recentprobes_exp1",
+      "num_samples": 51,
+      "output_file": "datasets/main_test_tasks/enkavi2019recentprobes_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7634,
+        "num_you_press": 73,
+        "num_i_press": 0,
+        "num_choice_tokens": 73,
+        "contains_history": true,
+        "first_100_chars": "You will repeatedly observe sequences of six letters.\nYou have to remember these letters before they",
+        "last_100_chars": " U. You press <<L>>.\nYou are shown the letters ['Z', 'C', 'N', 'W', 'E', 'P']. You see the letter U."
+      }
+    },
+    {
+      "task_name": "feng2021dynamics/exp1.csv",
+      "clean_name": "feng2021dynamics_exp1",
+      "num_samples": 3,
+      "output_file": "datasets/main_test_tasks/feng2021dynamics_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 116672,
+        "num_you_press": 1120,
+        "num_i_press": 0,
+        "num_choice_tokens": 1120,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled R and A.\nThe two slot m",
+        "last_100_chars": "d get 27 points.\nYou are instructed to press A and get 25 points.\nYou press <<A>> and get 39 points."
+      }
+    },
+    {
+      "task_name": "flesch2018comparing/exp1.csv",
+      "clean_name": "flesch2018comparing_exp1",
+      "num_samples": 22,
+      "output_file": "datasets/main_test_tasks/flesch2018comparing_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 98895,
+        "num_you_press": 600,
+        "num_i_press": 0,
+        "num_choice_tokens": 600,
+        "contains_history": true,
+        "first_100_chars": "You are going to plant trees in two different gardens labeled North and South.\nThe trees look differ",
+        "last_100_chars": "et a tree with level 3 of leafiness and level 4 of branchiness in the North garden. You press <<I>>."
+      }
+    },
+    {
+      "task_name": "frey2017cct/exp1.csv",
+      "clean_name": "frey2017cct_exp1",
+      "num_samples": 138,
+      "output_file": "datasets/main_test_tasks/frey2017cct_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 62639,
+        "num_you_press": 577,
+        "num_i_press": 0,
+        "num_choice_tokens": 577,
+        "contains_history": true,
+        "first_100_chars": "You will play a games with 84 rounds.\nIn each round, you will be presented with 32 face-down cards.\n",
+        "last_100_chars": " round has now ended because you encountered a loss card.\nYour final score for this round is -250.\n\n"
+      }
+    },
+    {
+      "task_name": "frey2017risk/exp1.csv",
+      "clean_name": "frey2017risk_exp1",
+      "num_samples": 176,
+      "output_file": "datasets/main_test_tasks/frey2017risk_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 8707,
+        "num_you_press": 30,
+        "num_i_press": 0,
+        "num_choice_tokens": 984,
+        "contains_history": true,
+        "first_100_chars": "Throughout the task, you will be presented with balloons, one at a time.\nIn each step, you can choos",
+        "last_100_chars": "> <<N>> <<N>> <<N>> <<N>> <<N>> <<N>> <<N>> <<X>>. You stop inflating the balloon and get 18 points."
+      }
+    },
+    {
+      "task_name": "garcia2023experiential/exp1.csv",
+      "clean_name": "garcia2023experiential_exp1",
+      "num_samples": 12,
+      "output_file": "datasets/main_test_tasks/garcia2023experiential_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 33617,
+        "num_you_press": 208,
+        "num_i_press": 0,
+        "num_choice_tokens": 216,
+        "contains_history": true,
+        "first_100_chars": "This experiment is composed of three parts.\nIn each round of the first part, you have to choose betw",
+        "last_100_chars": "O gives 1.0 points? A: <<70.0>>%.\nQ: What are the odds that option Y gives 1.0 points? A: <<20.0>>%."
+      }
+    },
+    {
+      "task_name": "garcia2023experiential/exp2.csv",
+      "clean_name": "garcia2023experiential_exp2",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/garcia2023experiential_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 33613,
+        "num_you_press": 208,
+        "num_i_press": 0,
+        "num_choice_tokens": 216,
+        "contains_history": true,
+        "first_100_chars": "This experiment is composed of three parts.\nIn each round of the first part, you have to choose betw",
+        "last_100_chars": "U gives 1.0 points? A: <<45.0>>%.\nQ: What are the odds that option D gives 1.0 points? A: <<30.0>>%."
+      }
+    },
+    {
+      "task_name": "garcia2023experiential/exp3.csv",
+      "clean_name": "garcia2023experiential_exp3",
+      "num_samples": 12,
+      "output_file": "datasets/main_test_tasks/garcia2023experiential_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 33613,
+        "num_you_press": 208,
+        "num_i_press": 0,
+        "num_choice_tokens": 216,
+        "contains_history": true,
+        "first_100_chars": "This experiment is composed of three parts.\nIn each round of the first part, you have to choose betw",
+        "last_100_chars": "M gives 1.0 points? A: <<0.0>>%.\nQ: What are the odds that option B gives 1.0 points? A: <<100.0>>%."
+      }
+    },
+    {
+      "task_name": "garcia2023experiential/exp4.csv",
+      "clean_name": "garcia2023experiential_exp4",
+      "num_samples": 11,
+      "output_file": "datasets/main_test_tasks/garcia2023experiential_exp4.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 26388,
+        "num_you_press": 164,
+        "num_i_press": 0,
+        "num_choice_tokens": 168,
+        "contains_history": true,
+        "first_100_chars": "This experiment is composed of three parts.\nIn each round of the first part, you have to choose betw",
+        "last_100_chars": "E gives 1.0 points? A: <<80.0>>%.\nQ: What are the odds that option Q gives 1.0 points? A: <<30.0>>%."
+      }
+    },
+    {
+      "task_name": "gershman2018deconstructing/exp1.csv",
+      "clean_name": "gershman2018deconstructing_exp1",
+      "num_samples": 5,
+      "output_file": "datasets/main_test_tasks/gershman2018deconstructing_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7641,
+        "num_you_press": 200,
+        "num_i_press": 0,
+        "num_choice_tokens": 200,
+        "contains_history": true,
+        "first_100_chars": "In this task, you have to repeatedly choose between two slot machines labeled T and Y.\nYou can choos",
+        "last_100_chars": "ou press <<Y>> and get 0 points.\nYou press <<T>> and get 2 points.\nYou press <<T>> and get 2 points."
+      }
+    },
+    {
+      "task_name": "gershman2018deconstructing/exp2.csv",
+      "clean_name": "gershman2018deconstructing_exp2",
+      "num_samples": 4,
+      "output_file": "datasets/main_test_tasks/gershman2018deconstructing_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7728,
+        "num_you_press": 200,
+        "num_i_press": 0,
+        "num_choice_tokens": 200,
+        "contains_history": true,
+        "first_100_chars": "In this task, you have to repeatedly choose between two slot machines labeled I and H.\nYou can choos",
+        "last_100_chars": "ou press <<H>> and get 4 points.\nYou press <<H>> and get 3 points.\nYou press <<H>> and get 4 points."
+      }
+    },
+    {
+      "task_name": "gershman2020reward/exp1.csv",
+      "clean_name": "gershman2020reward_exp1",
+      "num_samples": 11,
+      "output_file": "datasets/main_test_tasks/gershman2020reward_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 31095,
+        "num_you_press": 555,
+        "num_i_press": 0,
+        "num_choice_tokens": 555,
+        "contains_history": true,
+        "first_100_chars": "You are presented with a series of stimuli, each associated with one of three possible responses.\nYo",
+        "last_100_chars": " stimulus 3. You press <<Z>> and get 1 points.\nYou see stimulus 2. You press <<T>> and get 1 points."
+      }
+    },
+    {
+      "task_name": "hebart2023things/exp1.csv",
+      "clean_name": "hebart2023things_exp1",
+      "num_samples": 1218,
+      "output_file": "datasets/main_test_tasks/hebart2023things_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 3782,
+        "num_you_press": 60,
+        "num_i_press": 0,
+        "num_choice_tokens": 60,
+        "contains_history": true,
+        "first_100_chars": "You will be presented with triplets of objects, which will be assigned to the keys T, Z, and R.\nIn e",
+        "last_100_chars": ", and R: jigsaw puzzle. You press <<Z>>.\nT: pepper, Z: sauerkraut, and R: aardvark. You press <<Z>>."
+      }
+    },
+    {
+      "task_name": "hilbig2014generalized/exp1.csv",
+      "clean_name": "hilbig2014generalized_exp1",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/hilbig2014generalized_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7918,
+        "num_you_press": 96,
+        "num_i_press": 0,
+        "num_choice_tokens": 96,
+        "contains_history": true,
+        "first_100_chars": "You are repeatedly presented with two options, labeled P and G.\nEach option represents a fictitious ",
+        "last_100_chars": " 1 0]. You press <<G>>.\nProduct P ratings: [1 1 0 1]. Product G ratings: [0 0 0 1]. You press <<P>>."
+      }
+    },
+    {
+      "task_name": "jansen2021dunningkruger/exp1.csv",
+      "clean_name": "jansen2021dunningkruger_exp1",
+      "num_samples": 323,
+      "output_file": "datasets/main_test_tasks/jansen2021dunningkruger_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 9644,
+        "num_you_press": 20,
+        "num_i_press": 0,
+        "num_choice_tokens": 28,
+        "contains_history": true,
+        "first_100_chars": "You're about to answer a set of 20 questions about grammar. How many of the 20 questions do you thin",
+        "last_100_chars": " <<6>>.\nOn a scale of 0 to 10, how difficult was recognizing correct grammar for you?\nYou say <<6>>."
+      }
+    },
+    {
+      "task_name": "kool2017cost/exp1.csv",
+      "clean_name": "kool2017cost_exp1",
+      "num_samples": 9,
+      "output_file": "datasets/main_test_tasks/kool2017cost_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 39602,
+        "num_you_press": 199,
+        "num_i_press": 0,
+        "num_choice_tokens": 199,
+        "contains_history": true,
+        "first_100_chars": "Each day you will either be presented with spaceships C and Z or with spaceships M and R.\nThese spac",
+        "last_100_chars": "u end up on planet V. You find 2 pieces of space treasure. You receive 10 pieces of space treasure.\n"
+      }
+    },
+    {
+      "task_name": "kool2017cost/exp2.csv",
+      "clean_name": "kool2017cost_exp2",
+      "num_samples": 12,
+      "output_file": "datasets/main_test_tasks/kool2017cost_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 40869,
+        "num_you_press": 396,
+        "num_i_press": 0,
+        "num_choice_tokens": 396,
+        "contains_history": true,
+        "first_100_chars": "You will be taking one of the spaceships W or K to one of the planets P or V.\nThe spaceships can fly",
+        "last_100_chars": " up on planet P. You see alien N and alien U. You press <<U>>. You find 0 pieces of space treasure.\n"
+      }
+    },
+    {
+      "task_name": "kool2016when/exp1.csv",
+      "clean_name": "kool2016when_exp1",
+      "num_samples": 20,
+      "output_file": "datasets/main_test_tasks/kool2016when_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 15660,
+        "num_you_press": 124,
+        "num_i_press": 0,
+        "num_choice_tokens": 124,
+        "contains_history": true,
+        "first_100_chars": "Each day you will either be presented with spaceships V and X or with spaceships M and D.\nThese spac",
+        "last_100_chars": "th spaceships X and V. You press <<V>>. You end up on planet Z. You find 3 pieces of space treasure."
+      }
+    },
+    {
+      "task_name": "kool2016when/exp2.csv",
+      "clean_name": "kool2016when_exp2",
+      "num_samples": 18,
+      "output_file": "datasets/main_test_tasks/kool2016when_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 21672,
+        "num_you_press": 246,
+        "num_i_press": 0,
+        "num_choice_tokens": 246,
+        "contains_history": true,
+        "first_100_chars": "You will be taking one of the spaceships B or L to one of the planets S or V.\nThe spaceships can fly",
+        "last_100_chars": "d up on planet S. You see alien M and alien N. You press <<N>>. You find 1 pieces of space treasure."
+      }
+    },
+    {
+      "task_name": "krueger2022identifying/exp1.csv",
+      "clean_name": "krueger2022identifying_exp1",
+      "num_samples": 203,
+      "output_file": "datasets/main_test_tasks/krueger2022identifying_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 11602,
+        "num_you_press": 96,
+        "num_i_press": 0,
+        "num_choice_tokens": 192,
+        "contains_history": true,
+        "first_100_chars": "You will play multiple rounds of a gambling game.\nIn each round, you will be presented with 6 differ",
+        "last_100_chars": "57 points.\nYou press <<O>> and then type <<stop>>. A silver ball is chosen, and you earn 109 points."
+      }
+    },
+    {
+      "task_name": "kumar2023disentangling/exp1.csv",
+      "clean_name": "kumar2023disentangling_exp1",
+      "num_samples": 92,
+      "output_file": "datasets/main_test_tasks/kumar2023disentangling_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 53497,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 438,
+        "contains_history": false,
+        "first_100_chars": "You are playing a game where you are revealing patterns on a binary grid.\nEach turn you will be pres",
+        "last_100_chars": " now:\nXXXXXXX\n0111XXX\n01110XX\nX0X00XX\nXXXXXXX\nXXXXXXX\nXXXXXXX\nYou choose <<[3, 2]>> and get a hit!\n\n"
+      }
+    },
+    {
+      "task_name": "lefebvre2017behavioural/exp1.csv",
+      "clean_name": "lefebvre2017behavioural_exp1",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/lefebvre2017behavioural_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 10057,
+        "num_you_press": 96,
+        "num_i_press": 0,
+        "num_choice_tokens": 96,
+        "contains_history": true,
+        "first_100_chars": "You are going to visit four different casinos (named 1, 2, 3, and 4) 24 times each.\nEach casino owns",
+        "last_100_chars": "You go to casino 2. You can choose between machines O and L. You press <<O>> and receive 0.5 points."
+      }
+    },
+    {
+      "task_name": "lefebvre2017behavioural/exp2.csv",
+      "clean_name": "lefebvre2017behavioural_exp2",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/lefebvre2017behavioural_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 10116,
+        "num_you_press": 96,
+        "num_i_press": 0,
+        "num_choice_tokens": 96,
+        "contains_history": true,
+        "first_100_chars": "You are going to visit four different casinos (named 1, 2, 3, and 4) 24 times each.\nEach casino owns",
+        "last_100_chars": "ou go to casino 4. You can choose between machines J and Q. You press <<J>> and receive -0.5 points."
+      }
+    },
+    {
+      "task_name": "levering2020revisiting/exp1.csv",
+      "clean_name": "levering2020revisiting_exp1",
+      "num_samples": 18,
+      "output_file": "datasets/main_test_tasks/levering2020revisiting_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 9500,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 166,
+        "contains_history": false,
+        "first_100_chars": "You will observe a series of objects, one at a time.\nThe objects differ along three binary dimension",
+        "last_100_chars": "e typicality to be <<8>>.\nYou see the image 112, press <<Q>> and judged the typicality to be <<3>>.\n"
+      }
+    },
+    {
+      "task_name": "levering2020revisiting/exp2.csv",
+      "clean_name": "levering2020revisiting_exp2",
+      "num_samples": 24,
+      "output_file": "datasets/main_test_tasks/levering2020revisiting_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 9500,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 166,
+        "contains_history": false,
+        "first_100_chars": "You will observe a series of objects, one at a time.\nThe objects differ along three binary dimension",
+        "last_100_chars": "e typicality to be <<1>>.\nYou see the image 122, press <<B>> and judged the typicality to be <<1>>.\n"
+      }
+    },
+    {
+      "task_name": "ludwig2023human/exp0.csv",
+      "clean_name": "ludwig2023human_exp0",
+      "num_samples": 3,
+      "output_file": "datasets/main_test_tasks/ludwig2023human_exp0.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 43885,
+        "num_you_press": 360,
+        "num_i_press": 0,
+        "num_choice_tokens": 360,
+        "contains_history": true,
+        "first_100_chars": "You will have to repeatedly feed animals with fruits.\nEach fruit contains two vitamins.\nEvery animal",
+        "last_100_chars": " get -1 points.\nYou press <<H>> and find the apple which has the vitamins [-1 -1]. You get 2 points."
+      }
+    },
+    {
+      "task_name": "ludwig2023human/exp1.csv",
+      "clean_name": "ludwig2023human_exp1",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/ludwig2023human_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 43923,
+        "num_you_press": 360,
+        "num_i_press": 0,
+        "num_choice_tokens": 360,
+        "contains_history": true,
+        "first_100_chars": "You will have to repeatedly feed animals with fruits.\nEach fruit contains two vitamins.\nEvery animal",
+        "last_100_chars": "get 1 points.\nYou press <<A>> and find the grapes which has the vitamins [ 1 -1]. You get -1 points."
+      }
+    },
+    {
+      "task_name": "ludwig2023human/exp2.csv",
+      "clean_name": "ludwig2023human_exp2",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/ludwig2023human_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 44012,
+        "num_you_press": 360,
+        "num_i_press": 0,
+        "num_choice_tokens": 360,
+        "contains_history": true,
+        "first_100_chars": "You will have to repeatedly feed animals with fruits.\nEach fruit contains two vitamins.\nEvery animal",
+        "last_100_chars": " get -1 points.\nYou press <<F>> and find the apple which has the vitamins [-1 -1]. You get 1 points."
+      }
+    },
+    {
+      "task_name": "peterson2021using/exp1.csv",
+      "clean_name": "peterson2021using_exp1",
+      "num_samples": 1465,
+      "output_file": "datasets/main_test_tasks/peterson2021using_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 16034,
+        "num_you_press": 100,
+        "num_i_press": 0,
+        "num_choice_tokens": 100,
+        "contains_history": true,
+        "first_100_chars": "You will encounter a series of gambling problems where you have to select between two options.\nYou c",
+        "last_100_chars": "h 10.0% chance.\nYou press <<U>>.\nYou press <<U>>.\nYou press <<U>>.\nYou press <<U>>.\nYou press <<U>>."
+      }
+    },
+    {
+      "task_name": "plonsky2018when/exp1.csv",
+      "clean_name": "plonsky2018when_exp1",
+      "num_samples": 24,
+      "output_file": "datasets/main_test_tasks/plonsky2018when_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 65370,
+        "num_you_press": 750,
+        "num_i_press": 0,
+        "num_choice_tokens": 750,
+        "contains_history": true,
+        "first_100_chars": "You will encounter a series of gambling problems where you have to select between two options.\nYou c",
+        "last_100_chars": "tion G.\nYou press <<H>> and gain 29 points. You would have gained 22 points had you chosen option G."
+      }
+    },
+    {
+      "task_name": "popov2023intent/exp1.csv",
+      "clean_name": "popov2023intent_exp1",
+      "num_samples": 3,
+      "output_file": "datasets/main_test_tasks/popov2023intent_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 22191,
+        "num_you_press": 90,
+        "num_i_press": 0,
+        "num_choice_tokens": 134,
+        "contains_history": true,
+        "first_100_chars": "In this experiment, you will go through three cycles of three tasks.\nEach cycle concerns itself with",
+        "last_100_chars": "<<child>>.\nYou type the word <<potato>>.\nYou type the word <<garden>>.\nYou type the word <<harbor>>."
+      }
+    },
+    {
+      "task_name": "popov2023intent/exp2.csv",
+      "clean_name": "popov2023intent_exp2",
+      "num_samples": 4,
+      "output_file": "datasets/main_test_tasks/popov2023intent_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 14152,
+        "num_you_press": 90,
+        "num_i_press": 0,
+        "num_choice_tokens": 144,
+        "contains_history": true,
+        "first_100_chars": "In this experiment, you will go through three cycles of three tasks.\nEach cycle concerns itself with",
+        "last_100_chars": "r you were asked to remember them or not.\nYou type the word <<waiter>>.\nYou type the word <<ocean>>."
+      }
+    },
+    {
+      "task_name": "popov2023intent/exp3.csv",
+      "clean_name": "popov2023intent_exp3",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/popov2023intent_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 25038,
+        "num_you_press": 90,
+        "num_i_press": 0,
+        "num_choice_tokens": 150,
+        "contains_history": true,
+        "first_100_chars": "In this experiment, you will go through three cycles of three tasks.\nEach cycle concerns itself with",
+        "last_100_chars": "<wallet>>.\nYou type the word <<dentist>>.\nYou type the word <<steak>>.\nYou type the word <<turkey>>."
+      }
+    },
+    {
+      "task_name": "ruggeri2022globalizability/exp1.csv",
+      "clean_name": "ruggeri2022globalizability_exp1",
+      "num_samples": 1295,
+      "output_file": "datasets/main_test_tasks/ruggeri2022globalizability_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 1502,
+        "num_you_press": 11,
+        "num_i_press": 0,
+        "num_choice_tokens": 11,
+        "contains_history": true,
+        "first_100_chars": "In the following you will be presented with multiple choices between two options Q and L.\nPlease nam",
+        "last_100_chars": "ice between reduce 500$ immediately (press Q) or reduce 600$ in one year (press L). You press <<Q>>."
+      }
+    },
+    {
+      "task_name": "sadeghiyeh2020temporal/exp1.csv",
+      "clean_name": "sadeghiyeh2020temporal_exp1",
+      "num_samples": 13,
+      "output_file": "datasets/main_test_tasks/sadeghiyeh2020temporal_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 34288,
+        "num_you_press": 332,
+        "num_i_press": 0,
+        "num_choice_tokens": 332,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled V and N.\nThe two slot m",
+        "last_100_chars": "d get 71 points.\nYou are instructed to press N and get 46 points.\nYou press <<V>> and get 61 points."
+      }
+    },
+    {
+      "task_name": "schulz2020finding/exp1.csv",
+      "clean_name": "schulz2020finding_exp1",
+      "num_samples": 9,
+      "output_file": "datasets/main_test_tasks/schulz2020finding_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 14941,
+        "num_you_press": 300,
+        "num_i_press": 0,
+        "num_choice_tokens": 300,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game for 30 rounds.\nEach round contains 10 trials.\nIn each trial, you have to ",
+        "last_100_chars": "2 points.\nYou press <<1>> and get 42.618860284 points.\nYou press <<1>> and get 43.2272611507 points."
+      }
+    },
+    {
+      "task_name": "schulz2020finding/exp2.csv",
+      "clean_name": "schulz2020finding_exp2",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/schulz2020finding_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 14967,
+        "num_you_press": 300,
+        "num_i_press": 0,
+        "num_choice_tokens": 300,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game for 30 rounds.\nEach round contains 10 trials.\nIn each trial, you have to ",
+        "last_100_chars": " points.\nYou press <<1>> and get 44.1607497564 points.\nYou press <<1>> and get 43.4702653313 points."
+      }
+    },
+    {
+      "task_name": "schulz2020finding/exp3.csv",
+      "clean_name": "schulz2020finding_exp3",
+      "num_samples": 19,
+      "output_file": "datasets/main_test_tasks/schulz2020finding_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 14953,
+        "num_you_press": 300,
+        "num_i_press": 0,
+        "num_choice_tokens": 300,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game for 30 rounds.\nEach round contains 10 trials.\nIn each trial, you have to ",
+        "last_100_chars": " points.\nYou press <<1>> and get 44.5642325331 points.\nYou press <<1>> and get 45.2368063896 points."
+      }
+    },
+    {
+      "task_name": "schulz2020finding/exp4.csv",
+      "clean_name": "schulz2020finding_exp4",
+      "num_samples": 14,
+      "output_file": "datasets/main_test_tasks/schulz2020finding_exp4.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 14944,
+        "num_you_press": 300,
+        "num_i_press": 0,
+        "num_choice_tokens": 300,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game for 30 rounds.\nEach round contains 10 trials.\nIn each trial, you have to ",
+        "last_100_chars": " points.\nYou press <<7>> and get 38.6202879714 points.\nYou press <<7>> and get 39.3020399866 points."
+      }
+    },
+    {
+      "task_name": "schulz2020finding/exp5.csv",
+      "clean_name": "schulz2020finding_exp5",
+      "num_samples": 18,
+      "output_file": "datasets/main_test_tasks/schulz2020finding_exp5.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 15864,
+        "num_you_press": 300,
+        "num_i_press": 0,
+        "num_choice_tokens": 300,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game for 30 rounds.\nEach round contains 10 trials.\nIn each trial, you have to ",
+        "last_100_chars": "s.\nYou press <<4>> and get 40.9644815559589 points.\nYou press <<4>> and get 41.0945232143042 points."
+      }
+    },
+    {
+      "task_name": "somerville2017charting/exp1.csv",
+      "clean_name": "somerville2017charting_exp1",
+      "num_samples": 14,
+      "output_file": "datasets/main_test_tasks/somerville2017charting_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 58603,
+        "num_you_press": 560,
+        "num_i_press": 0,
+        "num_choice_tokens": 560,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled P and A.\nThe two slot m",
+        "last_100_chars": "press <<P>> and get 80 points.\nYou press <<P>> and get 81 points.\nYou press <<P>> and get 93 points."
+      }
+    },
+    {
+      "task_name": "speekenbrink2008learning/exp1.csv",
+      "clean_name": "speekenbrink2008learning_exp1",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/speekenbrink2008learning_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 21394,
+        "num_you_press": 200,
+        "num_i_press": 0,
+        "num_choice_tokens": 200,
+        "contains_history": true,
+        "first_100_chars": "You will be playing a game in which you pretend to be a weather forecaster.\nIn each trial, you will ",
+        "last_100_chars": " seeing the following: card 1, card 2. You press <<J>>. You are correct, the weather is indeed fine."
+      }
+    },
+    {
+      "task_name": "steingroever2015data/exp1.csv",
+      "clean_name": "steingroever2015data_exp1",
+      "num_samples": 54,
+      "output_file": "datasets/main_test_tasks/steingroever2015data_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 5161,
+        "num_you_press": 100,
+        "num_i_press": 0,
+        "num_choice_tokens": 100,
+        "contains_history": true,
+        "first_100_chars": "You see in front of you four decks of cards labeled T, Q, Z, and A.\nYou get a loan of 2000$ of play ",
+        "last_100_chars": "e 50.0$.\nYou press <<Z>>. You win 50.0$ and lose 0.0$.\nYou press <<Z>>. You win 50.0$ and lose 0.0$."
+      }
+    },
+    {
+      "task_name": "steingroever2015data/exp2.csv",
+      "clean_name": "steingroever2015data_exp2",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/steingroever2015data_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 4931,
+        "num_you_press": 95,
+        "num_i_press": 0,
+        "num_choice_tokens": 95,
+        "contains_history": true,
+        "first_100_chars": "You see in front of you four decks of cards labeled Q, T, U, and H.\nYou get a loan of 2000$ of play ",
+        "last_100_chars": "se 0.0$.\nYou press <<H>>. You win 50.0$ and lose 0.0$.\nYou press <<H>>. You win 50.0$ and lose 0.0$."
+      }
+    },
+    {
+      "task_name": "steingroever2015data/exp3.csv",
+      "clean_name": "steingroever2015data_exp3",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/steingroever2015data_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7536,
+        "num_you_press": 150,
+        "num_i_press": 0,
+        "num_choice_tokens": 150,
+        "contains_history": true,
+        "first_100_chars": "You see in front of you four decks of cards labeled P, M, D, and A.\nYou get a loan of 2000$ of play ",
+        "last_100_chars": "0.0$.\nYou press <<P>>. You win 100.0$ and lose 250.0$.\nYou press <<D>>. You win 50.0$ and lose 0.0$."
+      }
+    },
+    {
+      "task_name": "tomov2020discovery/exp2.csv",
+      "clean_name": "tomov2020discovery_exp2",
+      "num_samples": 22,
+      "output_file": "datasets/main_test_tasks/tomov2020discovery_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 69455,
+        "num_you_press": 471,
+        "num_i_press": 0,
+        "num_choice_tokens": 471,
+        "contains_history": true,
+        "first_100_chars": "Imagine that you are a tourist and you have to navigate the subway network in an unfamiliar town.\nIn",
+        "last_100_chars": "ations: circle on the north, 5 on the east, circle on the south, and 7 on the west. You press <<P>>."
+      }
+    },
+    {
+      "task_name": "tomov2020discovery/exp4.csv",
+      "clean_name": "tomov2020discovery_exp4",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/tomov2020discovery_exp4.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 46256,
+        "num_you_press": 295,
+        "num_i_press": 0,
+        "num_choice_tokens": 295,
+        "contains_history": true,
+        "first_100_chars": "Imagine that you are a tourist and you have to navigate the subway network in an unfamiliar town.\nIn",
+        "last_100_chars": "ations: circle on the north, 5 on the east, circle on the south, and 7 on the west. You press <<G>>."
+      }
+    },
+    {
+      "task_name": "tomov2020discovery/exp5.csv",
+      "clean_name": "tomov2020discovery_exp5",
+      "num_samples": 40,
+      "output_file": "datasets/main_test_tasks/tomov2020discovery_exp5.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 48101,
+        "num_you_press": 310,
+        "num_i_press": 0,
+        "num_choice_tokens": 310,
+        "contains_history": true,
+        "first_100_chars": "Imagine that you are a tourist and you have to navigate the subway network in an unfamiliar town.\nIn",
+        "last_100_chars": "ations: circle on the north, 5 on the east, circle on the south, and 7 on the west. You press <<Y>>."
+      }
+    },
+    {
+      "task_name": "tomov2020discovery/exp7.csv",
+      "clean_name": "tomov2020discovery_exp7",
+      "num_samples": 17,
+      "output_file": "datasets/main_test_tasks/tomov2020discovery_exp7.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 47591,
+        "num_you_press": 293,
+        "num_i_press": 0,
+        "num_choice_tokens": 293,
+        "contains_history": true,
+        "first_100_chars": "Imagine that you are a tourist and you have to navigate the subway network in an unfamiliar town.\nIn",
+        "last_100_chars": "ations: circle on the north, 5 on the east, circle on the south, and 7 on the west. You press <<T>>."
+      }
+    },
+    {
+      "task_name": "tomov2021multitask/exp1.csv",
+      "clean_name": "tomov2021multitask_exp1",
+      "num_samples": 23,
+      "output_file": "datasets/main_test_tasks/tomov2021multitask_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 27636,
+        "num_you_press": 202,
+        "num_i_press": 0,
+        "num_choice_tokens": 202,
+        "contains_history": true,
+        "first_100_chars": "You will explore a castle, walking from room to room.\nIn each room, you will find different amounts ",
+        "last_100_chars": "\nYou are in room 3. You press <<N>> and you find 0 wood, 100 stone, and 60 iron. You get 160 points."
+      }
+    },
+    {
+      "task_name": "tomov2021multitask/exp3.csv",
+      "clean_name": "tomov2021multitask_exp3",
+      "num_samples": 16,
+      "output_file": "datasets/main_test_tasks/tomov2021multitask_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 27534,
+        "num_you_press": 202,
+        "num_i_press": 0,
+        "num_choice_tokens": 202,
+        "contains_history": true,
+        "first_100_chars": "You will explore a castle, walking from room to room.\nIn each room, you will find different amounts ",
+        "last_100_chars": "ts.\nYou are in room 2. You press <<U>> and you find 90 wood, 0 stone, and 0 iron. You get 90 points."
+      }
+    },
+    {
+      "task_name": "waltz2020differential/exp1.csv",
+      "clean_name": "waltz2020differential_exp1",
+      "num_samples": 2,
+      "output_file": "datasets/main_test_tasks/waltz2020differential_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 44259,
+        "num_you_press": 425,
+        "num_i_press": 0,
+        "num_choice_tokens": 425,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled R and M.\nThe two slot m",
+        "last_100_chars": "press <<M>> and get 35 points.\nYou press <<M>> and get 48 points.\nYou press <<M>> and get 41 points."
+      }
+    },
+    {
+      "task_name": "wilson2014humans/exp1.csv",
+      "clean_name": "wilson2014humans_exp1",
+      "num_samples": 4,
+      "output_file": "datasets/main_test_tasks/wilson2014humans_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 116674,
+        "num_you_press": 1120,
+        "num_i_press": 0,
+        "num_choice_tokens": 1120,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled J and K.\nThe two slot m",
+        "last_100_chars": "press <<J>> and get 70 points.\nYou press <<J>> and get 68 points.\nYou press <<J>> and get 62 points."
+      }
+    },
+    {
+      "task_name": "wilson2014humans/exp3.csv",
+      "clean_name": "wilson2014humans_exp3",
+      "num_samples": 7,
+      "output_file": "datasets/main_test_tasks/wilson2014humans_exp3.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 47449,
+        "num_you_press": 454,
+        "num_i_press": 0,
+        "num_choice_tokens": 454,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled A and D.\nThe two slot m",
+        "last_100_chars": "press <<A>> and get 78 points.\nYou press <<A>> and get 73 points.\nYou press <<A>> and get 73 points."
+      }
+    },
+    {
+      "task_name": "wilson2014humans/exp4.csv",
+      "clean_name": "wilson2014humans_exp4",
+      "num_samples": 11,
+      "output_file": "datasets/main_test_tasks/wilson2014humans_exp4.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 58594,
+        "num_you_press": 560,
+        "num_i_press": 0,
+        "num_choice_tokens": 560,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled E and C.\nThe two slot m",
+        "last_100_chars": "d get 55 points.\nYou are instructed to press E and get 57 points.\nYou press <<C>> and get 55 points."
+      }
+    },
+    {
+      "task_name": "wilson2014humans/exp5.csv",
+      "clean_name": "wilson2014humans_exp5",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/wilson2014humans_exp5.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 58599,
+        "num_you_press": 560,
+        "num_i_press": 0,
+        "num_choice_tokens": 560,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled N and D.\nThe two slot m",
+        "last_100_chars": "press <<N>> and get 31 points.\nYou press <<N>> and get 37 points.\nYou press <<N>> and get 39 points."
+      }
+    },
+    {
+      "task_name": "wise2019acomputational/exp1.csv",
+      "clean_name": "wise2019acomputational_exp1",
+      "num_samples": 6,
+      "output_file": "datasets/main_test_tasks/wise2019acomputational_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 48574,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 320,
+        "contains_history": false,
+        "first_100_chars": "You are going to predict the probability of electric shocks associated with two visual stimuli.\nFirs",
+        "last_100_chars": "e is shown over stimulus E, and a circle is shown over stimulus I. Finally, no shocks are delivered."
+      }
+    },
+    {
+      "task_name": "wu2018generalisation/exp1.csv",
+      "clean_name": "wu2018generalisation_exp1",
+      "num_samples": 3,
+      "output_file": "datasets/main_test_tasks/wu2018generalisation_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7576,
+        "num_you_press": 120,
+        "num_i_press": 0,
+        "num_choice_tokens": 120,
+        "contains_history": true,
+        "first_100_chars": "You will be presented with a series of 16 different environments to explore.\nIn each trial, you can ",
+        "last_100_chars": "d receive 21 points.\nYou press <<21>> and receive 35 points.\nYou press <<24>> and receive 25 points."
+      }
+    },
+    {
+      "task_name": "wu2023chunking/exp1.csv",
+      "clean_name": "wu2023chunking_exp1",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/wu2023chunking_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 75621,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 1000,
+        "contains_history": false,
+        "first_100_chars": "Press the instructed key.\n\nAct as fast and accurately as possible.\n\nThe instruction is to press D, y",
+        "last_100_chars": " 738 ms. That is correct.\nThe instruction is to press F, you press <<F>> in 668 ms. That is correct."
+      }
+    },
+    {
+      "task_name": "wu2023chunking/exp2.csv",
+      "clean_name": "wu2023chunking_exp2",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/wu2023chunking_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 75486,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 1000,
+        "contains_history": false,
+        "first_100_chars": "Press the instructed key.\n\nAct as fast and accurately as possible.\n\nThe instruction is to press K, y",
+        "last_100_chars": " 596 ms. That is correct.\nThe instruction is to press F, you press <<F>> in 645 ms. That is correct."
+      }
+    },
+    {
+      "task_name": "wulff2018description/exp1.csv",
+      "clean_name": "wulff2018description_exp1",
+      "num_samples": 227,
+      "output_file": "datasets/main_test_tasks/wulff2018description_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 910,
+        "num_you_press": 3,
+        "num_i_press": 0,
+        "num_choice_tokens": 3,
+        "contains_history": true,
+        "first_100_chars": "You will choose from two monetary lotteries by pressing I or B.\nThe lotteries offer different points",
+        "last_100_chars": "B offers -32.0 points with 10.0% probability, or 0.0 points with 90.0% probability.\nYou press <<I>>."
+      }
+    },
+    {
+      "task_name": "wulff2018sampling/exp1.csv",
+      "clean_name": "wulff2018sampling_exp1",
+      "num_samples": 411,
+      "output_file": "datasets/main_test_tasks/wulff2018sampling_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 2053,
+        "num_you_press": 26,
+        "num_i_press": 0,
+        "num_choice_tokens": 29,
+        "contains_history": true,
+        "first_100_chars": "You can sample from two monetary lotteries by pressing J or T.\nThe lotteries offer different points ",
+        "last_100_chars": "ints.\nYou press <<T>> and observe 0.0 points.\nYou press <<U>> to stop sampling and then press <<T>>."
+      }
+    },
+    {
+      "task_name": "xiong2023neural/exp1.csv",
+      "clean_name": "xiong2023neural_exp1",
+      "num_samples": 3,
+      "output_file": "datasets/main_test_tasks/xiong2023neural_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 168871,
+        "num_you_press": 4800,
+        "num_i_press": 0,
+        "num_choice_tokens": 4800,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving two slot machines, labeled T and E.\nThe two slot m",
+        "last_100_chars": "press <<T>> and get 72 points.\nYou press <<T>> and get 72 points.\nYou press <<T>> and get 72 points."
+      }
+    },
+    {
+      "task_name": "zhu2020bayesian/exp1.csv",
+      "clean_name": "zhu2020bayesian_exp1",
+      "num_samples": 4,
+      "output_file": "datasets/main_test_tasks/zhu2020bayesian_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 15936,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 120,
+        "contains_history": false,
+        "first_100_chars": "You have to estimate the probability of a series of weather-related queries.\nPlease respond by typin",
+        "last_100_chars": "ability that the weather will be icy or not frosty on a random day in England? You estimate <<25>>%."
+      }
+    },
+    {
+      "task_name": "zhu2020bayesian/exp2.csv",
+      "clean_name": "zhu2020bayesian_exp2",
+      "num_samples": 11,
+      "output_file": "datasets/main_test_tasks/zhu2020bayesian_exp2.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 23621,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 180,
+        "contains_history": false,
+        "first_100_chars": "You have to estimate the probability of a series of weather-related queries.\nPlease respond by typin",
+        "last_100_chars": ", what is the probability that the weather will also be windy on the same day? You estimate <<30>>%."
+      }
+    },
+    {
+      "task_name": "zorowitz2023data/exp1.csv",
+      "clean_name": "zorowitz2023data_exp1",
+      "num_samples": 10,
+      "output_file": "datasets/main_test_tasks/zorowitz2023data_exp1.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 39237,
+        "num_you_press": 402,
+        "num_i_press": 0,
+        "num_choice_tokens": 402,
+        "contains_history": true,
+        "first_100_chars": "You are participating in a space treasure game.\nIn this game, you will be visiting two alien planets",
+        "last_100_chars": " blue planet. You see a blue alien named U and a blue alien named Z. You press <<Z>>. You find junk."
+      }
+    }
+  ],
+  "generalization_tasks": [
+    {
+      "task_name": "feher2020humans",
+      "num_samples": 24,
+      "output_file": "datasets/generalization_tasks/feher2020humans.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 35252,
+        "num_you_press": 206,
+        "num_i_press": 0,
+        "num_choice_tokens": 407,
+        "contains_history": true,
+        "first_100_chars": "You are playing the role of a musician living in a fantasy land.\nYou play the flute for gold coins t",
+        "last_100_chars": ">>. You end up on Pink Mountain. You see lamp E and lamp V. You rub lamp <<V>>. You receive 0 coins."
+      },
+      "category": "generalization"
+    },
+    {
+      "task_name": "dubois2022value",
+      "num_samples": 658,
+      "output_file": "datasets/generalization_tasks/dubois2022value.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 213360,
+        "num_you_press": 1400,
+        "num_i_press": 0,
+        "num_choice_tokens": 1400,
+        "contains_history": true,
+        "first_100_chars": "You are participating in multiple games involving three apple trees, labeled X, G, and W.\nThe three ",
+        "last_100_chars": " get an apple with size 4.0 centimeters.\nYou press <<G>> and get an apple with size 4.0 centimeters."
+      },
+      "category": "generalization"
+    },
+    {
+      "task_name": "jansen2021logic",
+      "num_samples": 3543,
+      "output_file": "datasets/generalization_tasks/jansen2021logic.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 13561,
+        "num_you_press": 20,
+        "num_i_press": 0,
+        "num_choice_tokens": 28,
+        "contains_history": true,
+        "first_100_chars": "You're about to answer a set of 20 questions about logical reasoning. How many of the 20 questions d",
+        "last_100_chars": "scale of 0 to 10, how difficult was solving these logical reasoning problems for you?\nYou say <<8>>."
+      },
+      "category": "generalization"
+    },
+    {
+      "task_name": "awad2018moral",
+      "num_samples": 6977,
+      "output_file": "datasets/held_out_tasks/awad2018moral.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 7663,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 13,
+        "contains_history": false,
+        "first_100_chars": "You are presented with a series of dilemmas in which an autonomous vehicle must decide between two d",
+        "last_100_chars": "fected pedestrians are abiding by the law by crossing on the green signal.\nYou select outcome <<G>>."
+      },
+      "category": "held_out"
+    },
+    {
+      "task_name": "demircan2024evaluatingcategory",
+      "num_samples": 91,
+      "output_file": "datasets/held_out_tasks/demircan2024evaluatingcategory.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 12985,
+        "num_you_press": 120,
+        "num_i_press": 0,
+        "num_choice_tokens": 120,
+        "contains_history": true,
+        "first_100_chars": "Hello! Thanks a lot for helping us today! Your task is to deliver some images to our friends Julty a",
+        "last_100_chars": "e!\nYou were shown watermelon. You press <<H>> to deliver the image to Julty. Julty loves the image!\n"
+      },
+      "category": "held_out"
+    },
+    {
+      "task_name": "demircan2024evaluatingreward",
+      "num_samples": 82,
+      "output_file": "datasets/held_out_tasks/demircan2024evaluatingreward.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 9527,
+        "num_you_press": 60,
+        "num_i_press": 0,
+        "num_choice_tokens": 60,
+        "contains_history": true,
+        "first_100_chars": "During this task, you will be presented with pairs of images, each of which is associated with a cer",
+        "last_100_chars": "the right. You press <<H>> and receive 84 points. magnifier had 84 points, and noose had 48 points.\n"
+      },
+      "category": "held_out"
+    },
+    {
+      "task_name": "akata2023repeatedgames",
+      "num_samples": 195,
+      "output_file": "datasets/held_out_tasks/akata2023repeatedgames.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 4421,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 20,
+        "contains_history": false,
+        "first_100_chars": "You will play two different 2x2 games. This means both games are played with 2 players and each play",
+        "last_100_chars": "<Q>> and the other player chose Option Q. Thus, you won 7 points and the other player won 10 points."
+      },
+      "category": "held_out"
+    },
+    {
+      "task_name": "singh2022representing",
+      "num_samples": 319,
+      "output_file": "datasets/held_out_tasks/singh2022representing.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 19976,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 244,
+        "contains_history": false,
+        "first_100_chars": "You will be presented with a series of behavior phrases.\nFor each behavior phrase X, you will be ask",
+        "last_100_chars": "You respond with <<4>>.\n\nRelative to others, I am likely to write in a book.\nYou respond with <<2>>."
+      },
+      "category": "held_out"
+    },
+    {
+      "task_name": "xu2021novelty",
+      "num_samples": 12,
+      "output_file": "datasets/held_out_tasks/xu2021novelty.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 27652,
+        "num_you_press": 0,
+        "num_i_press": 0,
+        "num_choice_tokens": 360,
+        "contains_history": false,
+        "first_100_chars": "You are playing a game where you are exploring an environment with 11 different states.\nYour task is",
+        "last_100_chars": ".\nYou are currently in state 4 and you press <<T>>. You arrive at state 1.\nYou reach the goal state!"
+      },
+      "category": "held_out"
+    }
+  ],
+  "zero_shot_tasks": [
+    {
+      "task_name": "peterson2021using_zeroshot",
+      "num_samples": 116920,
+      "output_file": "datasets/zero_shot_tasks/peterson2021using_zeroshot.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 802,
+        "num_you_press": 1,
+        "num_i_press": 0,
+        "num_choice_tokens": 1,
+        "contains_history": true,
+        "first_100_chars": "You will encounter a series of gambling problems where you have to select between two options.\nYou c",
+        "last_100_chars": "ints by selecting this option. You would have received -44.0 points had you chosen the other option."
+      }
+    },
+    {
+      "task_name": "ruggeri2022globalizability_zeroshot",
+      "num_samples": 15421,
+      "output_file": "datasets/zero_shot_tasks/ruggeri2022globalizability_zeroshot.jsonl",
+      "structure": {
+        "keys": [
+          "text",
+          "experiment",
+          "participant"
+        ],
+        "has_text": true,
+        "has_participant": true,
+        "has_experiment": true,
+        "text_length": 290,
+        "num_you_press": 1,
+        "num_i_press": 0,
+        "num_choice_tokens": 1,
+        "contains_history": true,
+        "first_100_chars": "In the following you will be presented with multiple choices between two options L and I.\nPlease nam",
+        "last_100_chars": "tween receiving 500$ immediately (press L) or receiving 550$ in one year (press I). You press <<L>>."
+      }
+    }
+  ],
+  "conversion_guidance": {
+    "description": "How to convert full behavioral history prompts to zero-shot",
+    "steps": [
+      "1. Remove all previous \"You press\" and \"I press\" statements",
+      "2. Remove all previous reward/outcome information",
+      "3. Keep only: task instructions + current trial description",
+      "4. End with the choice prompt for the current trial"
+    ],
+    "example_tasks_to_examine": [
+      "peterson2021using_exp1_csv",
+      "ruggeri2022globalizability_exp1_csv",
+      "feher2020humans",
+      "dubois2022value"
+    ]
+  }
+}

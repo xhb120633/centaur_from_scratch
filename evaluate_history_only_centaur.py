@@ -895,6 +895,397 @@ def create_history_only_prompts_hebart(original_prompts_file, output_file):
     
     return history_only_prompts
 
+def create_history_only_prompts_wilson(original_prompts_file, output_file):
+    """Create history-only prompts for wilson2014humans Horizon task (exp1/exp3/exp4/exp5).
+    Keep ONLY the original first sentence (cover story) and flatten to choice traces (no games, no instructions, no rewards)."""
+    print(f"📝 Creating history-only prompts from: {original_prompts_file}")
+    
+    # Load original prompts (each line = one participant session)
+    original_prompts = []
+    with open(original_prompts_file, 'r') as f:
+        for line in f:
+            original_prompts.append(json.loads(line))
+    
+    print(f"   Loaded {len(original_prompts)} participant sessions")
+    
+    # Create history-only versions (one prompt per participant with all choices)
+    history_only_prompts = []
+    
+    for participant_data in original_prompts:
+        prompt_text = participant_data['text']
+        
+        # Extract ONLY the first sentence from the first non-empty line
+        first_sentence = ""
+        for raw_line in prompt_text.split('\n'):
+            line = raw_line.strip()
+            if not line:
+                continue
+            # Take content up to first period if present
+            if '.' in line:
+                first_sentence = line.split('.', 1)[0].strip() + "."
+            else:
+                first_sentence = line
+            break
+        
+        if not first_sentence:
+            # Fallback
+            first_sentence = "You are participating in multiple games involving two slot machines."
+        
+        # Dynamically extract label letters if possible (e.g., 'labeled J and K')
+        label_match = re.search(r'labeled ([A-Z]) and ([A-Z])', first_sentence)
+        labels = None
+        if label_match:
+            labels = (label_match.group(1), label_match.group(2))
+        
+        # Extract ALL choices in order; ignore instructions/rewards/games
+        # We rely on the << >> spans present in the original data
+        all_choices = re.findall(r'You press <<([^>]+)>>', prompt_text)
+        if labels:
+            # Keep only choices that match the two labels when labels are available
+            allowed = set(labels)
+            choices = [c for c in all_choices if c in allowed]
+        else:
+            # Default to whatever appears inside << >>
+            choices = all_choices
+        
+        print(f"   Participant {participant_data.get('participant', 'unknown')}: found {len(choices)} choices")
+        
+        if choices:
+            # Build minimal, context-free prompt: first sentence + pure choice sequence
+            full_history_prompt = first_sentence + "\n\n"
+            
+            # Track positions if needed later; unified evaluator can also regex-match
+            choice_positions = []
+            for i, choice in enumerate(choices):
+                line_text = f"You press <<{choice}>>."
+                # Position of start of choice content for potential debugging
+                choice_start_pos = len(full_history_prompt) + len("You press <<")
+                choice_positions.append({
+                    'choice_index': i,
+                    'choice': choice,
+                    'choice_start_pos': choice_start_pos
+                })
+                full_history_prompt += line_text + "\n"
+            
+            history_only_data = {
+                'text': full_history_prompt.strip(),
+                'participant': participant_data.get('participant'),
+                'experiment': participant_data.get('experiment'),
+                'num_trials': len(choices),
+                'choice_positions': choice_positions,
+                'basic_instruction': first_sentence,
+                'original_length': len(prompt_text),
+                'history_only_length': len(full_history_prompt)
+            }
+            history_only_prompts.append(history_only_data)
+        else:
+            # Fallback - keep as is if no << >> choices found
+            history_only_prompts.append(participant_data)
+    
+    print(f"   Created {len(history_only_prompts)} participant prompts from {len(original_prompts)} participants")
+    if len(original_prompts) > 0:
+        total_choices = sum(p.get('num_trials', 0) for p in history_only_prompts)
+        print(f"   Total choices across all participants: {total_choices}")
+        print(f"   Average choices per participant: {total_choices / len(original_prompts):.1f}")
+    
+    # Save history-only prompts
+    with open(output_file, 'w') as f:
+        for prompt in history_only_prompts:
+            f.write(json.dumps(prompt) + '\n')
+    print(f"   Saved to: {output_file}")
+    
+    # Show example
+    if history_only_prompts:
+        example = history_only_prompts[0]
+        print(f"\n📝 Example participant prompt:")
+        print(f"   Participant: {example.get('participant')}")
+        print(f"   Total trials: {example.get('num_trials', 'N/A')}")
+        print(f"   Text length: {len(example['text'])} characters")
+        print(f"   Preview: {example['text'][:300]}...")
+    
+    return history_only_prompts
+
+def create_history_only_prompts_wilson_multi(experiment_files, output_file):
+    """Create history-only prompts for wilson2014humans across multiple experiments (exp1, exp3, exp4, exp5)."""
+    print(f"📝 Creating history-only prompts from multiple files: {experiment_files}")
+    
+    all_prompts = []
+    # Map known files to tags if possible
+    exp_tag_by_name = {
+        'exp1': 'exp1',
+        'exp3': 'exp3',
+        'exp4': 'exp4',
+        'exp5': 'exp5',
+    }
+    
+    for exp_file in experiment_files:
+        # Derive a tag from filename
+        lower = exp_file.lower()
+        tag = None
+        for key in exp_tag_by_name:
+            if key in lower:
+                tag = exp_tag_by_name[key]
+                break
+        if tag is None:
+            tag = 'exp'
+        
+        with open(exp_file, 'r') as f:
+            for line in f:
+                participant_data = json.loads(line)
+                prompt_text = participant_data['text']
+                
+                # Extract first sentence line as minimal context
+                first_sentence = ""
+                for raw_line in prompt_text.split('\n'):
+                    line_ = raw_line.strip()
+                    if not line_:
+                        continue
+                    if '.' in line_:
+                        first_sentence = line_.split('.', 1)[0].strip() + "."
+                    else:
+                        first_sentence = line_
+                    break
+                if not first_sentence:
+                    first_sentence = "You are participating in multiple games involving two slot machines."
+                
+                # Extract labels if present
+                label_match = re.search(r'labeled ([A-Z]) and ([A-Z])', first_sentence)
+                labels = None
+                if label_match:
+                    labels = (label_match.group(1), label_match.group(2))
+                
+                # Extract all choices
+                all_choices = re.findall(r'You press <<([^>]+)>>', prompt_text)
+                if labels:
+                    allowed = set(labels)
+                    choices = [c for c in all_choices if c in allowed]
+                else:
+                    choices = all_choices
+                
+                if choices:
+                    full_history_prompt = first_sentence + "\n\n"
+                    choice_positions = []
+                    for i, choice in enumerate(choices):
+                        line_text = f"You press <<{choice}>>."
+                        choice_start_pos = len(full_history_prompt) + len("You press <<")
+                        choice_positions.append({
+                            'choice_index': i,
+                            'choice': choice,
+                            'choice_start_pos': choice_start_pos
+                        })
+                        full_history_prompt += line_text + "\n"
+                    
+                    history_only_data = {
+                        'text': full_history_prompt.strip(),
+                        'participant': participant_data.get('participant'),
+                        'experiment': participant_data.get('experiment'),
+                        'exp_tag': tag,
+                        'num_trials': len(choices),
+                        'choice_positions': choice_positions,
+                        'basic_instruction': first_sentence,
+                        'original_length': len(prompt_text),
+                        'history_only_length': len(full_history_prompt)
+                    }
+                    all_prompts.append(history_only_data)
+                else:
+                    participant_data['exp_tag'] = tag
+                    all_prompts.append(participant_data)
+    
+    print(f"   Created {len(all_prompts)} participant prompts from {len(experiment_files)} experiments")
+    if len(all_prompts) > 0:
+        total_choices = sum(p.get('num_trials', 0) for p in all_prompts)
+        print(f"   Total choices across all participants: {total_choices}")
+        print(f"   Average choices per participant: {total_choices / len(all_prompts):.1f}")
+    
+    with open(output_file, 'w') as f:
+        for prompt in all_prompts:
+            f.write(json.dumps(prompt) + '\n')
+    print(f"   Saved to: {output_file}")
+    
+    if all_prompts:
+        example = all_prompts[0]
+        print(f"\n📝 Example participant prompt:")
+        print(f"   Participant: {example.get('participant')}")
+        print(f"   Experiment tag: {example.get('exp_tag')}")
+        print(f"   Total trials: {example.get('num_trials', 'N/A')}")
+        print(f"   Text length: {len(example['text'])} characters")
+        print(f"   Preview: {example['text'][:300]}...")
+    
+    return all_prompts
+
+def create_history_only_prompts_predictive_rl(original_prompts_file, output_file):
+    """Create history-only prompts for predictive RL (U/P) - minimal context + choice sequence only."""
+    print(f"📝 Creating history-only prompts from: {original_prompts_file}")
+    
+    # Load original prompts (each line = one participant session)
+    original_prompts = []
+    with open(original_prompts_file, 'r') as f:
+        for line in f:
+            original_prompts.append(json.loads(line))
+    
+    print(f"   Loaded {len(original_prompts)} participant sessions")
+    
+    # Create history-only versions (one prompt per participant with all choices)
+    history_only_prompts = []
+    
+    for participant_data in original_prompts:
+        prompt_text = participant_data['text']
+        
+        # Extract ONLY the first sentence from the first non-empty line
+        first_sentence = ""
+        for raw_line in prompt_text.split('\n'):
+            line = raw_line.strip()
+            if not line:
+                continue
+            first_sentence = (line.split('.', 1)[0].strip() + ".") if '.' in line else line
+            break
+        if not first_sentence:
+            first_sentence = "You are participating in multiple games involving two slot machines."
+        
+        # Extract labels if present; otherwise default to accepting any
+        label_match = re.search(r'labeled ([A-Z]) and ([A-Z])', first_sentence)
+        labels = None
+        if label_match:
+            labels = (label_match.group(1), label_match.group(2))
+        
+        # Extract ALL choices in order; ignore instructions/rewards/games
+        all_choices = re.findall(r'You press <<([^>]+)>>', prompt_text)
+        choices = [c for c in all_choices if c in set(labels)] if labels else all_choices
+        
+        print(f"   Participant {participant_data.get('participant', 'unknown')}: found {len(choices)} choices")
+        
+        if choices:
+            full_history_prompt = first_sentence + "\n\n"
+            choice_positions = []
+            for i, choice in enumerate(choices):
+                line_text = f"You press <<{choice}>>."
+                choice_start_pos = len(full_history_prompt) + len("You press <<")
+                choice_positions.append({
+                    'choice_index': i,
+                    'choice': choice,
+                    'choice_start_pos': choice_start_pos
+                })
+                full_history_prompt += line_text + "\n"
+            
+            history_only_data = {
+                'text': full_history_prompt.strip(),
+                'participant': participant_data.get('participant'),
+                'experiment': participant_data.get('experiment'),
+                'num_trials': len(choices),
+                'choice_positions': choice_positions,
+                'basic_instruction': first_sentence,
+                'original_length': len(prompt_text),
+                'history_only_length': len(full_history_prompt)
+            }
+            history_only_prompts.append(history_only_data)
+        else:
+            history_only_prompts.append(participant_data)
+    
+    print(f"   Created {len(history_only_prompts)} participant prompts from {len(original_prompts)} participants")
+    if len(original_prompts) > 0:
+        total_choices = sum(p.get('num_trials', 0) for p in history_only_prompts)
+        print(f"   Total choices across all participants: {total_choices}")
+        print(f"   Average choices per participant: {total_choices / len(original_prompts):.1f}")
+    
+    # Save history-only prompts
+    with open(output_file, 'w') as f:
+        for prompt in history_only_prompts:
+            f.write(json.dumps(prompt) + '\n')
+    print(f"   Saved to: {output_file}")
+    
+    # Show example
+    if history_only_prompts:
+        example = history_only_prompts[0]
+        print(f"\n📝 Example participant prompt:")
+        print(f"   Participant: {example.get('participant')}")
+        print(f"   Total trials: {example.get('num_trials', 'N/A')}")
+        print(f"   Text length: {len(example['text'])} characters")
+        print(f"   Preview: {example['text'][:300]}...")
+    
+    return history_only_prompts
+
+def create_history_only_prompts_wcst(original_prompts_file, output_file):
+    """Create history-only prompts for WCST (A/B/C/D) - keep first sentence only and flatten choices."""
+    print(f"📝 Creating history-only WCST prompts from: {original_prompts_file}")
+    
+    # Load original prompts (each line = one participant session)
+    original_prompts = []
+    with open(original_prompts_file, 'r') as f:
+        for line in f:
+            original_prompts.append(json.loads(line))
+    
+    print(f"   Loaded {len(original_prompts)} participant sessions")
+    
+    history_only_prompts = []
+    
+    for participant_data in original_prompts:
+        prompt_text = participant_data['text']
+        
+        # First sentence of the first non-empty line
+        first_sentence = ""
+        for raw_line in prompt_text.split('\n'):
+            line = raw_line.strip()
+            if not line:
+                continue
+            first_sentence = (line.split('.', 1)[0].strip() + ".") if '.' in line else line
+            break
+        if not first_sentence:
+            first_sentence = "You will see a stimulus card and must choose which of four key cards it matches."
+        
+        # Extract ONLY choice letters A/B/C/D from the full text
+        choices = re.findall(r'You press <<([ABCD])>>', prompt_text)
+        print(f"   Participant {participant_data.get('participant', 'unknown')}: found {len(choices)} choices")
+        
+        if choices:
+            full_history_prompt = first_sentence + "\n\n"
+            choice_positions = []
+            for i, choice in enumerate(choices):
+                line_text = f"You press <<{choice}>>."
+                choice_start_pos = len(full_history_prompt) + len("You press <<")
+                choice_positions.append({
+                    'choice_index': i,
+                    'choice': choice,
+                    'choice_start_pos': choice_start_pos
+                })
+                full_history_prompt += line_text + "\n"
+            
+            history_only_data = {
+                'text': full_history_prompt.strip(),
+                'participant': participant_data.get('participant'),
+                'experiment': participant_data.get('experiment'),
+                'num_trials': len(choices),
+                'choice_positions': choice_positions,
+                'basic_instruction': first_sentence,
+                'original_length': len(prompt_text),
+                'history_only_length': len(full_history_prompt)
+            }
+            history_only_prompts.append(history_only_data)
+        else:
+            history_only_prompts.append(participant_data)
+    
+    print(f"   Created {len(history_only_prompts)} participant prompts from {len(original_prompts)} participants")
+    if len(original_prompts) > 0:
+        total_choices = sum(p.get('num_trials', 0) for p in history_only_prompts)
+        print(f"   Total choices across all participants: {total_choices}")
+        print(f"   Average choices per participant: {total_choices / len(original_prompts):.1f}")
+    
+    # Save history-only prompts
+    with open(output_file, 'w') as f:
+        for prompt in history_only_prompts:
+            f.write(json.dumps(prompt) + '\n')
+    print(f"   Saved to: {output_file}")
+    
+    # Show example
+    if history_only_prompts:
+        example = history_only_prompts[0]
+        print(f"\n📝 Example participant prompt:")
+        print(f"   Participant: {example.get('participant')}")
+        print(f"   Total trials: {example.get('num_trials', 'N/A')}")
+        print(f"   Text length: {len(example['text'])} characters")
+        print(f"   Preview: {example['text'][:300]}...")
+    
+    return history_only_prompts
+
 def evaluate_collsioo_with_progressive_nll(model, tokenizer, dataset_list, condition_name, batch_size=4):
     """
     Specialized evaluation for collsioo datasets with progressive NLL extraction.
@@ -1594,12 +1985,30 @@ def create_history_only_prompts(original_prompts_file, output_file, dataset_name
         return create_history_only_prompts_hilbig(original_prompts_file, output_file)
     elif dataset_name == "hebart2023things":
         return create_history_only_prompts_hebart(original_prompts_file, output_file)
+    elif dataset_name == "wcst_predictive":
+        return create_history_only_prompts_wcst(original_prompts_file, output_file)
+    elif dataset_name == "wilson2014humans_all":
+        dataset_config = get_dataset_config(dataset_name)
+        experiment_files = dataset_config['original_prompts_file']
+        return create_history_only_prompts_wilson_multi(experiment_files, output_file)
+    elif dataset_name in ["wilson2014humans_exp1", "wilson2014humans_exp3", "wilson2014humans_exp4", "wilson2014humans_exp5"]:
+        return create_history_only_prompts_wilson(original_prompts_file, output_file)
+    elif dataset_name == "predictive_rl_exp1":
+        return create_history_only_prompts_predictive_rl(original_prompts_file, output_file)
     else:
         raise ValueError(f"Unsupported dataset: {dataset_name}")
 
 def get_dataset_config(dataset_name):
     """Get configuration for different datasets"""
     configs = {
+        "wcst_predictive": {
+            "original_prompts_file": "datasets/main_test_tasks/wcst_predictive.jsonl",
+            "baseline_nll": None,   # unknown full-context baseline for WCST here
+            "cognitive_nll": 0.871,
+            "random_nll": 1.3862943611198906,   # ln(4) for 4-choice task (A, B, C, D)
+            "description": "WCST task (A/B/C/D). Context-free prompts keep first sentence and choices only.",
+            "choice_pattern": r'You press <<([ABCD])>>'
+        },
         "ruggeri2022globalizability": {
             "original_prompts_file": "test_datasets/main_test_tasks/ruggeri2022globalizability_exp1.jsonl",
             "baseline_nll": 0.4382756948471069,  # from all_data_marcelbinz-Llama-3.1-Centaur-70B-adapter.csv
@@ -1659,6 +2068,59 @@ def get_dataset_config(dataset_name):
             "random_nll": 1.0986122886681098,   # ln(3) for 3-choice task (A, B, C)
             "description": "THINGS odd-one-out task with 3-choice trials - ultra-minimal context",
             "choice_pattern": r'You press <<([ABC])>>'
+        },
+        "predictive_rl_exp1": {
+            "original_prompts_file": "datasets/main_test_tasks/predictive_rl_exp1.jsonl",
+            "baseline_nll": None,   # unknown Centaur baseline for this synthetic/task variant
+            "cognitive_nll": 0.4253,
+            "random_nll": 0.6931471805599453,   # ln(2) for binary U/P
+            "description": "Predictive RL task with two slot machines labeled U and P; context-free prompts keep only choices",
+            "choice_pattern": r'You press <<([UP])>>'
+        },
+        "wilson2014humans_exp1": {
+            "original_prompts_file": "datasets/main_test_tasks/wilson2014humans_exp1.jsonl",
+            "baseline_nll": 0.4487724900245666,
+            "cognitive_nll": 0.5560149825576917,
+            "random_nll": 0.6931471805599453,   # ln(2) for binary J/K
+            "description": "Horizon task (Exp1): two slot machines labeled J and K; history-only prompts keep only choices",
+            "choice_pattern": r'You press <<([JK])>>'
+        },
+        "wilson2014humans_exp3": {
+            "original_prompts_file": "datasets/main_test_tasks/wilson2014humans_exp3.jsonl",
+            "baseline_nll": 0.4487724900245666,
+            "cognitive_nll": 0.5560149825576917,
+            "random_nll": 0.6931471805599453,
+            "description": "Horizon task (Exp3): two slot machines labeled J and K; history-only prompts keep only choices",
+            "choice_pattern": r'You press <<([JK])>>'
+        },
+        "wilson2014humans_exp4": {
+            "original_prompts_file": "datasets/main_test_tasks/wilson2014humans_exp4.jsonl",
+            "baseline_nll": 0.4487724900245666,
+            "cognitive_nll": 0.5560149825576917,
+            "random_nll": 0.6931471805599453,
+            "description": "Horizon task (Exp4): two slot machines labeled J and K; history-only prompts keep only choices",
+            "choice_pattern": r'You press <<([JK])>>'
+        },
+        "wilson2014humans_exp5": {
+            "original_prompts_file": "datasets/main_test_tasks/wilson2014humans_exp5.jsonl",
+            "baseline_nll": 0.4487724900245666,
+            "cognitive_nll": 0.5560149825576917,
+            "random_nll": 0.6931471805599453,
+            "description": "Horizon task (Exp5): two slot machines labeled J and K; history-only prompts keep only choices",
+            "choice_pattern": r'You press <<([JK])>>'
+        },
+        "wilson2014humans_all": {
+            "original_prompts_file": [
+                "datasets/main_test_tasks/wilson2014humans_exp1.jsonl",
+                "datasets/main_test_tasks/wilson2014humans_exp3.jsonl",
+                "datasets/main_test_tasks/wilson2014humans_exp4.jsonl",
+                "datasets/main_test_tasks/wilson2014humans_exp5.jsonl"
+            ],
+            "baseline_nll": 0.4487724900245666,   # Original Centaur aggregate
+            "cognitive_nll": 0.5560149825576917,  # Aggregate cognitive baseline mean
+            "random_nll": 0.6931471805599453,
+            "description": "Horizon task (All exps combined): J/K binary choices; history-only keeps first sentence + choices",
+            "choice_pattern": r'You press <<([JK])>>'
         }
     }
     
@@ -1840,7 +2302,7 @@ def main():
     """Main evaluation pipeline - follows structure of evaluate_zero_shot_centaur.py"""
     parser = argparse.ArgumentParser(description='History-Only Centaur Evaluation')
     parser.add_argument('--task', type=str, 
-                       choices=['ruggeri2022globalizability', 'dubois2022value', 'wu2018generalisation_exp1', 'collsioo2023MCPL_exp1', 'collsioo2023MCPL_all', 'hilbig2014generalized', 'hebart2023things'],
+                       choices=['wcst_predictive', 'ruggeri2022globalizability', 'dubois2022value', 'wu2018generalisation_exp1', 'collsioo2023MCPL_exp1', 'collsioo2023MCPL_all', 'hilbig2014generalized', 'hebart2023things', 'wilson2014humans_exp1', 'wilson2014humans_exp3', 'wilson2014humans_exp4', 'wilson2014humans_exp5', 'wilson2014humans_all', 'predictive_rl_exp1'],
                        default='ruggeri2022globalizability',
                        help='Dataset to evaluate on')
     parser.add_argument('--model', '--model-name', dest='model_name', type=str, 
@@ -1856,8 +2318,8 @@ def main():
                        help='Score only the first token inside << >> for each choice (for diagnostics)')
     parser.add_argument('--choice-nll-agg', type=str, choices=['average','sum'], default='average',
                        help='Aggregate token NLLs within << >> by average (length-normalized) or sum (joint log-prob)')
-    parser.add_argument('--prompt-mode', type=str, choices=['context_free','centaur'], default='context_free',
-                       help='Use context_free (history-only minimal prompts) or centaur (original prompts)')
+    parser.add_argument('--prompt-mode', type=str, choices=['context_free','centaur','both'], default='context_free',
+                       help='Use context_free (history-only minimal prompts), centaur (original prompts), or both (run both sequentially)')
     
     args = parser.parse_args()
     
@@ -1898,7 +2360,8 @@ def main():
     print(f"   History-only prompts: {history_only_file}")
     print(f"   Token scoring: {'first token only' if args.use_first_choice_token_only else args.choice_nll_agg} within << >>")
     print(f"   Prompt mode: {args.prompt_mode}")
-    print(f"   Original Centaur baseline: {'Will evaluate' if args.run_original else 'Use existing baseline'}")
+    original_eval_flag = (args.run_original or args.prompt_mode == 'both')
+    print(f"   Original Centaur baseline: {'Will evaluate' if original_eval_flag else 'Use existing baseline'}")
     
     # Check if original prompts file(s) exist
     if isinstance(original_prompts_file, list):
@@ -1936,6 +2399,11 @@ def main():
                 for line in src_f:
                     dst_f.write(line)
         history_only_prompts = []  # We won't keep prompts in memory for centaur mode
+    elif args.prompt_mode == 'both':
+        print(f"\n=== Step 1: Create History-Only Prompts (and use original as well) ===")
+        print(f"   Using dataset-specific parsing for: {task_name}")
+        print("📝 Creating history-only prompts...")
+        history_only_prompts = create_history_only_prompts(original_prompts_file, history_only_file, task_name)
     else:
         print(f"\n=== Step 1: Create History-Only Prompts ===")
         print(f"   Using dataset-specific parsing for: {task_name}")
@@ -1948,25 +2416,31 @@ def main():
     results_dict = {}
     
     # Evaluate history-only (our main focus)
-    print("\n🔍 Evaluating History-Only condition...")
-    # Use efficient evaluation for large datasets, detailed analysis otherwise
-    our_label = f"Our Result\n({args.prompt_mode}, {agg_suffix})"
-    history_nll, history_samples, history_basic, history_detailed = evaluate_centaur_on_prompts(
-        args.model_name, history_only_file, our_label, args.batch_size, args.skip_detailed_analysis,
-        use_first_choice_token_only=args.use_first_choice_token_only, debug_alignment=False,
-        choice_nll_aggregation=args.choice_nll_agg
-    )
-    results_dict['History-Only'] = {
-        'nll': history_nll, 
-        'samples': history_samples,
-        'basic_results': history_basic,
-        'detailed_results': history_detailed
-    }
+    if args.prompt_mode in ['context_free','both']:
+        print("\n🔍 Evaluating History-Only condition...")
+        # Use efficient evaluation for large datasets, detailed analysis otherwise
+        our_label = f"Our Result\n({('context_free' if args.prompt_mode=='context_free' else 'both')}, {agg_suffix})"
+        history_nll, history_samples, history_basic, history_detailed = evaluate_centaur_on_prompts(
+            args.model_name, history_only_file, our_label, args.batch_size, args.skip_detailed_analysis,
+            use_first_choice_token_only=args.use_first_choice_token_only, debug_alignment=False,
+            choice_nll_aggregation=args.choice_nll_agg
+        )
+        results_dict['History-Only'] = {
+            'nll': history_nll, 
+            'samples': history_samples,
+            'basic_results': history_basic,
+            'detailed_results': history_detailed
+        }
+    else:
+        history_nll = None
+        history_samples = 0
+        history_basic = {}
+        history_detailed = {}
     
 
     
     # Original full context (default: use existing baseline)
-    if args.run_original:
+    if original_eval_flag:
         print("\n🔍 Evaluating Original (Full Context) condition...")
         original_nll, original_samples, original_basic, original_detailed = evaluate_centaur_on_prompts(
             args.model_name, original_prompts_file, "Original (Full Context)", args.batch_size, args.skip_detailed_analysis
@@ -1985,16 +2459,20 @@ def main():
             print(f"\n📊 Using existing Original Centaur baseline: {baseline_nll:.4f}")
         else:
             print(f"\n⚠️  No baseline available for {task_name}")
+        original_nll = results_dict.get('Original (Full Context)', {}).get('nll')
     
     # Step 3: Create comparison plot
     print(f"\n=== Step 3: Create Comparison Plot ===")
     try:
+        # If we evaluated original in 'both' mode, reflect it in the plot by overriding baseline
+        if args.prompt_mode == 'both' and original_nll is not None:
+            dataset_config['baseline_nll'] = original_nll
         plot_file = eval_results_dir / f"{task_name}_comparison_{prompt_suffix}_{agg_suffix}.png"
-        comparison_data = create_comparison_plot(history_nll, dataset_config, task_name, plot_file, our_label)
+        comparison_data = create_comparison_plot(history_nll if history_nll is not None else float('nan'), dataset_config, task_name, plot_file, (our_label if args.prompt_mode in ['context_free','both'] else "Our Result\n(centaur)"))
     except Exception as e:
         print(f"   ❌ Error creating comparison plot: {e}")
         print(f"   ⚠️  Continuing without plot...")
-        comparison_data = [{'Model': 'History-Only Centaur\n(Context-Free)', 'NLL': history_nll, 'Type': 'Our Approach'}]
+        comparison_data = [{'Model': 'History-Only Centaur\n(Context-Free)', 'NLL': history_nll if history_nll is not None else float('nan'), 'Type': 'Our Approach'}]
     
     # Step 4: Analyze results
     print(f"\n=== Step 4: Analyze Results ===")
