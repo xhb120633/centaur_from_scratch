@@ -6,24 +6,51 @@ import numpy as np
 
 
 def build_cover_story(total_trials: int, label_left: str = "U", label_right: str = "P") -> str:
-    lines = [
-        f"You are participating in multiple games involving two slot machines, labeled {label_left} and {label_right}.",
-        "Each time you choose a slot machine, you get some points.",
-        "You choose a slot machine by pressing the corresponding key.",
-        "Each slot machine tends to pay out about the same amount of points on average.",
-        "Your goal is to choose the slot machines that will give you the most points across the experiment.",
-        f"Game 1. There are {total_trials} trials in this game.",
-    ]
-    return "\n".join(lines)
+    # Align exactly with predictive_rl_centaur_Sabrina.py's build_slot_prompt preface
+    preface = (
+        f"In this task, you have to repeatedly choose between two slot machines labeled {label_left} and {label_right}.\n"
+        "You can choose a slot machine by pressing its corresponding key."
+        "When you select one of the machines, you will win 1 or 0 points."
+        "Your goal is to choose the slot machines that will give you the most points."
+        "You will receive feedback about the outcome after making a choice.\n"
+        "The environment may change unpredictably, and past success does not guarantee future results. You’ll need to adapt to these changes to keep finding the better machine."
+        f"You will play 1 game in total, consisting of {total_trials} trials."
+        f" Game 1:"
+    )
+    return preface
 
 
 def convert_csv_to_jsonl(input_csv: Path, output_jsonl: Path, experiment_tag: str = "predictive_rl/exp1.csv") -> None:
     """
-    Convert a CSV with columns [trial, choice, reward, cumulative_reward, model_id]
-    into Centaur-style JSONL: one line per participant ('model_id'), with a 'text' prompt
-    that mirrors Centaur's prompt structure (cover story + per-trial lines).
+    Convert predictive RL CSV data into Centaur-style JSONL.
+
+    Supported inputs:
+    - Summary CSV with columns [model_id, overall_nll, prompt], where prompt is already
+      a complete Centaur prompt.
+    - Trial-level CSV with columns [trial, choice, reward, cumulative_reward, model_id].
     """
     df = pd.read_csv(input_csv)
+
+    if {"model_id", "prompt"}.issubset(df.columns):
+        participants = []
+        for _, row in df.iterrows():
+            prompt = row["prompt"]
+            if not isinstance(prompt, str) or not prompt.strip():
+                raise ValueError(f"Empty prompt for model_id={row.get('model_id')}")
+            participants.append({
+                "text": prompt,
+                "experiment": experiment_tag,
+                "participant": str(row["model_id"]),
+            })
+
+        output_jsonl.parent.mkdir(parents=True, exist_ok=True)
+        with output_jsonl.open("w", encoding="utf-8") as f:
+            for rec in participants:
+                f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+        print(f"Converted summary CSV with prompt column.")
+        print(f"Wrote {len(participants)} participants to {output_jsonl}")
+        return
 
     # Basic validation
     required_cols = {"trial", "choice", "reward", "model_id"}
@@ -57,6 +84,9 @@ def convert_csv_to_jsonl(input_csv: Path, output_jsonl: Path, experiment_tag: st
             choice_letter = str(row["choice_letter"]).strip()
             reward = int(row["reward"])
             lines.append(f"You press <<{choice_letter}>> and get {reward} points.")
+
+        # Add Sabrina-style open cue for the next choice (unfinished marker)
+        lines.append("You press <<")
 
         text = "\n".join(lines)
         participants.append({

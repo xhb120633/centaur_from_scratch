@@ -24,7 +24,7 @@ except ImportError:
     SCIENCEPLOTS_AVAILABLE = False
     print("⚠️ scienceplots not available - install with: pip install scienceplots")
 
-RESULTS_ROOT = Path(r"E:\reanalyzing_centaur")
+RESULTS_ROOT = Path(os.environ.get("CENTAUR_RESULTS_ROOT", ".")).resolve()
 
 def extract_nll_from_results(results_file):
     """Extract NLL value from results file"""
@@ -492,8 +492,9 @@ def process_dataset(dataset_name):
             vs_original = zero_shot_nll - baselines['original_centaur']
             print(f"      Zero-Shot vs Original: {vs_original:+.3f} ({'worse' if vs_original > 0 else 'better'})")
         
-        if history_only_nll is not None and baselines:
-            vs_original = history_only_nll - baselines['original_centaur']
+        original_for_comparison = original_override if original_override is not None else baselines.get('original_centaur')
+        if history_only_nll is not None and original_for_comparison is not None:
+            vs_original = history_only_nll - original_for_comparison
             print(f"      History-Only vs Original: {vs_original:+.3f} ({'worse' if vs_original > 0 else 'better'})")
         
         if zero_shot_nll is not None and history_only_nll is not None:
