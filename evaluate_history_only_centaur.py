@@ -1993,7 +1993,7 @@ def create_history_only_prompts(original_prompts_file, output_file, dataset_name
         return create_history_only_prompts_wilson_multi(experiment_files, output_file)
     elif dataset_name in ["wilson2014humans_exp1", "wilson2014humans_exp3", "wilson2014humans_exp4", "wilson2014humans_exp5"]:
         return create_history_only_prompts_wilson(original_prompts_file, output_file)
-    elif dataset_name == "predictive_rl_exp1":
+    elif dataset_name in ["predictive_rl_exp1", "rl_waltmann_centaur"]:
         return create_history_only_prompts_predictive_rl(original_prompts_file, output_file)
     else:
         raise ValueError(f"Unsupported dataset: {dataset_name}")
@@ -2076,6 +2076,14 @@ def get_dataset_config(dataset_name):
             "random_nll": 0.6931471805599453,   # ln(2) for binary U/P
             "description": "Predictive RL task with two slot machines labeled U and P; context-free prompts keep only choices",
             "choice_pattern": r'You press <<([UP])>>'
+        },
+        "rl_waltmann_centaur": {
+            "original_prompts_file": "datasets/main_test_tasks/rl_waltmann_centaur.jsonl",
+            "baseline_nll": None,   # computed dynamically with --prompt-mode both
+            "cognitive_nll": None,  # no separate cognitive baseline established for this dataset
+            "random_nll": 0.6931471805599453,   # ln(2) for binary slot-machine choices
+            "description": "Waltmann predictive RL task with two labeled slot machines; context-free prompts keep only choices",
+            "choice_pattern": r'You press <<([^>]+)>>'
         },
         "wilson2014humans_exp1": {
             "original_prompts_file": "datasets/main_test_tasks/wilson2014humans_exp1.jsonl",
@@ -2302,7 +2310,7 @@ def main():
     """Main evaluation pipeline - follows structure of evaluate_zero_shot_centaur.py"""
     parser = argparse.ArgumentParser(description='History-Only Centaur Evaluation')
     parser.add_argument('--task', type=str, 
-                       choices=['wcst_predictive', 'ruggeri2022globalizability', 'dubois2022value', 'wu2018generalisation_exp1', 'collsioo2023MCPL_exp1', 'collsioo2023MCPL_all', 'hilbig2014generalized', 'hebart2023things', 'wilson2014humans_exp1', 'wilson2014humans_exp3', 'wilson2014humans_exp4', 'wilson2014humans_exp5', 'wilson2014humans_all', 'predictive_rl_exp1'],
+                       choices=['wcst_predictive', 'ruggeri2022globalizability', 'dubois2022value', 'wu2018generalisation_exp1', 'collsioo2023MCPL_exp1', 'collsioo2023MCPL_all', 'hilbig2014generalized', 'hebart2023things', 'wilson2014humans_exp1', 'wilson2014humans_exp3', 'wilson2014humans_exp4', 'wilson2014humans_exp5', 'wilson2014humans_all', 'predictive_rl_exp1', 'rl_waltmann_centaur'],
                        default='ruggeri2022globalizability',
                        help='Dataset to evaluate on')
     parser.add_argument('--model', '--model-name', dest='model_name', type=str, 

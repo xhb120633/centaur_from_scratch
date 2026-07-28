@@ -76,6 +76,12 @@ def get_dataset_baselines(dataset_name):
             "random": 0.6931471805599453,
             "description": "Reversal Learning Task (Sequential)"
         },
+        "rl_waltmann_centaur": {
+            "original_centaur": None,            # computed dynamically in "both" mode if available
+            "cognitive_models": None,
+            "random": 0.6931471805599453,
+            "description": "Waltmann Reversal Learning Task (Sequential)"
+        },
         "wcst_predictive": {
             "original_centaur": None,            # not established
             "cognitive_models": 0.871,
@@ -150,6 +156,7 @@ def get_dataset_title(dataset_name):
     """Get appropriate title for each dataset"""
     titles = {
         "predictive_rl_exp1": "Reversal Learning Task (Sequential)\nPredictive RL",
+        "rl_waltmann_centaur": "Reversal Learning Task (Sequential)\nWaltmann RL",
         "wcst_predictive": "Wisconsin Card Sorting Task (Sequential)\nWCST",
         "wilson2014humans_all": "Horizon Task (Sequential)\nWilson et al., 2014",
         "wilson2014humans_exp1": "Horizon Task (Sequential, Exp 1)\nWilson et al., 2014",
@@ -187,6 +194,7 @@ def create_comprehensive_plot(dataset_name, zero_shot_nll=None, history_only_nll
         "hebart2023things": "Cognitive Models\n(Odd-one-out)",
         "wu2018generalisation_exp1": "Cognitive Models\n(GP-UCB)",
         "predictive_rl_exp1": "Cognitive Models\n(Reversal Learning)",
+        "rl_waltmann_centaur": "Cognitive Models\n(Reversal Learning)",
         "wilson2014humans_all": "Cognitive Models\n(Horizon Task)",
         "wilson2014humans_exp1": "Cognitive Models\n(Horizon Task)",
         "wilson2014humans_exp3": "Cognitive Models\n(Horizon Task)",
@@ -393,6 +401,7 @@ def find_available_datasets():
     # Also check for datasets that have baselines even if no eval results
     baseline_datasets = [
         "predictive_rl_exp1",
+        "rl_waltmann_centaur",
         "wcst_predictive",
         "wilson2014humans_all",
         "ruggeri2022globalizability",
